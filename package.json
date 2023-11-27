@@ -1,0 +1,17 @@
+{
+  "name": "ad320_final_project",
+  "version": "1.0.0",
+  "description": "For your final project you are tasked with creating a fully-fledged website. This full stack assignment will involve HTML, CSS, client-side JavaScript, server-side JavaScript, and a SQL database (**no file I/O allowed**). Although there are specific requirements, you have a lot of freedom in how you implement and design your website, like a CP. Since this is a full stack assignment, you might want to include your work in your portfolio.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.6"
+  }
+}
