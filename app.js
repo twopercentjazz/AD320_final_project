@@ -9,7 +9,14 @@ const cors = require('cors');
 const app = express();
 const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
+const cookieParser = require('cookie-parser');
+const multer = require('multer');
 app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(multer().none());
+
 
 
 
