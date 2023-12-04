@@ -33,7 +33,7 @@ PRAGMA foreign_keys=1;
 
 
 --	Comment this and COMMIT out to use with DB Browser for SQLite
---BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 
 CREATE TABLE IF NOT EXISTS "rooms" (
@@ -95,4 +95,4 @@ CREATE TABLE IF NOT EXISTS "trans" (
 
 
 --	Comment BEGIN TRANSACTION and this out to use with DB Browser for SQLite
---COMMIT;
+COMMIT;
