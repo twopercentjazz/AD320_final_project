@@ -1,4 +1,4 @@
-<!--
+<!-- 
 
 -->
 <!DOCTYPE html>
@@ -6,17 +6,44 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
-        <link rel="stylesheet" href="/src/css/account.css">
+        <link rel="stylesheet" href="../css/account.css">
         <script src="/src/js/account.js"></script>
-        <title>Title</title>
+        <title>Account</title>
     </head>
     <body>
         <header>
-
+            <nav>
+                <button>Join</button>
+                <button>Login</button>
+            </nav>
         </header>
-
         <main>
-
+            <div id="profile-view">
+                <div id="left">
+                    <div id="profile-card">
+                        <p>Hi insert-name</p>
+                        <p>email@email.com</p>
+                        <p>+1(123)456-7890</p>
+                        <p>active bookings: 0</p>
+                    </div>
+                    <div id="options">
+                        <button class="options" id="overview-button">Overview</button>
+                        <button class="options" id="profile-button">Profile</button>
+                        <button class="options" id="payment-button">Payment Method</button>
+                        <button class="options" id="reservations-button">Reservations</button>
+                        <button class="options" id="settings-button">Settings</button>
+                        <button class="options">Sign out</button>
+                    </div>
+                </div>
+                <div id="right">
+                    <div id="info-display">
+                        <div id="overview"></div>
+                        <div id="profile"></div>
+                        <div id="reservations"></div>
+                        <div id="payment"></div>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <footer>

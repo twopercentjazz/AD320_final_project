@@ -1,3 +1,75 @@
 /*
  *
  */
+
+ body {
+    margin: 0;
+    padding: 0;
+}
+
+
+/* temp nav */
+nav {
+    /* copy chris nav styling here */
+    background-color: #555;
+    padding: 30px;
+    display: flex;
+    justify-content: right;
+}
+
+#profile-view {
+    width: 1000px;
+    height: 1000px;
+    /* border: 10px solid red; */
+    /* border-radius: 50px; */
+    margin: 20px auto 0;
+    /* overflow: hidden; */
+    display: flex;
+}
+
+#profile-card {
+    width: 200px;
+    /* height: 120px; */
+    background-color: teal;
+    border-radius: 20px;
+    /* display: flex; */
+    /* flex-direction: column;
+    justify-content: center; */
+}
+
+#options { 
+    width: 200px;
+    margin-top: 20px;
+    
+    background-color: teal;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+p {
+    justify-content: center;
+    margin: 10px;
+    margin-top: auto;
+    margin-left: 20px;
+}
+.options {
+    width: 180px;
+    margin: 10px;
+    border-radius: 10px;
+    border-color: transparent;
+}
+
+.options:hover {
+    cursor: pointer;
+}
+
+#info-display {
+    margin-left: 20px;
+    width: 750px;
+    height: 800px;
+    background-color: teal;
+    border-radius: 20px;
+
+}
+ 
