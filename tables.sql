@@ -26,6 +26,9 @@ AUTOINCREMENT is unnecessary but could be added if desired
   Jan 01 2024 00:00:00 - Jan 19 2038 03:14:08
 */
 
+/*
+*/
+
 
 
 --	Turn on foreign key enforcement
@@ -36,14 +39,21 @@ PRAGMA foreign_keys=1;
 BEGIN TRANSACTION;
 
 
+DROP TABLE IF EXISTS "trans";
+DROP TABLE IF EXISTS "rooms";
+DROP TABLE IF EXISTS "types";
+DROP TABLE IF EXISTS "beds";
+DROP TABLE IF EXISTS "users";
+
+
 CREATE TABLE IF NOT EXISTS "rooms" (
 "id" INTEGER PRIMARY KEY,
-"number" INTEGER UNIQUE CHECK (number>=10 AND number<=1000),
-"max" INTEGER CHECK (max>0 AND max<5),	-- maximum occupancy 1-4
-"type" INTEGER REFERENCES "types" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
-"bed" INTEGER REFERENCES "beds" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
-"count" INTEGER CHECK (count>0 AND count<5),	-- beds 1-4
-"rate" INTEGER CHECK (rate>=5000 AND rate<=100000),	-- $50.00-$1,000.00 in pennies
+"number" INTEGER NOT NULL UNIQUE CHECK (number>=10 AND number<=1000),
+"max" INTEGER NOT NULL CHECK (max>0 AND max<5),	-- maximum occupancy 1-4
+"type" INTEGER NOT NULL REFERENCES "types" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
+"bed" INTEGER NOT NULL REFERENCES "beds" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
+"count" INTEGER NOT NULL CHECK (count>0 AND count<5),	-- beds 1-4
+"rate" INTEGER NOT NULL CHECK (rate>=1000 AND rate<=100000),	-- $10.00-$1,000.00 in pennies
 "picture" BLOB
 ) STRICT;
 
@@ -74,10 +84,10 @@ INSERT INTO "beds" ("id","label") VALUES
 
 CREATE TABLE IF NOT EXISTS "users" (
 "id" INTEGER PRIMARY KEY,
-"user" TEXT UNIQUE,	-- user name
+"user" TEXT NOT NULL UNIQUE,	-- user name
 "code" TEXT,	-- passcode
-"name" TEXT,
-"email" TEXT,
+"name" TEXT NOT NULL,
+"email" TEXT NOT NULL,
 "sessionid" INTEGER UNIQUE
 ) STRICT;
 
@@ -86,11 +96,12 @@ CREATE TABLE IF NOT EXISTS "trans" (
 "id" INTEGER PRIMARY KEY,
 "user" INTEGER REFERENCES "users" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
 "room" INTEGER REFERENCES "rooms" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
+"confirm" INTEGER NOT NULL UNIQUE,
 "date" INTEGER CHECK (date>1704067199 AND date<2147483648),
 "ckin" INTEGER CHECK (ckin>1704067199 AND ckin<2147483648),
 "ckout" INTEGER CHECK (ckout>1704067199 AND ckout<2147483648),
 "occupants" INTEGER CHECK (occupants>0 AND occupants<5),	-- maximum occupancy 1-4
-"cost" INTEGER CHECK (cost>=5000 AND cost<=100000)	-- $50.00-$1,000,000.00 in pennies
+"cost" INTEGER CHECK (cost>=1000 AND cost<=100000)	-- $10.00-$1,000,000.00 in pennies
 ) STRICT;
 
 
