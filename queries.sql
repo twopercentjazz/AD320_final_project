@@ -49,6 +49,11 @@ UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
 
 
 --	view trans
+SELECT t."id",u."user",r."number",t."confirm",date(b."date"),date(b."ckin"),date(b."ckout"),t."occupants",t."cost"
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."id"=t."room"
+WHERE u."user"=? AND t."confirm"=?;
 
 
 --	all trans per user
