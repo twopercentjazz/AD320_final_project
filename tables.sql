@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS "rooms" (
 "bed" INTEGER NOT NULL REFERENCES "beds" ("id") ON UPDATE CASCADE ON DELETE CASCADE,
 "count" INTEGER NOT NULL CHECK (count>0 AND count<5),	-- beds 1-4
 "rate" INTEGER NOT NULL CHECK (rate>=1000 AND rate<=100000),	-- $10.00-$1,000.00 in pennies
-"picture" BLOB
+"picture" TEXT
 ) STRICT;
 
 
