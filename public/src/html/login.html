@@ -7,15 +7,15 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
         <link rel="stylesheet" href="../css/login.css">
-        <script src="/src/js/account.js"></script>
-        <title>Account</title>
+        <script src="../js/login.js"></script>
+        <title>Login</title>
     </head>
     <body>
         <header>
             <nav>
                 <!-- Copy chris nav here -->
                 <button>Join</button>
-                <button>Login</button>
+                <button id="login-btn">Login</button>
             </nav>
         </header>
 
@@ -25,43 +25,43 @@
                 <p>*Indicates Required Field</p>
                 <div class="row">
                     <div class="column" id="left">
-                        <label for="nameF">First name *</label>
-                        <input type="text" id="nameF" required>
+                        <label for="first-name">First name *</label>
+                        <input type="text" id="first-name" required>
                         <label for="email">Email address *</label>
                         <input type="text" id="email" required>
                         <label for="pw">Create password *</label>
                         <input type="text" id="pw" required>
-                        <label for="street">Street address *</label>
+                        <!-- <label for="street">Street address *</label>
                         <input type="text" id="street" required>
                         <label for="code">Postal code *</label>
-                        <input type="text" id="code" required>
-                        <button id="create">Register</button>
+                        <input type="text" id="code" required> -->
+                        <button id="create-account">Register</button>
                     </div>
                     <div class="column" id="right">
-                        <label for="nameL">Last name *</label>
-                        <input type="text" id="nameL" required>
-                        <label for="emailVerify">Verify email address *</label>
-                        <input type="text" id="emailVerify" required>
-                        <label for="pwVerify">Verify password *</label>
-                        <input type="text" id="pwVerify" required>
-                        <label for="city">City/Town *</label>
+                        <label for="last-name">Last name *</label>
+                        <input type="text" id="last-name" required>
+                        <label for="verify-email">Verify email address *</label>
+                        <input type="text" id="verify-email" required>
+                        <label for="pw-verify">Verify password *</label>
+                        <input type="text" id="pw-verify" required>
+                        <!-- <label for="city">City/Town *</label>
                         <input type="text" id="city" required>
                         <label for="state">State *</label>
-                        <input type="text" id="state" required>
+                        <input type="text" id="state" required> -->
                     </div>
                 </div>
             </form>
             <div id="popup">
-                <div id="popupBody">
+                <div id="popup-body">
                     <form id="login">
                         <div class="column">
                             <h1>Please Sign in</h1>
-                            <label for="userEmail">Email</label>
-                            <input type="text" id="userEmail" required>
-                            <label for="userPw">Password</label>
-                            <input type="text" id="userPw" required>
+                            <label for="user-email">Email</label>
+                            <input type="text" id="user-email" required>
+                            <label for="user-pw">Password</label>
+                            <input type="text" id="user-pw" required>
                             <button id="sign-in-button">Sign in</button>
-                            <p>Not a member? Sign Up</p>
+                            <p>Not a member? <a href="login.html">Sign Up</a></p>
                         </div>
                     </form>
                 </div>
