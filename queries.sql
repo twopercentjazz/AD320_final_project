@@ -60,3 +60,5 @@ WHERE u."user"=?;
 
 
 --	make res
+INSERT INTO "trans" ("user","room","confirm","date","ckin","ckout","occupants","cost") VALUES
+(?,?,?,unixepoch(?),unixepoch(?),unixepoch(?),?,?);
