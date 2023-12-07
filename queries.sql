@@ -48,7 +48,7 @@ WHERE ?;
 --	all trans per user
 SELECT t."id",u."user",r."number",t."confirm",date(b."date"),date(b."ckin"),date(b."ckout"),t."occupants",t."cost"
 FROM "trans" t,"rooms" r,"users" u
-WHERE u."id"=t."user" AND r."id"=t."room";
+WHERE u."id"=t."user" AND r."id"=t."room" AND u."user"=?;
 
 
 --	make res
