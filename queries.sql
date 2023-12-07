@@ -34,12 +34,18 @@ WHERE ?;
 
 
 --	create account
+INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
+(NULL,?,?,?,?,NULL);
 
 
 --	login
+UPDATE "users" SET "sessionid"=? WHERE "id"=?
+UPDATE "users" SET "sessionid"=? WHERE "user"=?
 
 
 --	logout
+UPDATE "users" SET "sessionid"=0 WHERE "id"=?
+UPDATE "users" SET "sessionid"=0 WHERE "user"=?
 
 
 --	view trans
