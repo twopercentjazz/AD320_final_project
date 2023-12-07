@@ -44,8 +44,8 @@ UPDATE "users" SET "sessionid"=? WHERE "user"=?
 
 
 --	logout
-UPDATE "users" SET "sessionid"=0 WHERE "id"=?
-UPDATE "users" SET "sessionid"=0 WHERE "user"=?
+UPDATE "users" SET "sessionid"=NULL WHERE "id"=?
+UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
 
 
 --	view trans
