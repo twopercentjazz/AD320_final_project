@@ -35,5 +35,10 @@ INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
 (3,'kyle',NULL,'Kyle Potempa','Kyle.Potempa@seattlecolleges.edu',NULL);
 
 
+INSERT INTO "trans" ("id","user","room","confirm","date","ckin","ckout","occupants","cost") VALUES
+(0,1,1,1,1704240000,1704585600,1704931200,2,22500),
+(1,0,0,2,1704758400,1705104000,1705190400,2,7500);
+
+
 --	Comment BEGIN TRANSACTION and this out to use with DB Browser for SQLite
 COMMIT;
