@@ -7,10 +7,28 @@
     window.addEventListener("load", init);
 
     function init() {
+        hide();
+        id("settings-btn").addEventListener("click", () => toggleDisplay("settings"));
+        id("payment-btn").addEventListener("click", () => toggleDisplay("payment"));
+        // id("overview-btn").addEventListener("click", () => toggleDisplay("overview"));
+        id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
+        id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
+        // id("sign-out-btn").addEventListener("click", () => toggleDisplay("home"));
+    }   
 
+
+    function hide() {
+        let allDisplays = qsa('.profile-display');
+        allDisplays.forEach(display => {
+            display.style.display = 'none';
+        });
     }
 
-
+    function toggleDisplay(option) {
+        hide();
+        id(option).style.display = 'block';
+    }
+    
     /**
      * Returns the response's result text if successful, otherwise
      * returns the rejected Promise result with an error status and corresponding text

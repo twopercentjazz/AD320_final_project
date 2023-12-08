@@ -29,7 +29,7 @@ nav {
 
 #profile-card {
     width: 200px;
-    /* height: 120px; */
+    height: 120px;
     background-color: teal;
     border-radius: 20px;
     /* display: flex; */
@@ -47,12 +47,6 @@ nav {
     flex-direction: column;
 }
 
-p {
-    justify-content: center;
-    margin: 10px;
-    margin-top: auto;
-    margin-left: 20px;
-}
 .options {
     width: 180px;
     margin: 10px;
@@ -63,13 +57,85 @@ p {
 .options:hover {
     cursor: pointer;
 }
-
+.profile-display {
+    margin:35px
+}
 #info-display {
+    /* position: fixed; */
     margin-left: 20px;
-    width: 750px;
+    width: 700px;
     height: 800px;
     background-color: teal;
     border-radius: 20px;
-
+    padding: 40px;
 }
- 
+
+.display-body {
+    /* margin: 60px; */
+    /* margin-top: 0; */
+    width: 620px;
+    height: 720px;
+    /* border: solid black; */
+}
+
+#info {
+    /* border: solid black; */
+    width: 624px;
+    height: 150px;
+    
+}
+
+#reservations-list {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 620px;
+    height: 650px;
+    /* background-color: #f0f0f0; */
+    border: 5px solid black;
+    overflow-y: auto;
+}
+
+#details {
+    display: flex;
+    flex-wrap: wrap;
+    /* padding: 10px; */
+    /* padding-top: 0px; */
+    gap: 100px;
+    /* justify-content: space-between; */
+}
+
+h3 {
+    margin-bottom: 0px;
+    font-size:x-large;
+}
+
+h4 {
+    margin-bottom: 0;
+}
+p {
+    margin-top: 0;
+}
+.text {
+    font-size: medium;
+}
+
+#overview .profile-display, #overview-btn.active {
+    display: block;
+}
+
+#profile .profile-display, #profile-btn.active {
+    display: block;
+}
+
+#reservations .profile-display, #reservations-btn.active {
+    display: block;
+}
+
+#payment .profile-display, #payment-btn.active {
+    display: block;
+}
+
+#settings .profile-display, #settings-btn.active {
+    display: block;
+}

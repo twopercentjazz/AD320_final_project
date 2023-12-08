@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
         <link rel="stylesheet" href="../css/account.css">
-        <script src="/src/js/account.js"></script>
+        <script src="../js/account.js"></script>
         <title>Account</title>
     </head>
     <body>
@@ -27,27 +27,92 @@
                         <p>active bookings: 0</p>
                     </div>
                     <div id="options">
-                        <button class="options" id="overview-button">Overview</button>
-                        <button class="options" id="profile-button">Profile</button>
-                        <button class="options" id="payment-button">Payment Method</button>
-                        <button class="options" id="reservations-button">Reservations</button>
-                        <button class="options" id="settings-button">Settings</button>
-                        <button class="options">Sign out</button>
+                        <!-- <button class="options" id="overview-btn">Overview</button> -->
+                        <button class="options" id="profile-btn">Profile</button>
+                        <button class="options" id="payment-btn">Payment Method</button>
+                        <button class="options" id="reservations-btn">Reservations</button>
+                        <button class="options" id="settings-btn">Settings</button>
+                        <a href="login.html">
+                            <button class="options" id="sign-out-btn">Sign out</button>
+                        </a>
                     </div>
                 </div>
                 <div id="right">
                     <div id="info-display">
-                        <div id="overview"></div>
-                        <div id="profile"></div>
-                        <div id="reservations"></div>
-                        <div id="payment"></div>
+                        <div class="profile-display" id="profile">
+                            <div class="display-body">
+                                <h2>Derrek</h2>
+                                <div id="info">
+                                    <h3>Basic Info</h3>
+                                    <div id="details">
+                                        <div>
+                                            <h4 class="text">Name</h4>
+                                            <p class="text" id="name">Derk</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Date of Birth</h4>
+                                            <p class="text" id="birthay">11/08/2001</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Gender</h4>
+                                            <p class="text" id="gender">Male</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="info">
+                                    <h3>Contact</h2>
+                                    <div id="details">
+                                        <div>
+                                            <h4 class="text">Mobile Number</h4>
+                                            <p class="text" id="phone">206-123-1234</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Email</h4>
+                                            <p class="text" id="email">derk@seattleschools.edu</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Address</h4>
+                                            <p class="text" id="address">1234 S street St<br>Seattle, WA 98811</p>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-display" id="reservations">
+                            <div class="display-body">
+                                <h2>Reservations</h2>
+                                <legend><strong>Filter</strong></legend>
+                                <div id="filter">
+                                    <input type="checkbox" id="current">
+                                    <label>Current</label>
+                                    <input type="checkbox" id="current">
+                                    <label>Current</label>
+                                </div>
+                                <div id="reservations-list">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-display" id="payment">
+                            <h2>Payment Information</h2>
+                            <p>payment info will be filler</p>
+                            <div id="billing adress"></div>
+                            <div id="crdit card info"></div>
+                        </div>
+                        <div class="profile-display" id="settings">
+                            <h2>Settings</h2>
+                            <p>will change how the we can view ex.light/dark
+                                will also have ability to delete
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
 
         <footer>
-
+            <p>asdash</p>
         </footer>
     </body>
 </html>
