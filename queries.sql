@@ -24,9 +24,21 @@ SELECT r."id",r."number",r."max",t."type",b."label",r."count",r."rate",r."pictur
 FROM "rooms" r,"types" t,"beds" b
 WHERE t."id"=r."type" AND b."id"=r."bed";
 
+--	all rooms without direct reference to the picture field
+SELECT r."id",r."number",r."max",t."type",b."label",r."count",r."rate",concat('/public/assets/img/rooms/',r."number",'.png')
+FROM "rooms" r,"types" t,"beds" b
+WHERE t."id"=r."type" AND b."id"=r."bed";
+
 
 --	filter rooms
 SELECT r."id",r."number",r."max",t."type",b."label",r."count",r."rate",r."picture"
+FROM "rooms" r,"types" t,"beds" b
+JOIN "types" t ON t."id"=r."type"
+JOIN "beds" b ON b."id"=r."bed"
+WHERE ?;
+
+--	filter rooms without direct reference to the picture field
+SELECT r."id",r."number",r."max",t."type",b."label",r."count",r."rate",concat('/public/assets/img/rooms/',r."number",'.png')
 FROM "rooms" r,"types" t,"beds" b
 JOIN "types" t ON t."id"=r."type"
 JOIN "beds" b ON b."id"=r."bed"
