@@ -67,16 +67,29 @@ UPDATE "users" SET "sessionid"=NULL WHERE "id"=?
 UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
 
 
---	view trans
-SELECT t."id",u."user",r."number" AS "room",t."confirm",date(t."date",'unixepoch') AS "reserved",date(t."ckin",'unixepoch') AS "ckin",date(t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
+--	view trans with 8601 dates
+SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
 FROM "trans" t
 JOIN "users" u ON u."id"=t."user"
 JOIN "rooms" r ON r."number"=t."room"
 WHERE u."user"=? AND t."confirm"=?;
 
+--	view trans with mm/dd/YYYY dates
+SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room";
 
---	all trans per user
-SELECT t."id",u."user",r."number" AS "room",t."confirm",date(t."date",'unixepoch') AS "reserved",date(t."ckin",'unixepoch') AS "ckin",date(t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
+
+--	all trans per user with 8601 dates
+SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."id"=t."room"
+WHERE u."user"=?;
+
+--	all trans per user with mm/dd/YYYY dates
+SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
 FROM "trans" t
 JOIN "users" u ON u."id"=t."user"
 JOIN "rooms" r ON r."id"=t."room"
