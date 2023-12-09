@@ -1,9 +1,13 @@
 /*
  *
  */
- "use strict";
+"use strict";
 
- (function() {
+const apiUrl = 'http://localhost:8000/';
+const baseUrl = 'http://127.0.0.1:5500/'
+const account = 'public/src/html/account.html';
+
+(function() {
      window.addEventListener("load", init);
  
      function init() {
@@ -32,6 +36,11 @@
         params.append('lname', id('last-name').value);
         params.append('email', id('email').value);
         params.append('password', id('pw').value);
+        params.append('state', id("state").value);
+        params.append('city', id("city").value);
+        params.append('postalCode', id("code").value);
+        params.append('street', id("address").value);
+        params.append('number', id("phone-num").value);
 
         makeRequest(params, "register");
      }
@@ -44,10 +53,13 @@
     }
 
      function makeRequest(params, endpoint) {
-        fetch('http://localhost:8000/' + endpoint, {method: 'POST', body: params})
+        fetch(apiUrl + endpoint, {method: 'POST', body: params})
         .then(statusCheck)
-        .then(res => res.text())
+        .then(res => res.text)
         .then(console.log)
+        .then(() => {
+            window.location.href = baseUrl + account;
+        })
         .catch(console.error);
      }
 
