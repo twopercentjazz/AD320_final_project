@@ -23,32 +23,64 @@
             <form id="register">
                 <h1>Register</h1>
                 <p>*Indicates Required Field</p>
-                <div class="row">
-                    <div class="column" id="left">
-                        <label for="first-name">First name *</label>
-                        <input type="text" id="first-name" required>
-                        <label for="email">Email address *</label>
-                        <input type="text" id="email" required>
-                        <label for="pw">Create password *</label>
-                        <input type="text" id="pw" required>
-                        <!-- <label for="street">Street address *</label>
-                        <input type="text" id="street" required>
-                        <label for="code">Postal code *</label>
-                        <input type="text" id="code" required> -->
-                        <button id="create-account">Register</button>
+                <div id="register-body">
+                    <div class="required-inputs">
+                        <div>
+                            <label for="first-name">First name *</label>
+                            <input type="text" id="first-name" required>
+                        </div>
+                        <div>
+                            <label for="last-name">Last name *</label>
+                            <input type="text" id="last-name" required>
+                        </div>
                     </div>
-                    <div class="column" id="right">
-                        <label for="last-name">Last name *</label>
-                        <input type="text" id="last-name" required>
-                        <label for="verify-email">Verify email address *</label>
-                        <input type="text" id="verify-email" required>
-                        <label for="pw-verify">Verify password *</label>
-                        <input type="text" id="pw-verify" required>
-                        <!-- <label for="city">City/Town *</label>
-                        <input type="text" id="city" required>
-                        <label for="state">State *</label>
-                        <input type="text" id="state" required> -->
+                    <div class="required-inputs">
+                        <div>
+                            <label for="email">Email address *</label>
+                            <input type="text" id="email" required>
+                        </div>
+                        <div>
+                            <label for="verify-email">Verify email address *</label>
+                            <input type="text" id="verify-email" required>
+                        </div>
                     </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="pw">Password *</label>
+                            <input type="text" id="pw" required>
+                        </div>
+                        <div>
+                            <label for="verify-pw">Verify password *</label>
+                            <input type="text" id="verify-pw" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="">State *</label>
+                            <input type="text" id="state" required>
+                        </div>
+                        <div>
+                            <label for="city">City/Town *</label>
+                            <input type="text" id="city" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="address">Steet address *</label>
+                            <input type="text" id="address" required>
+                        </div>
+                        <div>
+                            <label for="code">Postal code *</label>
+                            <input type="text" id="code" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="phone">Mobile number *</label>
+                            <input type="text" id="phone" required>
+                        </div>
+                    </div>
+                    <button id="create-account">Register</button>
                 </div>
             </form>
             <div id="popup">
