@@ -8,6 +8,7 @@ This defines the queries for the Overlook Hotel database
 /*
 room number	100-300
 room rate	$50.00-$200.00
+passcode	6-30 characters
 trans cost	$50.00-$10,000.00
 max, (bed) count and occupants	1-4
 dates	2023/12/31-2038/01/19

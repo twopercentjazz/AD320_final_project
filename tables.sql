@@ -21,6 +21,7 @@ AUTOINCREMENT is unnecessary but could be added if desired
 - email addresses do not have to be UNIQUE
 - room number is in the range 100-300
 - room rate is in pennies and in the range $50.00-$200.00
+- passcode("password") is in the range 6-30 characters
 - trans cost is in pennies and in the range $50.00-$10,000.00
 - max, (bed) count and occupants are in the range 1-4
 - dates are Unix Time, seconds since 1970-01-01 00:00:00 UTC and in the range
@@ -118,7 +119,7 @@ The expression of a CHECK constraint may not contain a subquery
 CREATE TABLE IF NOT EXISTS "users" (
 "id" INTEGER PRIMARY KEY NOT NULL,
 "user" TEXT NOT NULL UNIQUE,	-- user name
-"code" TEXT DEFAULT NULL,	-- passcode
+"code" TEXT NOT NULL CHECK (length("code")>5 AND length("code")<31),	-- passcode
 "name" TEXT NOT NULL,
 "email" TEXT NOT NULL,
 "sessionid" INTEGER UNIQUE DEFAULT NULL
@@ -127,7 +128,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 
 CREATE TABLE IF NOT EXISTS "info" (
 "id" INTEGER PRIMARY KEY NOT NULL REFERENCES "users" ON UPDATE CASCADE ON DELETE CASCADE,
-"phone" TEXT NOT NULL CHECK (length("phone")=10),
+"phone" TEXT NOT NULL CHECK (length("phone") IN (10,12,14)),
 "address" TEXT NOT NULL,
 "city" TEXT NOT NULL,
 "state" TEXT NOT NULL CHECK (length("state")=2),

@@ -8,6 +8,7 @@ This defines the data for the Overlook Hotel database
 /*
 room number	100-300
 room rate	$50.00-$200.00
+passcode	6-30 characters
 trans cost	$50.00-$10,000.00
 max, (bed) count and occupants	1-4
 dates	2023/12/31-2038/01/19
@@ -69,18 +70,18 @@ INSERT INTO "rooms" ("number","max","type","bed","count","rate","picture") VALUE
 
 --	users
 INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
-(0,'derrek',NULL,'Derrek Do','Derrek.Do@Seattlecolleges.edu',NULL),
-(1,'chris',NULL,'Chris Nickell','Christopher.Nickell@Seattlecolleges.edu',NULL),
-(2,'joel',NULL,'Joel Perry','Joel.Perry@seattlecolleges.edu',NULL),
-(3,'kyle',NULL,'Kyle Potempa','Kyle.Potempa@seattlecolleges.edu',NULL);
+(0,'derrek','qwerty','Derrek Do','Derrek.Do@Seattlecolleges.edu',NULL),
+(1,'chris','poiuyt','Chris Nickell','Christopher.Nickell@Seattlecolleges.edu',NULL),
+(2,'joel','asdfgh','Joel Perry','Joel.Perry@seattlecolleges.edu',NULL),
+(3,'kyle','lkjhgf','Kyle Potempa','Kyle.Potempa@seattlecolleges.edu',NULL);
 
 
 --	info
 INSERT INTO "info" ("id","phone","address","city","state","code") VALUES
-(0,'8005551212','123 Nowhere Way','Nowhere','NW','10001'),
-(1,'8005550100','987 Nowhere St','Nowhere','NW','10001'),
-(2,'8005550123','456 Nowhere Ave','Nowhere','NW','10001'),
-(3,'8005550177','753 Nowhere Rd','Nowhere','NW','10001');
+(0,'(800) 555-1212','123 Nowhere Way','Nowhere','NW','10001'),
+(1,'(800) 555-0100','987 Nowhere St','Nowhere','NW','10001'),
+(2,'(800) 555-0123','456 Nowhere Ave','Nowhere','NW','10001'),
+(3,'(800) 555-0177','753 Nowhere Rd','Nowhere','NW','10001');
 
 
 --	transactions
