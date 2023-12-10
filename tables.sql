@@ -38,7 +38,7 @@ PRAGMA foreign_keys=1;
 
 
 --	Comment this and COMMIT out to use with DB Browser for SQLite
--- ~ BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 
 DROP TABLE IF EXISTS "trans";
@@ -147,4 +147,4 @@ CREATE TABLE IF NOT EXISTS "trans" (
 
 
 --	Comment BEGIN TRANSACTION and this out to use with DB Browser for SQLite
--- ~ COMMIT;
+COMMIT;

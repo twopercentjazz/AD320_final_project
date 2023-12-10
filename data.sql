@@ -22,7 +22,7 @@ PRAGMA foreign_keys=1;
 
 
 --	Comment this and COMMIT out to use with DB Browser for SQLite
--- ~ BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 
 
@@ -115,4 +115,4 @@ INSERT INTO "trans" ("id","user","room","confirm","date","ckin","ckout","occupan
 
 
 --	Comment BEGIN TRANSACTION and this out to use with DB Browser for SQLite
--- ~ COMMIT;
+COMMIT;
