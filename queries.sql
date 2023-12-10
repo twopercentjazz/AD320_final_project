@@ -68,7 +68,7 @@ UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
 
 
 --	view trans with 8601 dates
-SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
+SELECT t."id",u."user",r."number" AS "room",t."confirm",date(t."date",'unixepoch') AS "reserved",date(t."ckin",'unixepoch') AS "ckin",date(t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
 FROM "trans" t
 JOIN "users" u ON u."id"=t."user"
 JOIN "rooms" r ON r."number"=t."room"
@@ -78,11 +78,12 @@ WHERE u."user"=? AND t."confirm"=?;
 SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
 FROM "trans" t
 JOIN "users" u ON u."id"=t."user"
-JOIN "rooms" r ON r."number"=t."room";
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"=? AND t."confirm"=?;
 
 
 --	all trans per user with 8601 dates
-SELECT t."id",u."user",r."number" AS "room",t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS "reserved",strftime('%m/%d/%Y',t."ckin",'unixepoch') AS "ckin",strftime('%m/%d/%Y',t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
+SELECT t."id",u."user",r."number" AS "room",t."confirm",date(t."date",'unixepoch') AS "reserved",date(t."ckin",'unixepoch') AS "ckin",date(t."ckout",'unixepoch') AS "ckout",t."occupants",CAST((t."cost"/100) AS REAL) AS "cost"
 FROM "trans" t
 JOIN "users" u ON u."id"=t."user"
 JOIN "rooms" r ON r."id"=t."room"
