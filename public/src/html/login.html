@@ -14,7 +14,7 @@
         <header>
             <nav>
                 <!-- Copy chris nav here -->
-                <button>Join</button>
+                <button id="testlogout">Join</button>
                 <button id="login-btn">Login</button>
             </nav>
         </header>
@@ -56,6 +56,16 @@
                     </div>
                     <div class="required-inputs">
                         <div>
+                            <label for="user">Username *</label>
+                            <input type="text" id="user" required>
+                        </div>
+                        <div>
+                            <label for="phone-num">Mobile number *</label>
+                            <input type="text" id="phone-num" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
                             <label for="state">State *</label>
                             <input type="text" id="state" required>
                         </div>
@@ -74,12 +84,6 @@
                             <input type="text" id="code" required>
                         </div>
                     </div>
-                    <div class="required-inputs">
-                        <div>
-                            <label for="phone-num">Mobile number *</label>
-                            <input type="text" id="phone-num" required>
-                        </div>
-                    </div>
                     <button id="register-btn">Register</button>
                 </div>
             </form>
@@ -88,8 +92,8 @@
                     <form id="login">
                         <div class="column">
                             <h1>Please Sign in</h1>
-                            <label for="user-email">Email</label>
-                            <input type="text" id="user-email" required>
+                            <label for="username">Username</label>
+                            <input type="text" id="username" required>
                             <label for="user-pw">Password</label>
                             <input type="text" id="user-pw" required>
                             <button id="sign-in-button">Sign in</button>

@@ -2,7 +2,7 @@
  *
  */
 "use strict";
-
+const apiUrl = "http://localhost:8000/";
 (function() {
     window.addEventListener("load", init);
 
@@ -14,6 +14,7 @@
         id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
         id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
         // id("sign-out-btn").addEventListener("click", () => toggleDisplay("home"));
+        id('sign-out-btn').addEventListener('click', logout)
     }   
 
 
@@ -29,6 +30,16 @@
         id(option).style.display = 'block';
     }
     
+    function logout() {
+        fetch(apiUrl + 'logout')
+        .then(statusCheck)
+        .then(res => res.text())
+        .then(console.log)
+        // .then(() => {
+        //     window.location.href = baseUrl + account;
+        // })
+        .catch(console.error);
+    }
     /**
      * Returns the response's result text if successful, otherwise
      * returns the rejected Promise result with an error status and corresponding text
