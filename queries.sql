@@ -32,14 +32,23 @@ WHERE p."id"=r."picture";
 
 /*
 	all available rooms
-	this is still in development; DO NOT USE
+
+'2024-01-09'
+'2024-01-13'
+2
 */
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS "rate",p."picture"
-FROM "rooms" r,(SELECT t."ckin",t."ckout" FROM "trans" t) t
--- ~ FROM "rooms" r
--- ~ INNER JOIN (SELECT t."ckin",t."ckout" FROM "trans" t) t
+FROM "rooms" r
 JOIN "pictures" p ON p."id"=r."picture"
-WHERE unixepoch('2024-01-09') NOT BETWEEN t."ckin" AND (t."ckout"-86400);
+WHERE (r."number" NOT IN (
+	SELECT t."room"
+	FROM "trans" t
+	WHERE unixepoch(?) BETWEEN t."ckin" AND (t."ckout"-86400))
+) AND (r."number" NOT IN (
+	SELECT t."room"
+	FROM "trans" t
+	WHERE (unixepoch(?)-86400) BETWEEN t."ckin" AND (t."ckout"-86400))
+) AND ?<=r."max";
 
 
 /*
