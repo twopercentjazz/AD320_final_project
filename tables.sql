@@ -19,8 +19,9 @@ To upgrade to a newer version of SQLite (3.44.2), copy the .dll to the C:\Progra
 AUTOINCREMENT is unnecessary but could be added if desired
 
 - email addresses do not have to be UNIQUE
-- room rate is in pennies and in the range $50.00-$1,000.00
-- trans cost is in pennies and in the range $50.00-$1,000,000.00
+- room number is in the range 100-300
+- room rate is in pennies and in the range $50.00-$200.00
+- trans cost is in pennies and in the range $50.00-$10,000.00
 - max, (bed) count and occupants are in the range 1-4
 - dates are Unix Time, seconds since 1970-01-01 00:00:00 UTC and in the range
   Jan 01 2024 00:00:00 - Jan 19 2038 03:14:08
@@ -95,7 +96,7 @@ CREATE TABLE IF NOT EXISTS "pictures" (
 
 
 CREATE TABLE IF NOT EXISTS "rooms" (
-"number" INTEGER PRIMARY KEY NOT NULL CHECK (number>=10 AND number<=1000),
+"number" INTEGER PRIMARY KEY NOT NULL CHECK (number>=100 AND number<=300),
 "max" INTEGER NOT NULL CHECK (max>0 AND max<5),	-- maximum occupancy 1-4
 /*
 The expression of a CHECK constraint may not contain a subquery
@@ -105,7 +106,7 @@ The expression of a CHECK constraint may not contain a subquery
 "type" TEXT NOT NULL CHECK ("type" IN ('Economy','Standard','Deluxe','Suite')),
 "bed" TEXT NOT NULL CHECK ("bed" IN ('Twin','Full','Queen','King')),
 "count" INTEGER NOT NULL CHECK (count>0 AND count<5),	-- beds 1-4
-"rate" INTEGER NOT NULL CHECK (rate>=(10*100) AND rate<=(1000*100)),	-- $10.00-$1,000.00 in pennies
+"rate" INTEGER NOT NULL CHECK (rate>=(50*100) AND rate<=(200*100)),	-- $50.00-$200.00 in pennies
 "picture" INTEGER DEFAULT NULL REFERENCES "pictures" ON UPDATE CASCADE ON DELETE SET NULL
 ) STRICT;
 
@@ -143,7 +144,7 @@ CREATE TABLE IF NOT EXISTS "trans" (
 "ckin" INTEGER NOT NULL CHECK (ckin>unixepoch('2023-12-31') AND ckin<unixepoch('2038-01-19')),
 "ckout" INTEGER NOT NULL CHECK (ckout>unixepoch('2023-12-31') AND ckout<unixepoch('2038-01-19')),
 "occupants" INTEGER NOT NULL CHECK (occupants>0 AND occupants<5),	-- maximum occupancy 1-4
-"cost" INTEGER NOT NULL CHECK (cost>=(10*100) AND cost<=(1000000*100))	-- $10.00-$1,000,000.00 in pennies
+"cost" INTEGER NOT NULL CHECK (cost>=(50*100) AND cost<=(10000*100))	-- $50.00-$10,000.00 in pennies
 ) STRICT;
 
 

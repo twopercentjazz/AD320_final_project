@@ -6,8 +6,9 @@ This defines the queries for the Overlook Hotel database
 */
 
 /*
-room rate	50.00-1,000.00
-trans cost	50.00-1,000,000.00
+room number	100-300
+room rate	$50.00-$200.00
+trans cost	$50.00-$10,000.00
 max, (bed) count and occupants	1-4
 dates	2023/12/31-2038/01/19
 dates	1704067199-2147483648
@@ -23,14 +24,6 @@ PRAGMA foreign_keys=1;
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS "rate",p."picture"
 FROM "rooms" r,"pictures" p
 WHERE p."id"=r."picture";
--- ~ SELECT r."id",r."number",r."max",t."label",b."label",r."count",CAST((r."rate"/100) AS REAL) AS "rate",r."picture"
--- ~ FROM "rooms" r,"types" t,"beds" b
--- ~ WHERE t."id"=r."type" AND b."id"=r."bed";
-
---	all rooms without direct reference to the picture field
--- ~ SELECT r."id",r."number",r."max",t."label",b."label",r."count",CAST((r."rate"/100) AS REAL) AS "rate",concat('/public/assets/img/rooms/',r."number",'.png')
--- ~ FROM "rooms" r,"types" t,"beds" b
--- ~ WHERE t."id"=r."type" AND b."id"=r."bed";
 
 
 --	filter rooms
@@ -38,18 +31,6 @@ SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL
 FROM "rooms" r
 JOIN "pictures" p ON p."id"=r."picture"
 WHERE ?;
--- ~ SELECT r."id",r."number",r."max",t."label",b."label",r."count",CAST((r."rate"/100) AS REAL) AS "rate",r."picture"
--- ~ FROM "rooms" r,"types" t,"beds" b
--- ~ JOIN "types" t ON t."id"=r."type"
--- ~ JOIN "beds" b ON b."id"=r."bed"
--- ~ WHERE ?;
-
---	filter rooms without direct reference to the picture field
--- ~ SELECT r."id",r."number",r."max",t."label",b."label",r."count",CAST((r."rate"/100) AS REAL) AS "rate",concat('/public/assets/img/rooms/',r."number",'.png')
--- ~ FROM "rooms" r,"types" t,"beds" b
--- ~ JOIN "types" t ON t."id"=r."type"
--- ~ JOIN "beds" b ON b."id"=r."bed"
--- ~ WHERE ?;
 
 
 --	create account
