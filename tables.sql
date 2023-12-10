@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS "pictures" (
 
 
 CREATE TABLE IF NOT EXISTS "rooms" (
-"number" INTEGER PRIMARY KEY NOT NULL CHECK (number>=100 AND number<=300),
-"max" INTEGER NOT NULL CHECK (max>0 AND max<5),	-- maximum occupancy 1-4
+"number" INTEGER PRIMARY KEY NOT NULL CHECK ("number" BETWEEN 100 AND 300),
+"max" INTEGER NOT NULL CHECK ("max" BETWEEN 1 AND 4),	-- maximum occupancy
 /*
 The expression of a CHECK constraint may not contain a subquery
 "type" TEXT NOT NULL CHECK ("type" IN (SELECT "label" FROM "types")),
@@ -106,8 +106,8 @@ The expression of a CHECK constraint may not contain a subquery
 */
 "type" TEXT NOT NULL CHECK ("type" IN ('Economy','Standard','Deluxe','Suite')),
 "bed" TEXT NOT NULL CHECK ("bed" IN ('Twin','Full','Queen','King')),
-"count" INTEGER NOT NULL CHECK (count>0 AND count<5),	-- beds 1-4
-"rate" INTEGER NOT NULL CHECK (rate>=(50*100) AND rate<=(200*100)),	-- $50.00-$200.00 in pennies
+"count" INTEGER NOT NULL CHECK ("count" BETWEEN 1 AND 4),	-- beds
+"rate" INTEGER NOT NULL CHECK ("rate" BETWEEN 50*100 AND 200*100),	-- $50.00-$200.00 in pennies
 "picture" INTEGER DEFAULT NULL REFERENCES "pictures" ON UPDATE CASCADE ON DELETE SET NULL
 ) STRICT;
 
@@ -119,7 +119,7 @@ The expression of a CHECK constraint may not contain a subquery
 CREATE TABLE IF NOT EXISTS "users" (
 "id" INTEGER PRIMARY KEY NOT NULL,
 "user" TEXT NOT NULL UNIQUE,	-- user name
-"code" TEXT NOT NULL CHECK (length("code")>5 AND length("code")<31),	-- passcode
+"code" TEXT NOT NULL CHECK (length("code") BETWEEN 6 AND 30),	-- passcode
 "name" TEXT NOT NULL,
 "email" TEXT NOT NULL,
 "sessionid" INTEGER UNIQUE DEFAULT NULL
@@ -141,11 +141,11 @@ CREATE TABLE IF NOT EXISTS "trans" (
 "user" INTEGER NOT NULL REFERENCES "users" ON UPDATE CASCADE ON DELETE CASCADE,
 "room" INTEGER NOT NULL REFERENCES "rooms" ON UPDATE CASCADE ON DELETE CASCADE,
 "confirm" INTEGER NOT NULL UNIQUE,
-"date" INTEGER NOT NULL CHECK (date>unixepoch('2023-12-31') AND date<unixepoch('2038-01-19')),
-"ckin" INTEGER NOT NULL CHECK (ckin>unixepoch('2023-12-31') AND ckin<unixepoch('2038-01-19')),
-"ckout" INTEGER NOT NULL CHECK (ckout>unixepoch('2023-12-31') AND ckout<unixepoch('2038-01-19')),
-"occupants" INTEGER NOT NULL CHECK (occupants>0 AND occupants<5),	-- maximum occupancy 1-4
-"cost" INTEGER NOT NULL CHECK (cost>=(50*100) AND cost<=(10000*100))	-- $50.00-$10,000.00 in pennies
+"date" INTEGER NOT NULL CHECK ("date" BETWEEN unixepoch('2024-01-01') AND unixepoch('2038-01-18')),
+"ckin" INTEGER NOT NULL CHECK ("ckin" BETWEEN unixepoch('2024-01-01') AND unixepoch('2038-01-18')),
+"ckout" INTEGER NOT NULL CHECK ("ckout" BETWEEN unixepoch('2024-01-01') AND unixepoch('2038-01-18')),
+"occupants" INTEGER NOT NULL CHECK ("occupants" BETWEEN 1 AND 4),	-- maximum occupancy
+"cost" INTEGER NOT NULL CHECK ("cost" BETWEEN 50*100 AND 10000*100)	-- $50.00-$10,000.00 in pennies
 ) STRICT;
 
 

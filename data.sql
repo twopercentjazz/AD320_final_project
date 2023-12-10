@@ -86,8 +86,10 @@ INSERT INTO "info" ("id","phone","address","city","state","code") VALUES
 
 --	transactions
 INSERT INTO "trans" ("id","user","room","confirm","date","ckin","ckout","occupants","cost") VALUES
-(0,1,217,1,unixepoch(concat_ws('-','2024','01','03')),unixepoch('2024-01-07'),unixepoch('2024-01-11'),3,(225*100)),
-(1,0,101,2,unixepoch('2024-01-09'),unixepoch('2024-01-13'),unixepoch('2024-01-14'),2,(75*100));
+(0,1,217,1,unixepoch(concat_ws('-','2024','01','03')),unixepoch('2024-01-07'),unixepoch('2024-01-11'),2,4*100*100),
+(1,0,101,2,unixepoch('2024-01-09'),unixepoch('2024-01-13'),unixepoch('2024-01-14'),2,1*75*100),
+(2,3,204,3,unixepoch('2024-01-04'),unixepoch('2024-01-06'),unixepoch('2024-01-17'),3,11*95*100),
+(3,2,109,4,unixepoch('2024-01-09'),unixepoch('2024-01-12'),unixepoch('2024-01-19'),2,7*130*100);
 
 
 --	Comment BEGIN TRANSACTION and this out to use with DB Browser for SQLite
