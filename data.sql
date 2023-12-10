@@ -32,8 +32,35 @@ INSERT INTO "pictures" ("id","picture") VALUES
 
 --	rooms
 INSERT INTO "rooms" ("number","max","type","bed","count","rate","picture") VALUES
-(101,2,'Standard','Full',1,(75*100),0),
-(217,4,'Suite','King',4,(150*100),1);
+(100,2,'Economy','Twin',1,60*100,0),
+(101,2,'Standard','Full',1,75*100,0),
+(102,3,'Deluxe','Queen',1,110*100,0),
+(103,4,'Suite','King',1,140*100,0),
+(104,4,'Suite','Twin',1,140*100,0),
+(105,3,'Deluxe','Full',1,110*100,0),
+(106,2,'Standard','Queen',1,75*100,0),
+(107,2,'Economy','King',1,60*100,0),
+(108,2,'Economy','Twin',1,60*100,0),
+(109,2,'Standard','Full',1,75*100,0),
+(200,3,'Deluxe','Queen',1,110*100,0),
+(201,4,'Suite','King',1,140*100,0),
+(202,4,'Suite','Twin',1,140*100,0),
+(203,3,'Deluxe','Full',1,110*100,0),
+(204,2,'Standard','Queen',1,75*100,0),
+(205,2,'Economy','King',1,60*100,0),
+(206,2,'Economy','Twin',1,60*100,0),
+(207,2,'Standard','Full',1,75*100,0),
+(208,3,'Deluxe','Queen',1,110*100,0),
+(209,4,'Suite','King',1,140*100,0),
+(215,4,'Suite','Twin',1,140*100,0),
+(217,3,'Deluxe','Full',1,110*100,0),
+(237,2,'Standard','Queen',1,75*100,0),
+(401,2,'Economy','King',1,60*100,0),
+(411,2,'Economy','Twin',1,60*100,0),
+(412,2,'Standard','Full',1,75*100,0),
+(415,3,'Deluxe','Queen',1,110*100,0),
+(417,4,'Suite','King',1,140*100,0),
+(428,4,'Suite','Twin',1,140*100,0);
 --(101,2,1,1,1,(75*100),concat('/public/assets/img/rooms/',101,'.png')),
 --(217,4,3,1,4,(150*100),concat('/public/assets/img/rooms/',217,'.png'));
 
@@ -44,6 +71,14 @@ INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
 (1,'chris',NULL,'Chris Nickell','Christopher.Nickell@Seattlecolleges.edu',NULL),
 (2,'joel',NULL,'Joel Perry','Joel.Perry@seattlecolleges.edu',NULL),
 (3,'kyle',NULL,'Kyle Potempa','Kyle.Potempa@seattlecolleges.edu',NULL);
+
+
+--	info
+INSERT INTO "info" ("id","phone","address","city","state","code") VALUES
+(0,'8005551212','123 Nowhere Way','Nowhere','NW','10001'),
+(1,'8005550100','987 Nowhere St','Nowhere','NW','10001'),
+(2,'8005550123','456 Nowhere Ave','Nowhere','NW','10001'),
+(3,'8005550177','753 Nowhere Rd','Nowhere','NW','10001');
 
 
 --	transactions
