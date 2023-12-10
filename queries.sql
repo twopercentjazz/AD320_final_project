@@ -21,30 +21,61 @@ dates	1704067199-2147483648
 PRAGMA foreign_keys=1;
 
 
---	all rooms
+
+/*
+	all rooms
+*/
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS "rate",p."picture"
 FROM "rooms" r,"pictures" p
 WHERE p."id"=r."picture";
 
 
---	filter rooms
+/*
+	filter rooms with the WHERE clause condition expression
+*/
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS "rate",p."picture"
 FROM "rooms" r
 JOIN "pictures" p ON p."id"=r."picture"
 WHERE ?;
 
 
---	create account
+
+
+
+/*
+	create user account
+*/
 INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
 (NULL,?,?,?,?,NULL);
 
 
---	login
+/*
+	get user id - use this to set the user info (below) for a newly created user (above)
+*/
+SELECT u."id"
+FROM "users" r
+WHERE u."user"=?;
+
+
+/*
+	create user info
+*/
+INSERT INTO "users" ("id","phone","address","city","state","code") VALUES
+(?,?,?,?,?,?);
+
+
+/*
+	login user by id
+	login user by name
+*/
 UPDATE "users" SET "sessionid"=? WHERE "id"=?
 UPDATE "users" SET "sessionid"=? WHERE "user"=?
 
 
---	logout
+/*
+	logout user by id
+	logout user by name
+*/
 UPDATE "users" SET "sessionid"=NULL WHERE "id"=?
 UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
 
@@ -113,6 +144,8 @@ WHERE u."user"=? AND t."confirm"=?;
 
 
 
---	make res
+/*
+	make reservation
+*/
 INSERT INTO "trans" ("user","room","confirm","date","ckin","ckout","occupants","cost") VALUES
 (?,?,?,unixepoch(?),unixepoch(?),unixepoch(?),?,(?*100));
