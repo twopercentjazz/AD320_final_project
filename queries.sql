@@ -35,9 +35,20 @@ WHERE p."id"=r."picture";
 	all available rooms
 	Chris' list 2.
 
-2
-'2024-01-09'
-'2024-01-13'
+SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS "rate",p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE 2<=r."max"
+AND (r."number" NOT IN (
+	SELECT t."room"
+	FROM "trans" t
+	WHERE unixepoch('2024-01-09') BETWEEN t."ckin" AND (t."ckout"-86400))
+)
+AND (r."number" NOT IN (
+	SELECT t."room"
+	FROM "trans" t
+	WHERE (unixepoch('2024-01-13')-86400) BETWEEN t."ckin" AND (t."ckout"-86400))
+);
 */
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS "rate",p."picture"
 FROM "rooms" r
