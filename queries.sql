@@ -144,6 +144,15 @@ SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "id"=?;
 SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "user"=?;
 
 
+/*
+	all users and info
+	Derrek
+*/
+SELECT u."id",u."user",u."name",u."email",i."phone",i."address",i."city",i."state",i."code"
+FROM "users" u,"info" i
+WHERE i."id"=u."id";
+
+
 
 
 
