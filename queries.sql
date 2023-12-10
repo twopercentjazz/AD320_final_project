@@ -69,11 +69,16 @@ AND (r."number" NOT IN (
 /*
 	single room
 	Chris' list 3.
+
+SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE r."number"=217;
 */
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
 FROM "rooms" r
 JOIN "pictures" p ON p."id"=r."picture"
-WHERE ?=r."number";
+WHERE r."number"=?;
 
 
 /*
@@ -96,11 +101,11 @@ INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
 
 
 /*
-	get user id - use this to set the user info (below) for a newly created user (above)
+	get user id by user name - use this to set the user info (below) for a newly created user (above)
+
+SELECT "id" FROM "users" WHERE "user"='chris';
 */
-SELECT u."id"
-FROM "users" r
-WHERE u."user"=?;
+SELECT "id" FROM "users" WHERE "user"=?;
 
 
 /*
@@ -112,7 +117,7 @@ INSERT INTO "users" ("id","phone","address","city","state","code") VALUES
 
 /*
 	login user by id
-	login user by name
+	login user by user name
 */
 UPDATE "users" SET "sessionid"=? WHERE "id"=?
 UPDATE "users" SET "sessionid"=? WHERE "user"=?
@@ -120,7 +125,7 @@ UPDATE "users" SET "sessionid"=? WHERE "user"=?
 
 /*
 	logout user by id
-	logout user by name
+	logout user by user name
 */
 UPDATE "users" SET "sessionid"=NULL WHERE "id"=?
 UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
@@ -128,8 +133,11 @@ UPDATE "users" SET "sessionid"=NULL WHERE "user"=?
 
 /*
 	user sessionid by id
-	user sessionid by name
+	user sessionid by user name
 	Chris' list 5. First Endpoint
+
+SELECT u."sessionid" FROM "users" u WHERE "id"=1;
+SELECT u."sessionid" FROM "users" u WHERE "user"='chris';
 */
 SELECT u."sessionid" FROM "users" u WHERE "id"=?;
 SELECT u."sessionid" FROM "users" u WHERE "user"=?;
@@ -137,8 +145,11 @@ SELECT u."sessionid" FROM "users" u WHERE "user"=?;
 
 /*
 	user by id
-	user by name
+	user by user name
 	Chris' list 5. Second Endpoint
+
+SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "id"=1;
+SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "user"='chris';
 */
 SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "id"=?;
 SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "user"=?;
@@ -146,13 +157,39 @@ SELECT u."id",u."user",u."name",u."email" FROM "users" u WHERE "user"=?;
 
 /*
 	all users and info
-	Derrek
 
 ,u."code" AS 'password'
 */
 SELECT u."id",u."user",u."name",u."email",i."phone",i."address",i."city",i."state",i."code"
 FROM "users" u,"info" i
 WHERE i."id"=u."id";
+
+
+/*
+	user and info by id
+	user and info by user name
+	Derrek
+
+SELECT u."id",u."user",u."name",u."email",i."phone",i."address",i."city",i."state",i."code"
+FROM "users" u
+JOIN "info" i ON i."id"=u."id"
+WHERE u."id"=0;
+
+SELECT u."id",u."user",u."name",u."email",i."phone",i."address",i."city",i."state",i."code"
+FROM "users" u
+JOIN "info" i ON i."id"=u."id"
+WHERE u."user"='derrek';
+*/
+SELECT u."id",u."user",u."name",u."email",i."phone",i."address",i."city",i."state",i."code"
+FROM "users" u
+JOIN "info" i ON i."id"=u."id"
+WHERE u."id"=?;
+
+
+SELECT u."id",u."user",u."name",u."email",i."phone",i."address",i."city",i."state",i."code"
+FROM "users" u
+JOIN "info" i ON i."id"=u."id"
+WHERE u."user"=?;
 
 
 
@@ -169,7 +206,21 @@ INSERT INTO "trans" ("user","room","confirm","date","ckin","ckout","occupants","
 
 /*
 	all transactions per user (with 8601 dates)
+
+SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"='joel';
+
+
 	all transactions per user (with mm/dd/YYYY dates)
+
+SELECT t."id",u."user",r."number" AS 'room',t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS 'reserved',strftime('%m/%d/%Y',t."ckin",'unixepoch') AS 'ckin',strftime('%m/%d/%Y',t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"='joel';
 */
 SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
 FROM "trans" t
@@ -231,6 +282,12 @@ WHERE u."user"=? AND ((unixepoch(?) BETWEEN t."ckin" AND (t."ckout"-86400)) OR (
 /*
 	all transactions per user and current (with 8601 dates)
 	Derrek
+
+SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"='derrek' AND unixepoch('now')<t."date";
 */
 SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
 FROM "trans" t
@@ -243,6 +300,12 @@ WHERE u."user"=? AND unixepoch('now')<t."date";
 /*
 	all transactions per user and past (with 8601 dates)
 	Derrek
+
+SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"='derrek' AND t."ckout"<unixepoch('2025-01-01');
 */
 SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
 FROM "trans" t
@@ -254,7 +317,21 @@ WHERE u."user"=? AND t."ckout"<unixepoch('now');
 
 /*
 	all transactions per user and confirmation code (with 8601 dates)
+
+SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"='joel' AND t."confirm"=4;
+
+
 	all transactions per user and confirmation code (with mm/dd/YYYY dates)
+
+SELECT t."id",u."user",r."number" AS 'room',t."confirm",strftime('%m/%d/%Y',t."date",'unixepoch') AS 'reserved',strftime('%m/%d/%Y',t."ckin",'unixepoch') AS 'ckin',strftime('%m/%d/%Y',t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
+FROM "trans" t
+JOIN "users" u ON u."id"=t."user"
+JOIN "rooms" r ON r."number"=t."room"
+WHERE u."user"='joel' AND t."confirm"=4;
 */
 SELECT t."id",u."user",r."number" AS 'room',t."confirm",date(t."date",'unixepoch') AS 'reserved',date(t."ckin",'unixepoch') AS 'ckin',date(t."ckout",'unixepoch') AS 'ckout',t."occupants",CAST((t."cost"/100) AS REAL) AS 'cost'
 FROM "trans" t
