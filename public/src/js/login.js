@@ -8,9 +8,10 @@ const apiUrl = 'http://localhost:8000/';
 const account = 'src/html/account.html';
 
 (function() {
-     window.addEventListener("load", init);
+    window.addEventListener("load", init);
  
-     function init() {
+    function init() {
+        // id('phone-num').setCustomValidity("Can only be numbers");
         checkLoggedIn();
         id("login-btn").addEventListener('click', () => {
             id('popup').style.display = 'block';
@@ -20,25 +21,23 @@ const account = 'src/html/account.html';
                 id('popup').style.display ='none';
         }
         });
+        // qsa('input').addEventListener('change', () => clearErrors());
         id('register').addEventListener('submit', e => {
             e.preventDefault();
             registerUser();
         });
+        // id('register-btn').addEventListener('click', () => checkValidInput());
+
         id('login').addEventListener('submit', e => {
             e.preventDefault();
-            console.log(e);
             login();
         });
         id('testlogout').addEventListener('click', () => logout());
-     }
+    }
  
-     function registerUser() {
+    function registerUser() {
         let params = new FormData();
         let name = id('first-name').value + " " + id('last-name').value;
-        // params.append('firstname', id('first-name').value);
-        // params.append('lastname', id('last-name').value);
-        // console.log(name)
-        // console.log(id('user').value)
         params.append('name', name);
         params.append('username', id('user').value)
         params.append('email', id('email').value);
@@ -50,8 +49,39 @@ const account = 'src/html/account.html';
         // params.append('number', id("phone-num").value);
 
         createUserRequest(params);
-     }
+    }
 
+    function checkValidInput() {
+        errorMsg(id('first-name'), !/^[A-Za-z]+$/.test(id('first-name').value), "Invalid name, must be letters");
+        errorMsg(id('last-name'), !/^[A-Za-z]+$/.test(id('last-name').value), "Invalid name, must be letters");
+        errorMsg(id('verify-email'), id('email').value !== id('verify-email').value, "Emails do not match");
+        errorMsg(id('verify-pw'), id('pw').value !== id('verify-pw').value, "Passwords do not match")
+        errorMsg(id('phone-num'), id('phone-num').value.length !== 10, "Must be 10 numbers");
+        errorMsg(id('state'), !/^[A-Za-z]+$/.test(id('state').value), "Invalid state, must be letters");
+        errorMsg(id('code'), id('code').value.length < 5, "Must be 5-12 numbers");
+       
+    }
+
+    function clearErrors() {
+        let formInputs = qsa('input');
+        formInputs.forEach(input => {
+            id(input).setCustomValidity("");
+        });
+    }
+
+    function errorMsg(input, condition, msg) {
+        let validityState = input.validity;
+
+        if (validityState.valueMissing) {
+            input.setCustomValidity('Required field');
+        } else if (condition) {
+            input.setCustomValidity(msg);
+        } else {
+            input.setCustomValidity("");
+        }
+        input.reportValidity();
+    }
+    
     function login() {
         let params = new FormData();
         params.append('username', id('username').value);
