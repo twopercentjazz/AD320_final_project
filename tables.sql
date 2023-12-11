@@ -53,7 +53,6 @@ DROP TABLE IF EXISTS "users";
 CREATE TABLE IF NOT EXISTS "types" (
 "label" TEXT NOT NULL UNIQUE	-- Economy,Standard,Deluxe,Suite
 ) STRICT;
-
 --"id" INTEGER PRIMARY KEY,
 
 INSERT INTO "types" ("label") VALUES
@@ -73,7 +72,6 @@ INSERT INTO "types" ("id","label") VALUES
 CREATE TABLE IF NOT EXISTS "beds" (
 "label" TEXT NOT NULL UNIQUE	-- Twin,Full,Queen,King
 ) STRICT;
-
 --"id" INTEGER PRIMARY KEY,
 
 INSERT INTO "beds" ("label") VALUES
@@ -110,7 +108,6 @@ The expression of a CHECK constraint may not contain a subquery
 "rate" INTEGER NOT NULL CHECK ("rate" BETWEEN 50*100 AND 200*100),	-- $50.00-$200.00 in pennies
 "picture" INTEGER DEFAULT NULL REFERENCES "pictures" ON UPDATE CASCADE ON DELETE SET NULL
 ) STRICT;
-
 --"id" INTEGER PRIMARY KEY,
 --"type" INTEGER REFERENCES "types" ON UPDATE CASCADE ON DELETE SET NULL,
 --"bed" INTEGER REFERENCES "beds" ON UPDATE CASCADE ON DELETE SET NULL,
@@ -141,9 +138,9 @@ CREATE TABLE IF NOT EXISTS "trans" (
 "user" INTEGER NOT NULL REFERENCES "users" ON UPDATE CASCADE ON DELETE CASCADE,
 "room" INTEGER NOT NULL REFERENCES "rooms" ON UPDATE CASCADE ON DELETE CASCADE,
 "confirm" INTEGER NOT NULL UNIQUE,
-"date" INTEGER NOT NULL CHECK ("date" BETWEEN unixepoch('2024-01-01') AND unixepoch('2038-01-18')),
-"ckin" INTEGER NOT NULL CHECK ("ckin" BETWEEN unixepoch('2024-01-01') AND unixepoch('2038-01-18')),
-"ckout" INTEGER NOT NULL CHECK ("ckout" BETWEEN unixepoch('2024-01-01') AND unixepoch('2038-01-18')),
+"date" INTEGER NOT NULL CHECK ("date" BETWEEN unixepoch('2023-12-10') AND unixepoch('2038-01-18')),
+"ckin" INTEGER NOT NULL CHECK ("ckin" BETWEEN unixepoch('2023-12-10') AND unixepoch('2038-01-18')),
+"ckout" INTEGER NOT NULL CHECK ("ckout" BETWEEN unixepoch('2023-12-10') AND unixepoch('2038-01-18')),
 "occupants" INTEGER NOT NULL CHECK ("occupants" BETWEEN 1 AND 4),	-- maximum occupancy
 "cost" INTEGER NOT NULL CHECK ("cost" BETWEEN 50*100 AND 10000*100)	-- $50.00-$10,000.00 in pennies
 ) STRICT;
