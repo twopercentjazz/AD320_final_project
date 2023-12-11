@@ -166,7 +166,7 @@ SELECT "id" FROM "users" WHERE "user"=?;
 /*
 	create user info
 */
-INSERT INTO "users" ("id","phone","address","city","state","code") VALUES
+INSERT INTO "info" ("id","phone","address","city","state","code") VALUES
 (?,?,?,?,?,?);
 
 
