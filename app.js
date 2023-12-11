@@ -365,7 +365,6 @@ app.get("/room-filter", async (req, res) => {
         "\tWHERE (unixepoch(?)-86400) BETWEEN t.\"ckin\" AND (t.\"ckout\"-86400))\n" +
         ")";
     let rooms = await base.all(query, [req.query.guests, req.query.checkin, req.query.checkout]);
-    console.log(rooms.length);
     res.status(200).json(rooms);
     await base.close();
 });
