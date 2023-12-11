@@ -32,7 +32,32 @@ WHERE p."id"=r."picture";
 
 
 /*
-	all available rooms
+	all available rooms, one date
+	Chris' list 2.
+
+SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE 2<=r."max"
+AND (r."number" NOT IN (
+	SELECT t."room"
+	FROM "trans" t
+	WHERE unixepoch('2024-01-09') BETWEEN t."ckin" AND (t."ckout"-86400))
+);
+*/
+SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE ?<=r."max"
+AND (r."number" NOT IN (
+	SELECT t."room"
+	FROM "trans" t
+	WHERE unixepoch(?) BETWEEN t."ckin" AND (t."ckout"-86400))
+);
+
+
+/*
+	all available rooms, two dates
 	Chris' list 2.
 
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
