@@ -26,7 +26,7 @@ const account = 'src/html/account.html';
             e.preventDefault();
             registerUser();
         });
-        // id('register-btn').addEventListener('click', () => checkValidInput());
+        id('register-btn').addEventListener('click', () => checkValidInput());
 
         id('login').addEventListener('submit', e => {
             e.preventDefault();
@@ -42,12 +42,14 @@ const account = 'src/html/account.html';
         params.append('username', id('user').value)
         params.append('email', id('email').value);
         params.append('password', id('pw').value);
-        // params.append('state', id("state").value);
-        // params.append('city', id("city").value);
-        // params.append('postalcode', id("code").value);
-        // params.append('street', id("address").value);
-        // params.append('number', id("phone-num").value);
-
+        params.append('state', id("state").value);
+        params.append('city', id("city").value);
+        params.append('code', id("code").value);
+        params.append('address', id("address").value);
+        params.append('phone', id("phone-num").value);
+        for (let e of params.entries()) {
+            console.log(e);
+        }
         createUserRequest(params);
     }
 
@@ -98,23 +100,22 @@ const account = 'src/html/account.html';
     }
 
     function createUserRequest(params) {
-        fetch(apiUrl + 'create-user', {method: 'POST', body: params})
+        fetch(apiUrl + 'create-user-full', {method: 'POST', body: params})
         .then(statusCheck)
         .then(res => res.text())
         .then(console.log)
-        .catch(console.error);
+        .catch(registerError);
     } 
 
     function loginRequest(params) {
-        console.log('cookies: ', document.cookie);
         fetch(apiUrl + 'login', {method: 'POST', body: params})
         .then(statusCheck)
         .then(res => res.text())
-        .then(console.log)
+        // .then(console.log)
         .then(() => {
             window.location.href = apiUrl + account;
         })
-        .catch(console.error);
+        .catch(loginError);
     }
 
     function checkLoggedIn() { 
@@ -122,15 +123,23 @@ const account = 'src/html/account.html';
         .then(statusCheck)
         .then(res => res.text())
         .then(res => {
-            console.log(res);
-            if(res === "Active session in progress.") {
+            if(res === "true") {
                 window.location.href = apiUrl + account;
+            } else {
+                console.log("No Active Session");
             }
         })
         .catch(console.error);
     }
 
- 
+    function registerError(e) {
+        id('register-error').textContent = "*user already exists*"
+    }
+
+    function loginError(e) {
+        id('login-error').textContent = e;
+    }
+
      /**
       * Returns the response's result text if successful, otherwise
       * returns the rejected Promise result with an error status and corresponding text
