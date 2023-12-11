@@ -4,13 +4,14 @@
 "use strict";
 
 const apiUrl = 'http://localhost:8000/';
-const baseUrl = 'http://127.0.0.1:5500/'
-const account = 'public/src/html/account.html';
+// const baseUrl = 'http://127.0.0.1:8000/';
+const account = 'src/html/account.html';
 
 (function() {
      window.addEventListener("load", init);
  
      function init() {
+        checkLoggedIn();
         id("login-btn").addEventListener('click', () => {
             id('popup').style.display = 'block';
         });
@@ -22,12 +23,13 @@ const account = 'public/src/html/account.html';
         id('register').addEventListener('submit', e => {
             e.preventDefault();
             registerUser();
-        })
+        });
         id('login').addEventListener('submit', e => {
             e.preventDefault();
+            console.log(e);
             login();
-        })
-        id('testlogout').addEventListener('click', () => logout())
+        });
+        id('testlogout').addEventListener('click', () => logout());
      }
  
      function registerUser() {
@@ -35,8 +37,8 @@ const account = 'public/src/html/account.html';
         let name = id('first-name').value + " " + id('last-name').value;
         // params.append('firstname', id('first-name').value);
         // params.append('lastname', id('last-name').value);
-        console.log(name)
-        console.log(id('user').value)
+        // console.log(name)
+        // console.log(id('user').value)
         params.append('name', name);
         params.append('username', id('user').value)
         params.append('email', id('email').value);
@@ -47,14 +49,14 @@ const account = 'public/src/html/account.html';
         // params.append('street', id("address").value);
         // params.append('number', id("phone-num").value);
 
-        makeRequest(params, "create-user");
+        createUserRequest(params);
      }
 
     function login() {
         let params = new FormData();
         params.append('username', id('username').value);
         params.append('password', id('user-pw').value)
-        makeRequest(params, "login")
+        loginRequest(params)
     }
 
     function logout() {
@@ -65,20 +67,38 @@ const account = 'public/src/html/account.html';
         .catch(console.error);
     }
 
-    function makeRequest(params, endpoint) {
-        fetch(apiUrl + endpoint, {method: 'POST', body: params})
+    function createUserRequest(params) {
+        fetch(apiUrl + 'create-user', {method: 'POST', body: params})
         .then(statusCheck)
         .then(res => res.text())
         .then(console.log)
-        // .then(() => {
-        //     window.location.href = baseUrl + account;
-        // })
+        .catch(console.error);
+    } 
+
+    function loginRequest(params) {
+        console.log('cookies: ', document.cookie);
+        fetch(apiUrl + 'login', {method: 'POST', body: params})
+        .then(statusCheck)
+        .then(res => res.text())
+        .then(console.log)
+        .then(() => {
+            window.location.href = apiUrl + account;
+        })
         .catch(console.error);
     }
 
-    //  function process(data) {
-    //     console.log(data);
-    //  }
+    function checkLoggedIn() { 
+        fetch(apiUrl + 'activity-check', {method: 'GET'})
+        .then(statusCheck)
+        .then(res => res.text())
+        .then(res => {
+            console.log(res);
+            if(res === "Active session in progress.") {
+                window.location.href = apiUrl + account;
+            }
+        })
+        .catch(console.error);
+    }
 
  
      /**

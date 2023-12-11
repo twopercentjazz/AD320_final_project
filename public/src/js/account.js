@@ -3,20 +3,33 @@
  */
 "use strict";
 const apiUrl = "http://localhost:8000/";
+const baseUrl = 'http://127.0.0.1:8000/'
+const loginUrl = 'src/html/login.html';
 (function() {
     window.addEventListener("load", init);
 
     function init() {
+        checkLoggedIn();
         hide();
+        toggleDisplay('profile');
         id("settings-btn").addEventListener("click", () => toggleDisplay("settings"));
-        id("payment-btn").addEventListener("click", () => toggleDisplay("payment"));
-        // id("overview-btn").addEventListener("click", () => toggleDisplay("overview"));
         id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
         id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
-        // id("sign-out-btn").addEventListener("click", () => toggleDisplay("home"));
-        id('sign-out-btn').addEventListener('click', logout)
+        id('sign-out-btn').addEventListener('click', logout);
     }   
 
+    function checkLoggedIn() {
+        fetch(apiUrl + 'activity-check', {method: 'GET'})
+        .then(statusCheck)
+        .then(res => res.text())
+        .then(res => {
+            console.log(res);
+            if(res === "No active session found") {
+                window.location.href = apiUrl + loginUrl;
+            }
+        })
+        .catch(console.error);
+    }
 
     function hide() {
         let allDisplays = qsa('.profile-display');
@@ -29,15 +42,20 @@ const apiUrl = "http://localhost:8000/";
         hide();
         id(option).style.display = 'block';
     }
-    
+    //forgot to ask for get req to retrieve information
+    function getUserInfo() {
+
+    }
+
     function logout() {
-        fetch(apiUrl + 'logout')
+        fetch(apiUrl + 'logout', {method: 'POST'})
         .then(statusCheck)
         .then(res => res.text())
-        .then(console.log)
-        // .then(() => {
-        //     window.location.href = baseUrl + account;
-        // })
+        .then(res => {
+            console.log(res);
+            window.location.href = apiUrl + loginUrl;
+        })
+
         .catch(console.error);
     }
     /**
@@ -49,7 +67,10 @@ const apiUrl = "http://localhost:8000/";
      */
     async function statusCheck(res) {
         if (!res.ok) {
-            throw new Error(await res.text());
+            let errorMsg = await res.text();
+            if (errorMsg !== "Already logged out") {
+                throw new Error(errorMsg);
+            }
         }
         return res;
     }
