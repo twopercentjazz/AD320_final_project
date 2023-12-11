@@ -28,7 +28,7 @@ nav {
 }
 
 #profile-card {
-    width: 200px;
+    width: 220px;
     height: 120px;
     background-color: teal;
     border-radius: 20px;
@@ -38,7 +38,7 @@ nav {
 }
 
 #options { 
-    width: 200px;
+    width: 220px;
     margin-top: 20px;
     
     background-color: teal;
@@ -48,7 +48,7 @@ nav {
 }
 
 .options {
-    width: 180px;
+    width: 200px;
     margin: 10px;
     border-radius: 10px;
     border-color: transparent;
@@ -84,8 +84,12 @@ nav {
     height: 150px;
     
 }
+#profile-card-body {
+    padding-top: 10px;
+    padding-left: 10px;
+}
 
-#reservations-list {
+#upcoming, #previous {
     margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
@@ -116,9 +120,7 @@ h4 {
 p {
     margin-top: 0;
 }
-.text {
-    font-size: medium;
-}
+
 
 #overview .profile-display, #overview-btn.active {
     display: block;
@@ -137,5 +139,12 @@ p {
 }
 
 #settings .profile-display, #settings-btn.active {
+    display: block;
+}
+
+#upcoming .reservation-display, #settings-btn.active {
+    display: block;
+}
+#previous .reservation-display, #settings-btn.active {
     display: block;
 }
