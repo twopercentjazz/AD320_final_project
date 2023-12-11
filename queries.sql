@@ -82,9 +82,39 @@ WHERE r."number"=?;
 
 
 /*
-	filter rooms with the WHERE clause condition expression
+	filter rooms with the WHERE clause condition expression (all fields)
+	Chris' list 4.
+
+SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE r."type"='Deluxe' AND r."bed"='Queen' AND r."count"=1;
+
+SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE r."type"='Economy' AND r."bed"='Twin' AND r."count"=2;
+
+
+	filter rooms with the WHERE clause condition expression (no filter/search fields)
+
+SELECT r."number",r."max",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE r."type"='Deluxe' AND r."bed"='Queen' AND r."count"=1;
+
+SELECT r."number",r."max",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE r."type"='Economy' AND r."bed"='Twin' AND r."count"=2;
 */
 SELECT r."number",r."max",r."type",r."bed",r."count",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
+FROM "rooms" r
+JOIN "pictures" p ON p."id"=r."picture"
+WHERE ?;
+
+
+SELECT r."number",r."max",CAST((r."rate"/100) AS REAL) AS 'rate',p."picture"
 FROM "rooms" r
 JOIN "pictures" p ON p."id"=r."picture"
 WHERE ?;
