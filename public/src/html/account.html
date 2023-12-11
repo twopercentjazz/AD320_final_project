@@ -21,10 +21,11 @@
             <div id="profile-view">
                 <div id="left">
                     <div id="profile-card">
-                        <p>Hi insert-name</p>
-                        <p>email@email.com</p>
-                        <p>+1(123)456-7890</p>
-                        <p>active bookings: 0</p>
+                        <div id="profile-card-body">
+                            <p class="name">insert-name</p>
+                            <p class="email">email@email.com</p>
+                            <p class="phone">+1(123)456-7890</p>
+                        </div>
                     </div>
                     <div id="options">
                       
@@ -40,21 +41,21 @@
                     <div id="info-display">
                         <div class="profile-display" id="profile">
                             <div class="display-body">
-                                <h2>Derrek</h2>
+                                <h2 class="name">insert-name</h2>
                                 <div id="info">
                                     <h3>Basic Info</h3>
                                     <div id="details">
                                         <div>
-                                            <h4 class="text">Name</h4>
-                                            <p class="text" id="name">Derk</p>
+                                            <h4 class="text">First name</h4>
+                                            <p id="first-name">first</p>
                                         </div>
                                         <div>
-                                            <h4 class="text">Date of Birth</h4>
-                                            <p class="text" id="birthay">11/08/2001</p>
+                                            <h4 class="text">Last name</h4>
+                                            <p id="last-name">last</p>
                                         </div>
                                         <div>
-                                            <h4 class="text">Gender</h4>
-                                            <p class="text" id="gender">Male</p>
+                                            <h4 class="text">Username</h4>
+                                            <p id="user">Username</p>
                                         </div>
                                     </div>
                                 </div>
@@ -63,15 +64,15 @@
                                     <div id="details">
                                         <div>
                                             <h4 class="text">Mobile Number</h4>
-                                            <p class="text" id="phone">206-123-1234</p>
+                                            <p class="phone">number</p>
                                         </div>
                                         <div>
                                             <h4 class="text">Email</h4>
-                                            <p class="text" id="email">derk@seattleschools.edu</p>
+                                            <p class="email">email</p>
                                         </div>
                                         <div>
                                             <h4 class="text">Address</h4>
-                                            <p class="text" id="address">1234 S street St<br>Seattle, WA 98811</p>
+                                            <p class="text" id="address">Street<br>City, State, Zip</p>
                                             
                                         </div>
                                     </div>
@@ -83,14 +84,11 @@
                                 <h2>Reservations</h2>
                                 <legend><strong>Filter</strong></legend>
                                 <div id="filter">
-                                    <input type="checkbox" id="current">
-                                    <label for="current">Current</label>
-                                    <input type="checkbox" id="previous">
-                                    <label for="previous">Previous</label>
+                                    <button class="filter" id="current-btn">Upcoming</button>
+                                    <button class="filter" id="previous-btn">Previous</button>
                                 </div>
-                                <div id="reservations-list">
-                                    
-                                </div>
+                                <div class="reservation-display" id="upcoming"></div>
+                                <div class="reservation-display" id="previous"></div>
                             </div>
                         </div>
                         <div class="profile-display" id="payment">
