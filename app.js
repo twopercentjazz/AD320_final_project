@@ -16,6 +16,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(multer().none());
+
 /**
  * Creates a new user. Requires a unique username, a password, a name, and an email. Values can not be empty/null.
  * If a user with a given username already exists, fails with a 400 status code.
@@ -93,18 +94,33 @@ app.post("/logout", async (req, res) => {
  */
 app.get("/activity-check", async (req, res) => {
     if(isEmpty(req.cookies.username, req.cookies.sessionId)){
-        return res.status(200).send("No active session found");
+        return res.status(200).send("false");
     }
     let base = await getDBConnection();
-    let query = "SELECT user,sessionid from users WHERE user=?";
-    let result = await base.get(query, [req.cookies.username]);
-    if (isEmpty(result) || result["sessionid"] != req.cookies.sessionId){
-        res.status(200).send("No active session found");
+    if(!await activeCheck(base, req.cookies.username, req.cookies.sessionId)){
+        res.status(200).send("false");
     } else {
-        res.status(200).send("Active session in progress.");
+        res.status(200).send("true")
     }
     await base.close();
 });
+
+/**
+ * Function to check if a user is logged in with an active session.
+ * First check is currently redundant, may be removed.
+ * @param base Connection to the database.
+ * @param user The user to check.
+ * @param sessionId The users sessionId.
+ * @returns {Promise<boolean>} Whether or not the user is logged in (promise).
+ */
+async function activeCheck(base, user, sessionId){
+    if(isEmpty(user, sessionId)){
+        return false;
+    }
+    let query = "SELECT user,sessionid from users WHERE user=?";
+    let result = await base.get(query, [user]);
+    return (!isEmpty(result) && result["sessionid"] == sessionId);
+}
 
 /**
  * Returns effectively the entire rooms table.
@@ -115,9 +131,100 @@ app.get("/rooms", async (req, res) => {
     let rooms = await base.all(query, [], (error) => {
         if (error) {
             console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");        }
+            return res.status(500).send("Internal error");
+        }
     });
+    //Result checking?
     res.status(200).json(rooms);
+    await base.close();
+});
+
+app.get("/user-info", async (req, res) => {
+    if(isEmpty(req.cookies.username, req.cookies.sessionId)){
+        return res.status(400).send("false");
+    }
+    let base = await getDBConnection();
+    let query = "SELECT * FROM users WHERE user=?";
+    let userInfo = await base.get(query, [], (error) => {
+        if (error) {
+            console.log("Does this ever trigger?");
+            return res.status(500).send("Internal error");
+        }
+    });
+    res.status(200).json(userInfo);
+    await base.close();
+});
+
+//TODO: There definitely will be errors here, patch up.
+app.get("/room-info/:number", async (req, res) => {
+    let query = "SELECT * FROM rooms WHERE number=?";
+    let base = await getDBConnection();
+    let room = await base.get(query, [req.params.number], (error) => {
+        if (error) {
+            console.log("Does this ever trigger?");
+            return res.status(500).send("Internal error");
+        }
+    });
+    res.status(200).json(room);
+    await base.close();
+});
+
+/**
+ * Checks if a user is logged in, and then returns all of that users transactions.
+ * TODO: Test success and fail conditions.
+ */
+app.get("/user-reservations", async (req, res) => {
+    if(isEmpty(req.cookies.username, req.cookies.sessionId)){
+        return res.status(401).send("No active session found");
+    }
+    let base = await getDBConnection();
+    if(!await activeCheck(base, req.cookies.username, req.cookies.sessionId)){
+        res.status(401).send("No active session found.");
+    } else {
+        let query = "SELECT * FROM trans WHERE user=?";
+        let transactions = await base.all(query, [req.cookies.username], (error) => {
+            if (error) {
+                console.log("Does this ever trigger?");
+                return res.status(500).send("Internal error");        }
+        });
+        res.status(200).json(transactions);
+    }
+    await base.close();
+});
+
+//Subtle issue with a discrepancy between Date.now() being the actual time, and the stored times being standardized
+//part of the day due to rounding and the differences between timezones.
+app.get("/past-reservations", async (req, res) => {
+    if(isEmpty(req.cookies.username, req.cookies.sessionId)){
+        return res.status(401).send("No active session found");
+    }
+    let base = await getDBConnection();
+    let query = "SELECT * FROM trans WHERE user=? AND WHERE ckout<?";
+    let transactions = await base.all(query, [req.cookies.username, Date.now()])
+});
+
+//Subtle issue with a discrepancy between Date.now() being the actual time, and the stored times being standardized
+//part of the day due to rounding and the differences between timezones.
+app.get("/future-reservations", async (req, res) => {
+    if(isEmpty(req.cookies.username, req.cookies.sessionId)){
+        return res.status(401).send("No active session found");
+    }
+    let base = await getDBConnection();
+    let query = "SELECT * FROM trans WHERE user=? AND WHERE ckout>?";
+    let transactions = await base.all(query, [req.cookies.username, Date.now()])
+});
+
+//TODO: Finish
+app.post("/reserve", async (req, res) => {
+    if(isEmpty(req.cookies.username, req.cookies.sessionId, req.body.param)){
+    }
+    let base = await getDBConnection();
+    if(!await activeCheck(base, req.cookies.username, req.cookies.sessionId)){
+        res.status(401).send("No active session found.");
+    } else {
+
+        //do the thing.
+    }
     await base.close();
 });
 
@@ -141,7 +248,7 @@ function isEmpty(...input) {
 /**
  * Takes a number in Unix Epoch time (assumed to be UTC) and converts to ISO 8601 Date format in local time.
  * @param time The number to parse.
- * @returns {Promise<string>} Promise for a time in human readable form.
+ * @returns {Promise<string>} Promise for a time in human-readable form.
  */
 async function epochToDate(time) {
     let base = await getDBConnection();

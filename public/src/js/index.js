@@ -7,7 +7,72 @@
     window.addEventListener("load", init);
 
     function init() {
-        void testDB();
+        // void testNewUser();
+        // void testLogin();
+        // void testActive();
+        // void testLogout();
+        void testRoomCall();
+        // void testTime();
+    }
+
+    async function testActive(){
+        // let params = new FormData;
+        fetch("/activity-check")
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testTime() {
+        fetch("/time")
+            .then(statusCheck)
+            .then(resp => resp.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testNewUser(){
+        let params = new FormData;
+        // let testName = "kyle";
+        // let fakeName = "notKyle";
+        // let testName = "calliope";
+        // let fakeName = "karen";
+        let testName = "kiwawa";
+        let fakeName = "keeki";
+        params.append("username", testName);
+        params.append("password", "badPassword");
+        params.append("name", fakeName);
+        params.append("email", "fakeEmail");
+
+        fetch("/create-user", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testLogin(){
+        let params = new FormData;
+        // let testName = "kyle";
+        let testName = "calliope";
+        params.append("username", testName);
+        params.append("password", "badPassword");
+
+        fetch("/login", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testLogout(){
+        let params = new FormData;
+        fetch("/logout", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
     }
 
     async function testDB() {
@@ -16,6 +81,21 @@
             .then(resp => resp.text())
             .then(processTest)
             .catch(console.log);
+    }
+
+    async function testRoomCall() {
+        fetch('/rooms')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    function processJson(response){
+        for (let i = 0; i < response.length;i++){
+            console.log(response[i]);
+        }
+        // response.forEach(console.log);
     }
 
     function processTest(responseText) {
