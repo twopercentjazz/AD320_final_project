@@ -3,24 +3,142 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
-        <link rel="stylesheet" href="src/css/styles.css">
-        <script src="src/js/index.js"></script>
-        <title>Overlook Hotel</title>
-    </head>
-    <body>
-        <header>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
+    <link rel="stylesheet" href="src/css/styles.css">
+    <script src="src/js/index.js"></script>
+    <title>Overlook Hotel</title>
+</head>
+<body>
+<header>
+    <a id="logo-box" href="index.html">
+        <img id="logo" src="assets/img/overlook-logo.png" alt="overlook-logo">
+        <p>Overlook Hotel</p>
+    </a>
+    <section id="navigation">
+        <nav id="nav1">
+            <ul id="login">
+                <li><a id="link1" href="">Login</a></li>
+                <li><a id="nullLink" href="">|</a></li>
+                <li><a id="link2" href="">Join</a></li>
+            </ul>
+            <ul id="account" class="hidden">
+                <li><a href="src/html/account.html">My Account</a></li>
+            </ul>
+        </nav>
+        <nav id="nav2">
+            <ul>
+                <li><a href="src/html/amenities.html">Play</a></li>
+                <li><a href="src/html/dinning.html">Dine</a></li>
+                <li><a href="src/html/rooms.html">Stay</a></li>
+                <li><a id="curr-page" href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </section>
+</header>
+<main>
+    <section id="hotel-name">
+        <P>SINCE 1921</P>
+        <section id="hotel-title">
+            <hr><h1>Historic Overlook Hotel</h1><hr>
+        </section>
+        <p>SIDEWINDER, COLORADO</p>
+    </section>
 
-        </header>
 
-        <main>
 
-        </main>
+    <section id="availability">
+        <section id="availability-box">
+            <form id="availability-form">
+                <label for="checkin-date">Check-In</label>
+                <input type="date" id="checkin-date" name="dates" required>
+                <label for="checkout-date">Check-Out</label>
+                <input type="date" id="checkout-date" name="dates" required>
+                <label for="people">People</label>
+                <select id="people">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <button id="check" type="button" class="button">Check Availability</button>
+            </form>
+            <section id="error-msg">
+                <section id="error-msg-box"></section>
+            </section>
+        </section>
+    </section>
 
-        <footer>
 
-        </footer>
-    </body>
+
+
+
+
+    <section id="intro">
+        <iframe id="intro-video"
+                src="https://www.youtube.com/embed/hDoS6LJL6cw?si=e7FXn7wavqe2RrgB"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+                        gyroscope; picture-in-picture; web-share" allowfullscreen>
+        </iframe>
+    </section>
+    <section id="rooms-title">
+        <hr><h2>Rooms & Suites</h2><hr>
+    </section>
+    <section id="rooms">
+        <img id="room-img" src="assets/img/room-237.jpg" alt="room-237">
+        <article id="room-text">
+            <p>
+                Our rooms are spacious and comfortable, with breathtaking views of the
+                Rocky Mountains. Our suites are perfect for families or groups of friends
+                who want to enjoy the beauty of nature while still having all the comforts
+                of home. So whether you're looking for a romantic weekend getaway or just
+                want to get away from it all, we have something for everyone at the
+                Overlook Hotel. Come play with us!
+            </p>
+            <a id="stay-link" href="src/html/rooms.html">
+                <button id="room-btn" type="button">Explore Rooms</button>
+            </a>
+        </article>
+    </section>
+    <section id="dinner-title">
+        <hr><h2>Dinner & Drinks</h2><hr>
+    </section>
+    <section id="dinner">
+        <article id="dinner-text">
+            <p>
+                Visit the Gold Room for a fine dining experience you won't soon forget.
+                You'll be treated like royalty from the moment you walk through our doors
+                until the moment you leave. If you're looking to take your mind off of work,
+                stop by our bar where we serve up the best cocktails in town, you might
+                just want to stay forever and ever.
+            </p>
+            <a id="dine-link" href="src/html/dinning.html">
+                <button id="dinner-btn" type="button">Learn More</button>
+            </a>
+        </article>
+        <img id="dinner-img" src="assets/img/gold-room.png" alt="gold-room">
+    </section>
+    <section id="grounds-title">
+        <hr><h2>Overlook Maze</h2><hr>
+    </section>
+    <section id="grounds">
+        <img id="grounds-img" src="assets/img/maze.jpg" alt="maze">
+        <article id="grounds-text">
+            <p>
+                During your stay make sure to check out our famous hedge maze! Our outdoor
+                labyrinth is the perfect place to get lost in nature and forget about all your
+                worries. The maze will keep you entertained for hours as you try to find your
+                way out. It's also a great place to spend time with family.
+            </p>
+            <a id="play-link" href="src/html/amenities.html">
+                <button id="grounds-btn" type="button">Learn More</button>
+            </a>
+        </article>
+    </section>
+</main>
+<footer>
+</footer>
+</body>
 </html>

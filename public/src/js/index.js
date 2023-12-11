@@ -4,77 +4,143 @@
 "use strict";
 
 (function() {
+    const loggedIn = true;
     window.addEventListener("load", init);
 
     function init() {
-        // void testNewUser();
-        // void testLogin();
-        // void testActive();
-        // void testLogout();
-        void testRoomCall();
-        // void testTime();
+        toggleNav(loggedIn);
+
+
+
+
+        const CHECKIN = new Date();
+        const CHECKOUT = new Date(CHECKIN);
+        CHECKOUT.setDate(CHECKOUT.getDate() + 1);
+        let year = CHECKIN.getFullYear();
+        let month = CHECKIN.getMonth() + 1;
+        let day = CHECKIN.getDate();
+        id("checkin-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+        year = CHECKOUT.getFullYear();
+        month = CHECKOUT.getMonth() + 1;
+        day = CHECKOUT.getDate();
+        id("checkout-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+
+
+
+
+
+
+
+
+
+        id("check").addEventListener("click", checkAvailability);
+
+        /*
+        qsa("a").forEach(link => link.addEventListener("click",  (e) => {
+            e.preventDefault();
+        }));
+
+         */
+        id("link1").addEventListener("click",  (e) => {
+            e.preventDefault();
+            id("login").classList.toggle("hidden");
+            id("account").classList.toggle("hidden");
+        });
+        id("link2").addEventListener("click",  (e) => {
+            e.preventDefault();
+            id("login").classList.toggle("hidden");
+            id("account").classList.toggle("hidden");
+        });
+        id("nullLink").addEventListener("click",  (e) => {
+            e.preventDefault();
+        });
+
+
+        //void testDB();
     }
 
-    async function testActive(){
-        // let params = new FormData;
-        fetch("/activity-check")
-            .then(statusCheck)
-            .then(response => response.text())
-            .then(console.log)
-            .catch(console.log);
+    function toggleNav(loggedIn) {
+        id("login").classList.toggle("hidden");
+        id("account").classList.toggle("hidden");
     }
 
-    async function testTime() {
-        fetch("/time")
-            .then(statusCheck)
-            .then(resp => resp.text())
-            .then(console.log)
-            .catch(console.log);
+
+
+    function checkAvailability() {
+        id("error-msg-box").innerHTML = "";
+        let error = gen("p");
+        let checkin = id("checkin-date").value;
+        let checkout = id("checkout-date").value;
+        let people = id("people").value;
+        if (!isValidDate(checkin) || !isValidDate(checkout) || !isValidCheckin(checkin, checkout)) {
+            error.textContent = "Please enter valid dates.";
+            id("error-msg-box").appendChild(error);
+        } else {
+            window.sessionStorage.setItem("checkin", checkin);
+            window.sessionStorage.setItem("checkout", checkout);
+            window.sessionStorage.setItem("people", people);
+            window.location.href = "src/html/booking.html";
+        }
+    }
+    function isValidCheckin(checkin, checkout) {
+        let checkinDate = new Date(checkin);
+        let checkoutDate = new Date(checkout);
+        if (checkinDate >= checkoutDate) {
+            return false;
+        }
+        return true;
     }
 
-    async function testNewUser(){
-        let params = new FormData;
-        // let testName = "kyle";
-        // let fakeName = "notKyle";
-        // let testName = "calliope";
-        // let fakeName = "karen";
-        let testName = "kiwawa";
-        let fakeName = "keeki";
-        params.append("username", testName);
-        params.append("password", "badPassword");
-        params.append("name", fakeName);
-        params.append("email", "fakeEmail");
-
-        fetch("/create-user", {method :"POST", body: params})
-            .then(statusCheck)
-            .then(response => response.text())
-            .then(console.log)
-            .catch(console.log);
+    function isValidDate(date) {
+        let inputDate = new Date(date);
+        inputDate.setHours(0, 0, 0, 0);
+        if (isNaN(inputDate)) {
+            return false;
+        }
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let nextYear = new Date(today);
+        nextYear.setFullYear(today.getFullYear() + 1);
+        today.setDate(today.getDate() - 1);
+        nextYear.setDate(nextYear.getDate() - 1);
+        let year = inputDate.getFullYear();
+        let month = inputDate.getMonth() + 1;
+        let day = inputDate.getDate();
+        if (inputDate < today || inputDate > nextYear) {
+            return false;
+        }
+        /*
+        if (month < 1 || month > 12) {
+            return false;
+        }
+        if (day < 1 || day > validateDay(month, year)) {
+            return false;
+        }
+         */
+        return true;
     }
 
-    async function testLogin(){
-        let params = new FormData;
-        // let testName = "kyle";
-        let testName = "calliope";
-        params.append("username", testName);
-        params.append("password", "badPassword");
 
-        fetch("/login", {method :"POST", body: params})
-            .then(statusCheck)
-            .then(response => response.text())
-            .then(console.log)
-            .catch(console.log);
+    function validateDay(month, year) {
+        /*
+        let day = 31;
+        if (month === 4 || month === 6 || month === 9 || month === 11) {
+            day = 30;
+        } else if (month === 2) {
+            if (year % 4 === 0) {
+                day = 29;
+            } else {
+                day = 28;
+            }
+        }
+        return day;
+
+         */
+        return new Date(year, month, 0).getDate();
     }
 
-    async function testLogout(){
-        let params = new FormData;
-        fetch("/logout", {method :"POST", body: params})
-            .then(statusCheck)
-            .then(response => response.text())
-            .then(console.log)
-            .catch(console.log);
-    }
 
+    /*
     async function testDB() {
         fetch('http://localhost:8000/test')
             .then(statusCheck)
@@ -83,27 +149,13 @@
             .catch(console.log);
     }
 
-    async function testRoomCall() {
-        fetch('/rooms')
-            .then(statusCheck)
-            .then(resp => resp.json())
-            .then(processJson)
-            .catch(console.log);
-    }
-
-    function processJson(response){
-        for (let i = 0; i < response.length;i++){
-            console.log(response[i]);
-        }
-        // response.forEach(console.log);
-    }
-
     function processTest(responseText) {
         let text = document.createElement("p");
         text.textContent = responseText;
         //text.style.color = "red";
         document.body.appendChild(text);
     }
+    */
 
 
     /**

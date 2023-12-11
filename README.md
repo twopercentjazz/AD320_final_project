@@ -53,7 +53,7 @@ Keep in mind that the files listed in the table below are the _minimum_ requirem
 |---------------|------------------------------|
 |`public/index.html`|This file should be your “homepage” or the starting place for the entire front end of your website.|
 |`public/styles.css`|This file should contain the CSS styles for your front end.|
-|`public/index.js`|This file should contain your client-side JavaScript, which will call the API you build in your `app.js` and provide other front end behavior for the features you implement.|
+|`public/test-index.js`|This file should contain your client-side JavaScript, which will call the API you build in your `app.js` and provide other front end behavior for the features you implement.|
 |`app.js`|This file should contain the Node.js service that is your back end API.|
 |`<insert-file-name>.db`|This file should contain the database for your website. You are required to create a database and use SQL to access it. You **cannot** use file I/O! Your database must include at least 3 tables and use at least 1 foreign key. Each table must have at least 2 columns (for more information see [Database Requirements](#database-requirements)).|
 |`package.json`|This file should contain your project dependencies (e.g. `express`) which you initialize using `npm init`.|
