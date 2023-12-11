@@ -3,7 +3,6 @@
  */
 "use strict";
 const apiUrl = "http://localhost:8000/";
-const baseUrl = 'http://127.0.0.1:8000/'
 const loginUrl = 'src/html/login.html';
 (function() {
     window.addEventListener("load", init);
@@ -11,10 +10,21 @@ const loginUrl = 'src/html/login.html';
     function init() {
         checkLoggedIn();
         hide();
+        hideReservations();
+        getUserInfo();
         toggleDisplay('profile');
+        // retrieveReservations();
         id("settings-btn").addEventListener("click", () => toggleDisplay("settings"));
         id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
         id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
+        id('current-btn').addEventListener('click', () => {
+            filter("upcoming");
+            retrieveReservations('future-reservations');
+        });
+        id('previous-btn').addEventListener('click', () => {
+            filter("previous")
+            retrieveReservations('past-reservations');
+        });
         id('sign-out-btn').addEventListener('click', logout);
     }   
 
@@ -23,9 +33,10 @@ const loginUrl = 'src/html/login.html';
         .then(statusCheck)
         .then(res => res.text())
         .then(res => {
-            console.log(res);
-            if(res === "No active session found") {
+            if(res === "false") {
                 window.location.href = apiUrl + loginUrl;
+            } else {
+                console.log('Successfully logged in')
             }
         })
         .catch(console.error);
@@ -38,13 +49,59 @@ const loginUrl = 'src/html/login.html';
         });
     }
 
+    function hideReservations() {
+        let allDisplays = qsa('.reservation-display');
+        allDisplays.forEach(display => {
+            display.style.display = 'none';
+        }); 
+    }
+
     function toggleDisplay(option) {
         hide();
         id(option).style.display = 'block';
     }
-    //forgot to ask for get req to retrieve information
-    function getUserInfo() {
+    
+    function filter(option) {
+        hideReservations();
+        id(option).style.display = 'block';
+    }
 
+    function getUserInfo() {
+       fetch(apiUrl + 'user-all-info', {method: 'GET'})
+       .then(statusCheck)
+       .then(res => res.json())
+       .then(updateProfile)
+       .catch(console.error);
+    }
+
+    function updateProfile(data) {
+        let name = data.name;
+        let [first, last] = name.split(" ");
+        id('user').textContent = data.user;
+        id('first-name').textContent = first;
+        id('last-name').textContent = last;
+        similarUpdates(qsa('.name'), data.name);
+        similarUpdates(qsa('.email'), data.email);
+        similarUpdates(qsa('.phone'), data.phone);
+        // let address = data.address + ' <br> ' + data.city + ', ' + data.state + ', ' + data.code;
+        id('address').innerHTML = data.address + ' <br> ' + data.city + ', ' + data.state + ', ' + data.code;;
+    }
+
+    function similarUpdates(element, data) {
+        element.forEach(e => {
+            e.textContent = data;
+        })
+    }
+
+    function retrieveReservations(endpoint){
+        fetch(apiUrl + endpoint)
+        .then(statusCheck)
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
+        })
+        .catch(console.error);
+        
     }
 
     function logout() {
@@ -67,10 +124,7 @@ const loginUrl = 'src/html/login.html';
      */
     async function statusCheck(res) {
         if (!res.ok) {
-            let errorMsg = await res.text();
-            if (errorMsg !== "Already logged out") {
-                throw new Error(errorMsg);
-            }
+            throw new Error(await res.text());
         }
         return res;
     }
