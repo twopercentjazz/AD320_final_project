@@ -23,6 +23,7 @@
             <form id="register">
                 <h1>Register</h1>
                 <p>*Indicates Required Field</p>
+                <p id="register-error"></p>
                 <div id="register-body">
                     <div class="required-inputs">
                         <div>
@@ -97,7 +98,10 @@
                             <label for="user-pw">Password</label>
                             <input type="password" id="user-pw" required>
                             <button id="sign-in-button">Sign in</button>
-                            <p>Not a member? <a href="login.html">Sign Up</a></p>
+                            <div>
+                                <p>Not a member? <a href="login.html">Sign Up</a></p>
+                                <p id="login-error"></p>
+                            </div>
                         </div>
                     </form>
                 </div>
