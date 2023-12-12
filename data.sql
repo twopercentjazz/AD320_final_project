@@ -50,7 +50,7 @@ INSERT INTO "rooms" ("number","max","type","bed","count","rate","picture") VALUE
 (110,4,'Suite','King',2,145*100,0),
 (200,1,'Economy','Twin',1,60*100,0),
 (201,2,'Economy','Twin',2,75*100,0),
-(202,2,'Economy','Full',1,70*100,0),
+(202,2,'Economy','Full',1,70*100,0),	-- in trans table
 (203,2,'Standard','Full',1,80*100,0),
 (204,4,'Standard','Full',2,95*100,0),	-- in trans table
 (205,2,'Standard','Queen',1,90*100,0),
