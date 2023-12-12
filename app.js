@@ -349,6 +349,33 @@ app.post("/reserve", async (req, res) => {
 });
 
 app.get("/room-filter", async (req, res) => {
+    let query
+
+    if (isEmpty(req.query.room-type, req.query.bed-type, req.query.bed-count)){
+    }
+    req.query
+});
+
+function queryBuilder(req){
+    let baseQuery = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" +
+        "FROM \"rooms\" r\n" +
+        "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" +
+        "WHERE";
+    let params = [];
+    if(!isEmpty(req.query.occupants)){
+        baseQuery += " max<=?";
+        params.push(req.query.occupants);
+    }
+    if(!isEmpty(req.query.room-type)){
+        baseQuery += ""
+    }
+    if(!isEmpty(req.query.room-type)){
+        baseQuery += ""
+    }
+}
+
+
+app.get("/available-rooms", async (req, res) => {
     let base = await getDBConnection();
     let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" +
         "FROM \"rooms\" r\n" +
