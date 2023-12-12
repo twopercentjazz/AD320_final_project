@@ -24,7 +24,7 @@ app.use(multer().none());
  */
 function isEmpty(...input) {
     for (const val of input) {
-        if (val === null || val === undefined || val.length === 0) {
+        if (val === null || val === undefined || val.length === 0 || val === 'null') {
             return true;
         }
     }
@@ -341,7 +341,9 @@ app.post("/reserve", async (req, res) => {
  */
 app.get("/rooms", async (req, res) => {
     // let query = "SELECT * FROM rooms";
-    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" + "FROM \"rooms\" r,\"pictures\" p\n" + "WHERE p.\"id\"=r.\"picture\";"
+    let query = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
+        "FROM rooms r,pictures p\n" +
+        "WHERE p.id=r.picture;";
     let base = await getDBConnection();
     let rooms = await base.all(query, [], (error) => {
         if (error) {
@@ -371,6 +373,69 @@ app.get("/room-info/:number", async (req, res) => {
     }
     await base.close();
 });
+
+app.get("/room-filter", async (req, res) => {
+    await filter(req.query, res);
+});
+
+app.get("/room-filter/:guests/:roomType/:bedType/:checkin/:checkout", async (req, res) => {
+    await filter(req.params, res);
+});
+
+async function filter(values, res){
+    let params = queryBuilder(values)
+    let query = params.pop();
+    if(params.length < 1){
+        return res.status(400).send("No filter values found.")
+    }
+    // console.log(query);
+    let base = await getDBConnection();
+    let rooms = await base.all(query, params);
+    res.status(200).json(rooms);
+    await base.close();
+}
+
+function queryBuilder(values){
+    let baseQuery = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
+        "FROM rooms r\n" +
+        "JOIN pictures p ON p.id=r.picture\n" +
+        "WHERE";
+    let params = [];
+    if(!isEmpty(values.guests)){
+        baseQuery += " r.max>=?";
+        params.push(values.guests);
+    }
+    if(!isEmpty(values.roomType)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.type=?";
+        params.push(values.roomType);
+
+    }
+    if(!isEmpty(values.bedType)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.bed=?";
+        params.push(values.bedType);
+    }
+    if(!isEmpty(values.checkIn, values.checkOut)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " (r.number NOT IN (SELECT t.room FROM trans t\n" +
+            "WHERE unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)))\n" +
+            "AND (r.number NOT IN (SELECT t.room FROM trans t\n" +
+            "WHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400)))";
+        // baseQuery += " (r.number IN (SELECT t.room FROM trans t WHERE unixepoch(?) >= t.ckout))\n" +
+        //     "OR (r.number IN (SELECT t.room FROM trans t WHERE unixepoch(?) <= t.ckin))";
+        params.push(values.checkIn);
+        params.push(values.checkOut);
+    }
+    params.push(baseQuery);
+    return params;
+}
 
 app.get("/available-rooms", async (req, res) => {
     let base = await getDBConnection();
@@ -436,32 +501,6 @@ app.post("/update-user-info", async (req, res) => {
    let infoUpdate = await base.run(statement, params);
    res.status(200).send("User information updated successfully.");
 });
-
-app.get("/room-filter", async (req, res) => {
-    let query
-
-    if (isEmpty(req.query.room-type, req.query.bed-type, req.query.bed-count)){
-    }
-    req.query
-});
-
-function queryBuilder(req){
-    let baseQuery = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" +
-        "FROM \"rooms\" r\n" +
-        "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" +
-        "WHERE";
-    let params = [];
-    if(!isEmpty(req.query.occupants)){
-        baseQuery += " max<=?";
-        params.push(req.query.occupants);
-    }
-    if(!isEmpty(req.query.room-type)){
-        baseQuery += ""
-    }
-    if(!isEmpty(req.query.room-type)){
-        baseQuery += ""
-    }
-}
 
 async function availableCheck(base, room, checkIn, checkOut) {
     let availableCheck = "SELECT (ckin,ckout) FROM trans WHERE room=?";
