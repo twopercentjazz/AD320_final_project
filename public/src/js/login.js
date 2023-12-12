@@ -11,8 +11,7 @@ const account = 'src/html/account.html';
  
     function init() {
         checkLoggedIn();
-        id("link1").addEventListener('click', e => {
-            e.preventDefault();
+        id("login-btn").addEventListener('click', e => {
             id('popup').style.display = 'block';
         });
         id('popup').addEventListener('click', e => {
