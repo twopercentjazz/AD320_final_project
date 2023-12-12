@@ -47,7 +47,7 @@
     }
 
     function checkActivity() {
-        fetch("/activity-check")
+        fetch("http://localhost:8000/activity-check")
             .then(statusCheck)
             .then(response => response.text())
             .then(processCheckActivity)

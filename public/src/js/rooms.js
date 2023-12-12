@@ -8,135 +8,58 @@
 
     function init() {
 
-
-
         id("check").addEventListener("click", checkAvailability);
 
-
-
-
-
-        let currFilter = "none";
-        id("filter-btn1").addEventListener("click", () => {
-            if (currFilter === "filters") {
-                toggleFilters();
-            } else if (currFilter === "views") {
-                toggleViews();
-            }
-            toggleSearch();
-            currFilter = "search";
+        displayRooms().then(rooms => {
+            displayList(rooms);
         });
 
-        id("filter-btn2").addEventListener("click", () => {
-            toggleSearch();
-            currFilter = "none";
+        displayRooms().then(rooms => {
+            displayTile(rooms);
         });
 
-        id("filter-btn3").addEventListener("click", () => {
-            if (currFilter === "search") {
-                toggleSearch();
-            } else if (currFilter === "views") {
-                toggleViews();
-            }
-            toggleFilters();
-            currFilter = "filters";
-        });
-
-        id("filter-btn4").addEventListener("click", () => {
-            toggleFilters();
-            currFilter = "none";
-        });
-
-        id("filter-btn5").addEventListener("click", () => {
-            if (currFilter === "filters") {
-                toggleFilters();
-            } else if (currFilter === "search") {
-                toggleSearch();
-            }
-            toggleViews();
-            currFilter = "views";
-        });
-
-        id("filter-btn6").addEventListener("click", () => {
-            toggleViews();
-            currFilter = "none";
-        });
-
-
-
-
-        let testRooms = [
-            {
-                id: "1",
-                number: "237",
-                max: "2",
-                type: "Suite",
-                bed: "King",
-                count: "1",
-                rate: "250",
-                picture: "/public/assets/img/rooms/suite/1king.png"
-            },
-            {
-                id: "2",
-                number: "217",
-                max: "2",
-                type: "Deluxe",
-                bed: "King",
-                count: "1",
-                rate: "200",
-                picture: "/public/assets/img/rooms/deluxe/1king.png"
-            },
-            {
-                id: "3",
-                number: "115",
-                max: "4",
-                type: "Standard",
-                bed: "Queen",
-                count: "2",
-                rate: "180",
-                picture: "/public/assets/img/rooms/standard/2queen.png"
-            },
-            {
-                id: "4",
-                number: "130",
-                max: "1",
-                type: "Economy",
-                bed: "Twin",
-                count: "1",
-                rate: "90",
-                picture: "/public/assets/img/rooms/economy/1twin.png"
-            }];
-
-
-
-        displayList(testRooms);
-        displayTile(testRooms);
         qsa("#view-form input").forEach(view => view.addEventListener("change", changeView));
-        id("display-list").addEventListener("click", () => showListDetails(event, testRooms));
-        id("display-tile").addEventListener("click", () => showTileDetails(event, testRooms));
+
+        id("display-list").addEventListener("click", event => {
+            displayRooms().then(rooms => {
+                showListDetails(event, rooms);
+            });
+        });
+
+        id("display-tile").addEventListener("click", event => {
+            displayRooms().then(rooms => {
+                showTileDetails(event, rooms);
+            });
+        });
 
 
-
-
-        // start for filters
+        // test filter return
         id("filter-btn").addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the form from submitting
-
+            event.preventDefault();
             let roomType = Array.from(qsa('input[name="room-type"]:checked')).map(e => e.value);
             let bedType = Array.from(qsa('input[name="bed-type"]:checked')).map(e => e.value);
             let bedCount = Array.from(qsa('input[name="bed-count"]:checked')).map(e => e.value);
-
             let filters = {
                 type: roomType,
                 bed: bedType,
                 count: bedCount
             };
-
             let json = JSON.stringify(filters);
-
             console.log(json); // Output the JSON string to the console
         });
-        // end for filters
+
+    }
+
+    async function getRoomList() {
+        return fetch("http://localhost:8000/rooms")
+            .then(statusCheck)
+            .then(response => response.json())
+            .catch(console.log);
+    }
+
+    async function displayRooms() {
+        let rooms = await getRoomList();
+        return rooms;
     }
 
     function checkAvailability() {
@@ -155,6 +78,7 @@
             window.location.href = "booking.html";
         }
     }
+
     function isValidCheckin(checkin, checkout) {
         let checkinDate = new Date(checkin);
         let checkoutDate = new Date(checkout);
@@ -182,14 +106,6 @@
         if (inputDate < today || inputDate > nextYear) {
             return false;
         }
-        /*
-        if (month < 1 || month > 12) {
-            return false;
-        }
-        if (day < 1 || day > validateDay(month, year)) {
-            return false;
-        }
-         */
         return true;
     }
 
@@ -315,50 +231,6 @@
         roomItem.appendChild(roomRate);
 
         return roomItem;
-
-        /*
-        let roomImg = gen("img");
-        roomImg.src = room.picture;
-        roomImg.alt = room.type + " room";
-        roomItem.appendChild(roomImg);
-
-
-
-        let roomInfo = gen("div");
-        roomInfo.classList.add("room-info");
-        roomItem.appendChild(roomInfo);
-
-        let roomNum = gen("h3");
-        roomNum.textContent = room.number;
-        roomInfo.appendChild(roomNum);
-
-        let roomType = gen("p");
-        roomType.textContent = room.type;
-        roomInfo.appendChild(roomType);
-
-        let roomBed = gen("p");
-        roomBed.textContent = room.bed + " bed";
-        roomInfo.appendChild(roomBed);
-
-        let roomMax = gen("p");
-        roomMax.textContent = "Max " + room.max + " people";
-        roomInfo.appendChild(roomMax);
-
-        let roomRate = gen("p");
-        roomRate.textContent = "$" + room.rate + "/night";
-        roomInfo.appendChild(roomRate);
-
-
-
-
-        let roomBtn = gen("button");
-        roomBtn.textContent = "Book Now";
-        roomInfo.appendChild(roomBtn);
-
-        return roomItem;
-
-         */
-
     }
 
     function createTileItem(room) {
@@ -390,25 +262,6 @@
         return roomItem;
     }
 
-    function toggleSearch() {
-        id("show-search").classList.toggle("hidden");
-        id("hide-search").classList.toggle("hidden");
-        id("search-section").classList.toggle("hidden");
-    }
-
-    function toggleFilters() {
-        id("show-filters").classList.toggle("hidden");
-        id("hide-filters").classList.toggle("hidden");
-        id("filters-section").classList.toggle("hidden");
-    }
-
-    function toggleViews() {
-        id("show-views").classList.toggle("hidden");
-        id("hide-views").classList.toggle("hidden");
-        id("views-section").classList.toggle("hidden");
-    }
-
-
     /**
      * Returns the response's result text if successful, otherwise
      * returns the rejected Promise result with an error status and corresponding text
@@ -418,7 +271,7 @@
      */
     async function statusCheck(res) {
         if (!res.ok) {
-            throw new Error(await res.text());
+            throw new Error(await res.json());
         }
         return res;
     }
