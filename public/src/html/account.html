@@ -12,10 +12,25 @@
     </head>
     <body>
         <header>
-            <nav>
-                <!-- <button>Join</button>
-                <button>Login</button> -->
-            </nav>
+            <a id="logo-box" href="index.html">
+                <img id="logo" src="../../assets/img/overlook-logo.png" alt="overlook-logo">
+                <p>Overlook Hotel</p>
+            </a>
+            <section id="navigation">
+                <nav id="nav1">
+                    <ul id="account" class="hidden">
+                        <li><a href="account.html">My Account</a></li>
+                    </ul>
+                </nav>
+                <nav id="nav2">
+                    <ul>
+                        <li><a href="src/html/amenities.html">Play</a></li>
+                        <li><a href="src/html/dinning.html">Dine</a></li>
+                        <li><a href="src/html/rooms.html">Stay</a></li>
+                        <li><a id="curr-page" href="index.html">Home</a></li>
+                    </ul>
+                </nav>
+            </section>
         </header>
         <main>
             <div id="profile-view">
@@ -85,8 +100,8 @@
                                     <button class="filter" id="current-btn">Upcoming</button>
                                     <button class="filter" id="previous-btn">Previous</button>
                                 </div>
-                                <div class="reservation-display" id="upcoming">
-                                </div>
+                                <div class="reservation-display" id="upcoming"></div>
+                                <div class="reservation-display" id="previous"></div>
                             </div>
                         </div>
                     </div>
