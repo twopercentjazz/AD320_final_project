@@ -14,7 +14,6 @@ const loginUrl = 'src/html/login.html';
         getUserInfo();
         toggleDisplay('profile');
         // retrieveReservations();
-        id("settings-btn").addEventListener("click", () => toggleDisplay("settings"));
         id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
         id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
         id('current-btn').addEventListener('click', () => {
