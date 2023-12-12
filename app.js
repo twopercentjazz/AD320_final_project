@@ -96,6 +96,7 @@ async function newUser(base, req, res){
     let addQuery = "INSERT INTO users (user, code, name, email) VALUES (?, ?, ?, ?)";
     try {
         let info = await base.run(addQuery, [req.body.username, req.body.password, req.body.name, req.body.email]);
+        console.log(info);
     } catch (error) {
         res.status(500);
     }
@@ -378,6 +379,10 @@ app.get("/room-filter", async (req, res) => {
     await filter(req.query, res);
 });
 
+app.post("/room-filter", async (req, res) => {
+    await filter(req.body, res);
+});
+
 app.get("/room-filter/:guests/:roomType/:bedType/:checkin/:checkout", async (req, res) => {
     await filter(req.params, res);
 });
@@ -388,12 +393,36 @@ async function filter(values, res){
     if(params.length < 1){
         return res.status(400).send("No filter values found.")
     }
-    // console.log(query);
     let base = await getDBConnection();
     let rooms = await base.all(query, params);
     res.status(200).json(rooms);
     await base.close();
 }
+
+function valueBuilder(values, params, query, snip){
+    if(values.length > 1){
+        query += " (";
+        let bits = [];
+        for (const val of values){
+            if (val == ","){
+                continue;
+            }
+            bits.push(snip);
+            params.push(val);
+            bits.push(" OR");
+        }
+        bits.pop();
+        for (const val of bits){
+            query += val;
+        }
+        query += ")"
+    } else {
+        query += snip;
+        params.push(values);
+    }
+    return [query, params];
+}
+
 
 function queryBuilder(values){
     let baseQuery = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
@@ -402,23 +431,37 @@ function queryBuilder(values){
         "WHERE";
     let params = [];
     if(!isEmpty(values.guests)){
-        baseQuery += " r.max>=?";
-        params.push(values.guests);
+        let guestSnip = " r.max>=?";
+        let vals = valueBuilder(values.guests, params, baseQuery, guestSnip);
+        baseQuery = vals[0];
+        params = vals[1];
     }
     if(!isEmpty(values.roomType)){
         if(params.length > 0){
             baseQuery += " AND";
         }
-        baseQuery += " r.type=?";
-        params.push(values.roomType);
-
+        let roomSnip = " r.type=?";
+        let vals = valueBuilder(values.roomType, params, baseQuery, roomSnip);
+        baseQuery = vals[0];
+        params = vals[1];
     }
     if(!isEmpty(values.bedType)){
         if(params.length > 0){
             baseQuery += " AND";
         }
-        baseQuery += " r.bed=?";
-        params.push(values.bedType);
+        let bedSnip = " r.bed=?";
+        let vals = valueBuilder(values.bedType, params, baseQuery, bedSnip);
+        baseQuery = vals[0];
+        params = vals[1];
+    }
+    if(!isEmpty(values.bedCount)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        let bedSnip = " r.count=?";
+        let vals = valueBuilder(values.bedCount, params, baseQuery, bedSnip);
+        baseQuery = vals[0];
+        params = vals[1];
     }
     if(!isEmpty(values.checkIn, values.checkOut)){
         if(params.length > 0){
