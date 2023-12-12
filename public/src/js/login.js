@@ -24,7 +24,7 @@ const account = 'src/html/account.html';
             e.preventDefault();
             registerUser();
         });
-        id('link2').addEventListener('click', () => checkValidInput());
+        id('register-btn').addEventListener('click', () => checkValidInput());
 
         id('login').addEventListener('submit', e => {
             e.preventDefault();
@@ -131,7 +131,7 @@ const account = 'src/html/account.html';
      * 
      */
     function registerError(e) {
-        id('register-error').textContent = "*user already exists*"
+        id('register-error').textContent = "e"
     }
 
      /**
