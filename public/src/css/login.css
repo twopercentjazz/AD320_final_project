@@ -12,7 +12,7 @@ body, button {
     font-family: 'Poiret One', serif;
 }
 
-button {
+#login-btn:hover {
     cursor: pointer;
 }
 
@@ -74,6 +74,15 @@ nav li a {
     text-shadow: 0 0 10px black;
 }
 
+nav li p {
+    display: block;
+    color: #e0c99b;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 10px black;
+}
+
 #nav1 {
     margin-right: 20px;
 }
@@ -86,6 +95,12 @@ nav li a {
     padding: 14px 10px;
     font-size: 20px;
 }
+
+    #nav1 li p {
+        margin-top: -1px;
+        padding: 14px 10px;
+        font-size: 20px;
+    }
 
 #nav2 li a {
     padding: 14px 16px;
