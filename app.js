@@ -381,7 +381,8 @@ app.post("/room-filter", async (req, res) => {
     await filter(req.body, res);
 });
 
-app.get("/room-filter/:guests/:roomType/:bedType/:checkin/:checkout", async (req, res) => {
+// added param to get bed count to work
+app.get("/room-filter/:bedCount/:guests/:roomType/:bedType/:checkin/:checkout", async (req, res) => {
     await filter(req.params, res);
 });
 
@@ -501,6 +502,16 @@ function queryBuilder(values){
         baseQuery = vals[0];
         params = vals[1];
     }
+
+    // added this for bed count param from your old implementation
+    if(!isEmpty(values.bedCount)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.count=?";
+        params.push(values.bedCount);
+    }
+
     if(!isEmpty(values.roomType)){
         if(params.length > 0){
             baseQuery += " AND";
