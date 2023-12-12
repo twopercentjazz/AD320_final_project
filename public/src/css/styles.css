@@ -17,10 +17,6 @@ body {
     margin-top: 0;
 }
 
-
-
-
-
 header {
     display: flex;
     justify-content: space-between;
@@ -70,8 +66,6 @@ nav li a {
     text-align: center;
     text-decoration: none;
     text-shadow: 0 0 10px black;
-
-
 }
 
 #nav1 {
@@ -81,7 +75,6 @@ nav li a {
 #nav2 {
     margin-right: 15px;
 }
-
 
 #nav1 li a {
     padding: 14px 10px;
@@ -110,18 +103,6 @@ nav li a {
     margin-bottom: 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 #availability, #search, #view, #filter, #explore-rooms, #error-msg, #room-review {
     display: flex;
     justify-content: center;
@@ -141,7 +122,6 @@ nav li a {
     color: white;
     margin-bottom: 0;
     padding-bottom: 0;
-
 }
 
 #availability {
@@ -182,12 +162,9 @@ nav li a {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     padding: 0;
     margin: 0;
-
 }
-
 
 #login-form label {
     margin-bottom: 10px;
@@ -201,19 +178,6 @@ nav li a {
     width: 230px;
     font-size: 18px;
 }
-
-/*
-#transaction-form input {
-    font-size: 16px;
-    width: 230px;
-    background-color: black;
-    color: #a2a2a2;
-    border: none;
-}
-
- */
-
-
 
 #transaction-form label, #transaction-form p {
     font-weight: bold;
@@ -235,20 +199,13 @@ nav li a {
     margin-top: 5px;
 }
 
-
-
-
-
 #checkin, #checkout, #review-details {
     display: flex;
     justify-content: center;
     align-items: center;
     padding-top: 0;
     padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-right: 20px;
-    margin-left: 20px;
+    margin: 0 20px;
 }
 
 #nights {
@@ -305,27 +262,17 @@ nav li a {
     padding: 40px;
 }
 
-
-
 #rooms-title {
     padding: 50px 40px 40px;
 }
 
 #review-title, #date, #guests, #price, #confirm, #confirm-box, #submit-title, #complete-title, #success-msg {
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-bottom: 0;
-    padding-top: 0;
+    padding: 0 40px;
 }
 
 #results-title {
-    padding-right: 40px;
-    padding-left: 40px;
-    padding-bottom: 0px;
-    padding-top: 25px;
+    padding: 25px 40px 0;
 }
-
-
 
 #rooms, #dinner, #grounds, #about-grounds {
     display: flex;
@@ -361,10 +308,7 @@ nav li a {
 }
 
 .divider {
-    padding-top: 10px;
-    padding-right: 40px;
-    padding-left: 40px;
-    padding-bottom: 20px;
+    padding: 10px 40px 20px;
 }
 
 #room-img, #dinner-img, #grounds-img {
@@ -520,7 +464,6 @@ hr {
     font-size: 16px;
 }
 
-
 #search-form input {
     width: 350px;
 }
@@ -570,8 +513,6 @@ hr {
     margin-left: 20px;
     margin-right: 30px;
 }
-
-
 
 #availability-form button, #search-btn, #view-btn, #filter-btn, #filter-btn1, #filter-btn2, #filter-btn3,
 #filter-btn4, #filter-btn5, #filter-btn6, #room-btn, #dinner-btn, #grounds-btn, #confirm-btn, #cancel-btn,
@@ -633,16 +574,12 @@ hr {
     border-radius: 15px;
 }
 
-
-
-
 #availability-form button:hover, #search-btn:hover, #room-btn:hover,
 #dinner-btn:hover, #grounds-btn:hover, #filter-btn:hover, #clear-btn1:hover, #clear-btn2:hover,
 #login-btn:hover {
     background-color: #1c1212;
     box-shadow: #424242 1px 1px 2px;
 }
-
 
 #room-btn, #dinner-btn, #grounds-btn {
     margin-top: 20px;
@@ -688,12 +625,8 @@ hr {
     width: 60%;
     margin-left: auto;
     margin-right: auto;
-    padding-top: 40px;
-    padding-right: 40px;
-    padding-left: 40px;
-    padding-bottom: 0;
+    padding: 40px 40px 0;
     color: #a8a7a7;
-
 }
 
 #tile-view {
@@ -713,9 +646,7 @@ hr {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-
     border: #545454 1px solid;
-
     background-color: #171717;
     box-shadow: #343434 0 0 10px;
     width: 90%;
@@ -805,7 +736,6 @@ hr {
 #num-results {
     font-size: 25px;
 }
-
 
 #room-detail {
     position: fixed;
@@ -976,9 +906,7 @@ hr {
     height: 50%;
     margin-left: auto;
     margin-right: 10px;
-
 }
-
 
 #close-btn {
     color: #d7be8a;
