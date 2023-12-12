@@ -28,7 +28,8 @@ const loginUrl = 'src/html/login.html';
         });
         id('previous-btn').addEventListener('click', () => {
             filter("previous")
-            retrieveReservations('past-reservations');
+            // retrieveReservations('past-reservations');
+            displayError("No reservations found");
         });
         id('sign-out-btn').addEventListener('click', logout);
     }   
@@ -126,7 +127,7 @@ const loginUrl = 'src/html/login.html';
         .then(res => res.json())
         .then(res => {
             if(res.length === 0) {
-                displayError("No reservations found");
+                displayError("No reservations found", endpoint);
             } else {
                 displayReservations(res, endpoint);
             }
@@ -135,8 +136,22 @@ const loginUrl = 'src/html/login.html';
         .catch(displayError);
     }
 
-    function displayError(e){
-        let reservationDisplay = document.getElementById("upcoming");
+    /**
+     * Even wehn tables are empty (no reservations found), server sends back a empty json [],
+     * this is to prevent appending empty json data. Additonally since previous reservations arent being saved
+     * this is to prevent website from crashing, when the search query fails.
+     * @param {*} e error msg returned from server
+     * @param {*} endpoint determines which display will appear
+     */
+    function displayError(e, endpoint){
+        let reservationDisplay = "";
+        if (endpoint === "future-reservations") {
+            reservationDisplay = document.getElementById("upcoming");    
+        } else {
+            reservationDisplay = document.getElementById("previous");
+        
+        }
+
         reservationDisplay.innerHTML = "";
         let msg = gen("p");
         msg.textContent = e;
@@ -169,14 +184,22 @@ const loginUrl = 'src/html/login.html';
      * @param {*} data 
      */
     function displayReservations(data, endpoint) {
-        let reservationDisplay = document.getElementById("upcoming");
-        reservationDisplay.innerHTML = "";
+        let reservationDisplay = "";
         let filter = gen("h1");
         if (endpoint === "future-reservations") {
-            filter.textContent = "Upcoming Reservations";
+            reservationDisplay = document.getElementById("upcoming"); 
+            filter.textContent = "Upcoming Reservations";   
         } else {
+            reservationDisplay = document.getElementById("previous");
             filter.textContent = "Previous Reservations";
         }
+        reservationDisplay.innerHTML = "";
+      
+        // if (endpoint === "future-reservations") {
+        //     filter.textContent = "Upcoming Reservations";
+        // } else {
+        //     filter.textContent = "Previous Reservations";
+        // }
         appendElement(reservationDisplay, filter);
 
         data.forEach(reservation => {
