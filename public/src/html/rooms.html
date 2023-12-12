@@ -95,6 +95,11 @@
                     <button id="filter-btn6" type="button" class="button">Hide Views</button>
                 </section>
             </section>
+            <section id="filter-msg-box">
+                <section id="filter-msg">
+                    <p id="filter-message-text">Filter rooms using the buttons above</p>
+                </section>
+            </section>
             <section id="search-section" class="hidden">
                 <section id="search-title">
                     <hr><h3>Keyword Search</h3><hr>
@@ -117,26 +122,26 @@
                         <section id="room-type">
                             <h3>Room Type:</h3>
                             <section id="room-type-options">
-                                <label><input value="economy" type="checkbox" name="type"> Economy</label>
-                                <label><input value="standard" type="checkbox" name="type"> Standard</label>
-                                <label><input value="deluxe" type="checkbox" name="type"> Deluxe</label>
-                                <label><input value="suite" type="checkbox" name="type"> Suite</label>
+                                <label><input value="Economy" type="radio" name="type"> Economy</label>
+                                <label><input value="Standard" type="radio" name="type"> Standard</label>
+                                <label><input value="Deluxe" type="radio" name="type"> Deluxe</label>
+                                <label><input value="Suite" type="radio" name="type"> Suite</label>
                             </section>
                         </section>
                         <section id="bed-type">
                             <h3>Bed Type:</h3>
                             <section id="bed-type-options">
-                                <label><input value="twin" type="checkbox" name="bed"> Twin</label>
-                                <label><input value="full" type="checkbox" name="bed"> Full</label>
-                                <label><input value="queen" type="checkbox" name="bed"> Queen</label>
-                                <label><input value="king" type="checkbox" name="bed"> King</label>
+                                <label><input value="Twin" type="radio" name="bed"> Twin</label>
+                                <label><input value="Full" type="radio" name="bed"> Full</label>
+                                <label><input value="Queen" type="radio" name="bed"> Queen</label>
+                                <label><input value="King" type="radio" name="bed"> King</label>
                             </section>
                         </section>
                         <section id="bed-count">
                             <h3>Bed Count:</h3>
                             <section id="bed-count-options">
-                                <label><input value="1" type="checkbox" name="count"> One</label>
-                                <label><input value="2" type="checkbox" name="count"> Two</label>
+                                <label><input value="1" type="radio" name="count"> One</label>
+                                <label><input value="2" type="radio" name="count"> Two</label>
                             </section>
                         </section>
                         <button id="filter-btn" type="submit">Apply Filters</button>

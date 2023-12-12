@@ -17,6 +17,62 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(multer().none());
 
+/**
+ * Takes values and checks if they exist and aren't empty.
+ * @param input Value(s). Rare occasion where I appreciate javascript having dynamic typing.
+ * @returns {boolean} Whether or not the values are empty.
+ */
+function isEmpty(...input) {
+    for (const val of input) {
+        if (val === null || val === undefined || val.length === 0 || val === 'null') {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Generates a random 16 digit integer (as a string) and inserts it for the given user.
+ * Yes, I know labels are frowned upon. This could be re-written in a number of ways to avoid it, but frankly I think
+ * this is the cleanest option that I've considered.
+ * @param base A database connection.
+ * @param user The user to give a sessionId to.
+ * @returns {Promise<string>} The unique sessionId.
+ */
+async function createSessionId(base, user) {
+    let sessionId = Math.random().toString().substring(2, 18);
+    let query = "SELECT sessionid FROM users";
+    let ids = await base.all(query);
+    let safe = false;
+    checkLoop: while (!safe) {
+        for (const val of ids) {
+            if (val["sessionid"] === sessionId) {
+                sessionId = Math.random().toString().substring(2, 18);
+                continue checkLoop;
+            }
+        }
+        safe = true;
+    }
+
+    let insertion = "UPDATE users SET sessionid=? WHERE user=?";
+    await base.run(insertion, [sessionId, user], (error) => {
+        if (error) {
+            console.log("Does this ever trigger?");
+        }
+    });
+    return sessionId
+}
+
+/**
+ * Returns a (promise for a) database connection.
+ * @returns {Promise<Database<Database, Statement>>} Promise for a database connection.
+ */
+async function getDBConnection() {
+    return await sqlite.open({
+        filename: 'overlook-hotel.db', driver: sqlite3.Database
+    });
+}
+
 app.post("/create-user-full", async (req, res) => {
     if (isEmpty(req.body.username, req.body.password, req.body.name, req.body.email, req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code)) {
         return res.status(400).send("Missing a required parameter");
@@ -26,6 +82,7 @@ app.post("/create-user-full", async (req, res) => {
     if(res.statusCode === 200){
         let info = await newUserInfo(base, req, res);
     }
+    res.status(200).send()
     await base.close();
 });
 
@@ -36,7 +93,7 @@ async function newUser(base, req, res){
     } catch (error) {
         res.status(500);
     }
-    res.status(200);
+    res.status(200).send("New user successfully created");
 }
 
 async function newUserInfo(base, req, res){
@@ -85,50 +142,6 @@ app.post("/create-user", async (req, res) => {
         }
     }
     await base.close();
-});
-
-app.post("/update-user-info", async (req, res) => {
-    if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
-        return res.status(400).send("Must be logged in to change user information.");
-    }
-   let statement = "INSERT INTO info (";
-   let params = [];
-   if(req.body.phone){
-       statement += "phone,";
-       params.push(req.body.phone);
-   }
-   if(req.body.address){
-       statement += "address,";
-       params.push(req.body.address);
-   }
-    if(req.body.city){
-        statement += "city,";
-        params.push(req.body.city);
-    }
-    if(req.body.state){
-        statement += "state,";
-        params.push(req.body.state);
-    }
-    if(req.body.code){
-        statement += "code,";
-        params.push(req.body.code);
-    }
-    if(params.length === 0){
-        return res.status(200).send("No valid values given.");
-    }
-    statement = statement.slice(0, -1); //Kills the last comma. What we lose in efficiency, we gain in simplicity.
-    statement += ") VALUES (";
-
-   for(let i= 0; i < params.length - 1;i++){
-       statement += "?, ";
-    }
-   statement += "?)";
-   let base = await getDBConnection();
-   let idQuery = "SELECT id FROM users WHERE user=?";
-   let userID = await base.get(idQuery, [req.cookies.username]);
-   let infoUpdate = await base.run(statement, params);
-   console.log(infoUpdate);
-   res.status(200).send("User information updated successfully.");
 });
 
 /**
@@ -206,31 +219,13 @@ async function activeCheck(base, user, sessionId) {
     return (!isEmpty(result) && result["sessionid"] == sessionId);
 }
 
-/**
- * Returns effectively the entire rooms table.
- */
-app.get("/rooms", async (req, res) => {
-    // let query = "SELECT * FROM rooms";
-    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" + "FROM \"rooms\" r,\"pictures\" p\n" + "WHERE p.\"id\"=r.\"picture\";"
-    let base = await getDBConnection();
-    let rooms = await base.all(query, [], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");
-        }
-    });
-    //Result checking?
-    res.status(200).json(rooms);
-    await base.close();
-});
-
 app.get("/user-info", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(400).send("false");
     }
     let base = await getDBConnection();
     let query = "SELECT * FROM users WHERE user=?";
-    let userInfo = await base.get(query, [], (error) => {
+    let userInfo = await base.get(query, [req.cookies.username], (error) => {
         if (error) {
             console.log("Does this ever trigger?");
             return res.status(500).send("Internal error");
@@ -254,27 +249,8 @@ app.get("/user-all-info", async (req, res) => {
     await base.close();
 });
 
-app.get("/room-info/:number", async (req, res) => {
-    // let query = "SELECT * FROM rooms WHERE number=?";
-    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" + "FROM \"rooms\" r\n" + "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" + "WHERE r.\"number\"=?;";
-    let base = await getDBConnection();
-    let room = await base.get(query, [req.params.number], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");
-        }
-    });
-    if (isEmpty(room)) {
-        res.status(200).send("Room not found.");
-    } else {
-        res.status(200).json(room);
-    }
-    await base.close();
-});
-
 /**
  * Checks if a user is logged in, and then returns all of that users transactions.
- * TODO: Test success and fail conditions.
  */
 app.get("/user-reservations", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
@@ -284,7 +260,12 @@ app.get("/user-reservations", async (req, res) => {
     if (!await activeCheck(base, req.cookies.username, req.cookies.sessionId)) {
         res.status(401).send("No active session found.");
     } else {
-        let query = "SELECT * FROM trans WHERE user=?";
+        // let query = "SELECT * FROM trans WHERE user=?";
+        let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'\n" +
+            "FROM trans t\n" +
+            "JOIN users u ON u.id=t.user\n" +
+            "JOIN rooms r ON r.number=t.room\n" +
+            "WHERE u.user=?";
         let transactions = await base.all(query, [req.cookies.username], (error) => {
             if (error) {
                 console.log("Does this ever trigger?");
@@ -296,29 +277,36 @@ app.get("/user-reservations", async (req, res) => {
     await base.close();
 });
 
-//Subtle issue with a discrepancy between Date.now() being the actual time, and the stored times being standardized
-//part of the day due to rounding and the differences between timezones.
 app.get("/past-reservations", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(401).send("No active session found");
     }
     let base = await getDBConnection();
-    let query = "SELECT * FROM trans WHERE user=? AND WHERE ckout<?";
-    let transactions = await base.all(query, [req.cookies.username, Date.now()])
+    let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'\n" +
+        "FROM trans t\n" +
+        "JOIN users u ON u.id=t.user\n" +
+        "JOIN rooms r ON r.number=t.room\n" +
+        "WHERE u.user=? AND t.ckout<unixepoch('now');";
+    let transactions = await base.all(query, [req.cookies.username, Date.now()]);
+    res.status(200).json(transactions);
+    await base.close();
 });
 
-//Subtle issue with a discrepancy between Date.now() being the actual time, and the stored times being standardized
-//part of the day due to rounding and the differences between timezones.
 app.get("/future-reservations", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(401).send("No active session found");
     }
     let base = await getDBConnection();
-    let query = "SELECT * FROM trans WHERE user=? AND WHERE ckout>?";
-    let transactions = await base.all(query, [req.cookies.username, Date.now()])
+    let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'\n" +
+        "FROM trans t\n" +
+        "JOIN users u ON u.id=t.user\n" +
+        "JOIN rooms r ON r.number=t.room\n" +
+        "WHERE u.user=? AND t.ckout>unixepoch('now');";
+    let transactions = await base.all(query, [req.cookies.username]);
+    res.status(200).json(transactions);
+    await base.close();
 });
 
-//TODO: Make not terrible.
 app.post("/reserve", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId, req.body.room, req.body.checkIn, req.body.checkOut, req.body.occupants)) {
         return res.status(400).send("Missing required information.");
@@ -348,34 +336,187 @@ app.post("/reserve", async (req, res) => {
     await base.close();
 });
 
-app.get("/room-filter", async (req, res) => {
+/**
+ * Returns effectively the entire rooms table.
+ */
+app.get("/rooms", async (req, res) => {
+    // let query = "SELECT * FROM rooms";
+    let query = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
+        "FROM rooms r,pictures p\n" +
+        "WHERE p.id=r.picture;";
     let base = await getDBConnection();
-    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" +
-        "FROM \"rooms\" r\n" +
-        "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" +
-        "WHERE ?<=r.\"max\"\n" +
-        "AND (r.\"number\" NOT IN (\n" +
-        "\tSELECT t.\"room\"\n" +
-        "\tFROM \"trans\" t\n" +
-        "\tWHERE unixepoch(?) BETWEEN t.\"ckin\" AND (t.\"ckout\"-86400))\n" +
+    let rooms = await base.all(query, [], (error) => {
+        if (error) {
+            console.log("Does this ever trigger?");
+            return res.status(500).send("Internal error");
+        }
+    });
+    //Result checking?
+    res.status(200).json(rooms);
+    await base.close();
+});
+
+app.get("/room-info/:number", async (req, res) => {
+    // let query = "SELECT * FROM rooms WHERE number=?";
+    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" + "FROM \"rooms\" r\n" + "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" + "WHERE r.\"number\"=?;";
+    let base = await getDBConnection();
+    let room = await base.get(query, [req.params.number], (error) => {
+        if (error) {
+            console.log("Does this ever trigger?");
+            return res.status(500).send("Internal error");
+        }
+    });
+    if (isEmpty(room)) {
+        res.status(200).send("Room not found.");
+    } else {
+        res.status(200).json(room);
+    }
+    await base.close();
+});
+
+app.get("/room-filter", async (req, res) => {
+    await filter(req.query, res);
+});
+
+app.get("/room-filter/:bedCount/:guests/:roomType/:bedType/:checkin/:checkout", async (req, res) => {
+    await filter(req.params, res);
+});
+
+async function filter(values, res){
+    let params = queryBuilder(values)
+    let query = params.pop();
+    if(params.length < 1){
+        return res.status(400).send("No filter values found.")
+    }
+    // console.log(query);
+    let base = await getDBConnection();
+    let rooms = await base.all(query, params);
+    res.status(200).json(rooms);
+    await base.close();
+}
+
+function queryBuilder(values){
+    let baseQuery = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
+        "FROM rooms r\n" +
+        "JOIN pictures p ON p.id=r.picture\n" +
+        "WHERE";
+    let params = [];
+
+    if(!isEmpty(values.guests)){
+        baseQuery += " r.max>=?";
+        params.push(values.guests);
+    }
+
+    if(!isEmpty(values.bedCount)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.count=?";
+        params.push(values.bedCount);
+    }
+
+    if(!isEmpty(values.roomType)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.type=?";
+        params.push(values.roomType);
+
+    }
+    if(!isEmpty(values.bedType)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.bed=?";
+        params.push(values.bedType);
+    }
+    if(!isEmpty(values.checkIn, values.checkOut)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " (r.number NOT IN (SELECT t.room FROM trans t\n" +
+            "WHERE unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)))\n" +
+            "AND (r.number NOT IN (SELECT t.room FROM trans t\n" +
+            "WHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400)))";
+        // baseQuery += " (r.number IN (SELECT t.room FROM trans t WHERE unixepoch(?) >= t.ckout))\n" +
+        //     "OR (r.number IN (SELECT t.room FROM trans t WHERE unixepoch(?) <= t.ckin))";
+        params.push(values.checkIn);
+        params.push(values.checkOut);
+    }
+    params.push(baseQuery);
+    return params;
+}
+
+app.get("/available-rooms", async (req, res) => {
+    let base = await getDBConnection();
+    let query = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
+        "FROM rooms r\n" +
+        "JOIN pictures p ON p.id=r.picture\n" +
+        "WHERE ?<=r.max\n" +
+        "AND (r.number NOT IN (\n" +
+        "\tSELECT t.room\n" +
+        "\tFROM trans t\n" +
+        "\tWHERE unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400))\n" +
         ")\n" +
-        "AND (r.\"number\" NOT IN (\n" +
-        "\tSELECT t.\"room\"\n" +
-        "\tFROM \"trans\" t\n" +
-        "\tWHERE (unixepoch(?)-86400) BETWEEN t.\"ckin\" AND (t.\"ckout\"-86400))\n" +
+        "AND (r.number NOT IN (\n" +
+        "\tSELECT t.room\n" +
+        "\tFROM trans t\n" +
+        "\tWHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400))\n" +
         ")";
     let rooms = await base.all(query, [req.query.guests, req.query.checkin, req.query.checkout]);
     res.status(200).json(rooms);
     await base.close();
 });
 
+//TODO: DO NOT USE PAST THIS POINT
+app.post("/update-user-info", async (req, res) => {
+    if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
+        return res.status(400).send("Must be logged in to change user information.");
+    }
+   let statement = "INSERT INTO info (";
+   let params = [];
+   if(req.body.phone){
+       statement += "phone,";
+       params.push(req.body.phone);
+   }
+   if(req.body.address){
+       statement += "address,";
+       params.push(req.body.address);
+   }
+    if(req.body.city){
+        statement += "city,";
+        params.push(req.body.city);
+    }
+    if(req.body.state){
+        statement += "state,";
+        params.push(req.body.state);
+    }
+    if(req.body.code){
+        statement += "code,";
+        params.push(req.body.code);
+    }
+    if(params.length === 0){
+        return res.status(200).send("No valid values given.");
+    }
+    statement = statement.slice(0, -1); //Kills the last comma. What we lose in efficiency, we gain in simplicity.
+    statement += ") VALUES (";
+
+   for(let i= 0; i < params.length - 1;i++){
+       statement += "?, ";
+    }
+   statement += "?)";
+   let base = await getDBConnection();
+   let idQuery = "SELECT id FROM users WHERE user=?";
+   let userID = await base.get(idQuery, [req.cookies.username]);
+   let infoUpdate = await base.run(statement, params);
+   res.status(200).send("User information updated successfully.");
+});
+
 async function availableCheck(base, room, checkIn, checkOut) {
     let availableCheck = "SELECT (ckin,ckout) FROM trans WHERE room=?";
     let reservations = await base.all(availableCheck, [room]);
     let inDate = dateToEpoch(checkIn);
-    console.log(inDate);
     let outDate = dateToEpoch(checkOut);
-    console.log(checkOut);
     let safe = true;
     for (const val in reservations) {
         if (inDate > val["ckin"] && inDate < val["ckout"]) {
@@ -384,23 +525,6 @@ async function availableCheck(base, room, checkIn, checkOut) {
         }
     }
 }
-
-/**
- * Takes values and checks if they exist and aren't empty.
- * @param input Value(s). Rare occasion where I appreciate javascript having dynamic typing.
- * @returns {boolean} Whether or not the values are empty.
- */
-function isEmpty(...input) {
-    for (const val of input) {
-        if (val === null || val === undefined || val.length === 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
-//If not for some specific issues involving time zones, these could be condensed into a single query using auto.
-//Accessing a dummy db in memory would be better than opening a file, but attempts to do so failed for unknown reasons.
 
 /**
  * Takes a number in Unix Epoch time (assumed to be UTC) and converts to ISO 8601 Date format in local time.
@@ -426,48 +550,6 @@ async function dateToEpoch(time) {
     let newTime = await base.get(timeQuery, [time]);
     await base.close();
     return JSON.stringify(newTime["unixepoch(?, 'utc')"]);
-}
-
-/**
- * Generates a random 16 digit integer (as a string) and inserts it for the given user.
- * Yes, I know labels are frowned upon. This could be re-written in a number of ways to avoid it, but frankly I think
- * this is the cleanest option that I've considered.
- * @param base A database connection.
- * @param user The user to give a sessionId to.
- * @returns {Promise<string>} The unique sessionId.
- */
-async function createSessionId(base, user) {
-    let sessionId = Math.random().toString().substring(2, 18);
-    let query = "SELECT sessionid FROM users";
-    let ids = await base.all(query);
-    let safe = false;
-    checkLoop: while (!safe) {
-        for (const val of ids) {
-            if (val["sessionid"] === sessionId) {
-                sessionId = Math.random().toString().substring(2, 18);
-                continue checkLoop;
-            }
-        }
-        safe = true;
-    }
-
-    let insertion = "UPDATE users SET sessionid=? WHERE user=?";
-    await base.run(insertion, [sessionId, user], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-        }
-    });
-    return sessionId
-}
-
-/**
- * Returns a (promise for a) database connection.
- * @returns {Promise<Database<Database, Statement>>} Promise for a database connection.
- */
-async function getDBConnection() {
-    return await sqlite.open({
-        filename: 'overlook-hotel.db', driver: sqlite3.Database
-    });
 }
 
 app.use(express.static('public'));

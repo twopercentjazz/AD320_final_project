@@ -7,47 +7,88 @@
     window.addEventListener("load", init);
 
     function init() {
-
         id("check").addEventListener("click", checkAvailability);
-
         displayRooms().then(rooms => {
             displayList(rooms);
         });
-
         displayRooms().then(rooms => {
             displayTile(rooms);
         });
-
         qsa("#view-form input").forEach(view => view.addEventListener("change", changeView));
-
         id("display-list").addEventListener("click", event => {
             displayRooms().then(rooms => {
                 showListDetails(event, rooms);
             });
         });
-
         id("display-tile").addEventListener("click", event => {
             displayRooms().then(rooms => {
                 showTileDetails(event, rooms);
             });
         });
-
-
-        // test filter return
+        id("clear-btn1").addEventListener("click", clearSearch);
+        id("clear-btn2").addEventListener("click", clearSearch);
+        id("search-btn").addEventListener("click",  function(event) {
+            event.preventDefault();
+            SearchRooms();
+        });
         id("filter-btn").addEventListener('click', function(event) {
             event.preventDefault();
-            let roomType = Array.from(qsa('input[name="room-type"]:checked')).map(e => e.value);
-            let bedType = Array.from(qsa('input[name="bed-type"]:checked')).map(e => e.value);
-            let bedCount = Array.from(qsa('input[name="bed-count"]:checked')).map(e => e.value);
+            filterResults();
+            let roomType = Array.from(qsa('input[name="type"]:checked')).map(e => e.value);
+            let bedType = Array.from(qsa('input[name="bed"]:checked')).map(e => e.value);
+            let bedCount = Array.from(qsa('input[name="count"]:checked')).map(e => e.value);
             let filters = {
-                type: roomType,
-                bed: bedType,
-                count: bedCount
+                bedCount: bedCount,
+                roomType: roomType,
+                bedType: bedType
             };
-            let json = JSON.stringify(filters);
-            console.log(json); // remove test
+            let queryString = Object.entries(filters)
+                .flatMap(([key, values]) => values.map(value => `${key}=${value}`))
+                .join('&');
+            if (!noneChecked()) {
+                fetch("http://localhost:8000/room-filter?" + queryString)
+                    .then(statusCheck)
+                    .then(response => response.json())
+                    .then(response => {
+                        console.log(JSON.stringify(response));
+                        displayList(response);
+                        displayTile(response);
+                    })
+            }
         });
+    }
 
+    function noneChecked() {
+        let checkboxes = qsa('#filter-form input[type="radio"]');
+        for (let checkbox of checkboxes) {
+            if (checkbox.checked) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function filterResults() {
+        if (noneChecked()) {
+            id("filter-message-text").textContent = "Please select at least one filter.";
+        } else {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
+        }
+    }
+
+    function clearSearch() {
+        id("filter-message-text").textContent = "Filter rooms using the buttons above";
+        id("search-bar").value = "";
+        let checkboxes = qsa('#filter-form input[type="radio"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        displayRooms().then(rooms => {
+            displayList(rooms);
+        });
+        displayRooms().then(rooms => {
+            displayTile(rooms);
+        });
     }
 
     async function getRoomList() {
@@ -58,8 +99,7 @@
     }
 
     async function displayRooms() {
-        let rooms = await getRoomList();
-        return rooms;
+        return await getRoomList();
     }
 
     function checkAvailability() {

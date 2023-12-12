@@ -17,7 +17,15 @@
         id("status-room").style.backgroundColor = "darkgrey";
         id("check").addEventListener("click", checkAvailability);
         id("cancel-btn").addEventListener("click",  cancelReview);
-        id("confirm-btn").addEventListener("click", () => confirmReview(user));
+
+
+        id("confirm-btn").addEventListener("click", () => {
+            displayUserData().then(user => {
+                confirmReview(user);
+            });
+        });
+
+
         id("login-btn").addEventListener("click", function(event) {
             event.preventDefault();
             userLogin();
@@ -50,56 +58,47 @@
 
 
 
-        // test var
-        let user =
-            {
-                id: "1",
-                user: "username",
-                code: "password",
-                name: "Chris Nickell",
-                email: "chris@nickell.com",
-                sessionid: "12345"
-            };
+
         // test var
         let testRooms = [
             {
                 id: "1",
-                number: "237",
-                max: "2",
-                type: "Suite",
-                bed: "King",
-                count: "1",
-                rate: "250",
+                number: "100",
+                max: "1",
+                type: "Economy",
+                bed: "Twin",
+                count: "2",
+                rate: "60",
                 picture: "../../assets/img/rooms/suite/1king.png"
             },
             {
                 id: "2",
-                number: "217",
+                number: "108",
                 max: "2",
                 type: "Deluxe",
                 bed: "King",
                 count: "1",
-                rate: "200",
+                rate: "110",
                 picture: "../../assets/img/rooms/deluxe/1king.png"
             },
             {
                 id: "3",
-                number: "115",
-                max: "4",
+                number: "105",
+                max: "2",
                 type: "Standard",
                 bed: "Queen",
-                count: "2",
-                rate: "180",
+                count: "1",
+                rate: "90",
                 picture: "../../assets/img/rooms/standard/2queen.png"
             },
             {
                 id: "4",
-                number: "130",
-                max: "1",
-                type: "Economy",
-                bed: "Twin",
+                number: "109",
+                max: "2",
+                type: "Suite",
+                bed: "King",
                 count: "1",
-                rate: "90",
+                rate: "130",
                 picture: "../../assets/img/rooms/economy/1twin.png"
             }];
 
@@ -118,7 +117,7 @@
         // get confirmation number from server, using test var now
         // show error message on fail
 
-        console.log(isLoggedIn()); //remove test
+
 
 
 
@@ -127,12 +126,9 @@
                 // show success page
                 id("status-submit").style.backgroundColor = "#737373";
                 id("status-done").style.backgroundColor = "darkgrey";
-
                 id("submit").classList.toggle("hidden");
-
                 id("room-booked").classList.toggle("hidden");
                 id("book-room").classList.toggle("hidden");
-
                 id("confirm-msg").textContent = "Booking Receipt";
 
                 // get confirmation number from server, using test var now
@@ -141,11 +137,11 @@
                 id("confirm-number").textContent = confirmationNumber;
 
                 id("confirmation").classList.toggle("hidden");
-
                 id("success").classList.toggle("hidden");
-
                 id("submit-page-buttons").classList.toggle("hidden");
                 id("complete-page-buttons").classList.toggle("hidden");
+                id("submit-text-msg").textContent =
+                    "All work and no play makes for a dull stay. Come play with us!";
                 window.scrollTo(0, 0);
             } else {
                 id("submit-text-msg").textContent = "Please log in to complete your reservation";
@@ -279,12 +275,6 @@
         id("submit-msg").classList.add("hidden");
         id("submit-msg").classList.toggle("hidden");
         window.scrollTo(0, 0);
-
-
-
-        console.log(isLoggedIn()); //remove test
-
-
         isLoggedIn().then(loggedIn => {
             if (loggedIn) {
                 id("confirm-msg").textContent = "Booking Summary";
@@ -298,8 +288,17 @@
                 id("submit-text-msg").textContent = "Must be Logged in to continue";
             }
         });
+    }
 
+    async function getUserData() {
+        return fetch("http://localhost:8000/user-all-info", {method: 'GET'})
+            .then(statusCheck)
+            .then(response => response.json())
+            .catch(console.log);
+    }
 
+    async function displayUserData() {
+        return await getUserData();
     }
 
     async function checkActivity() {
@@ -671,6 +670,13 @@
         roomItem.appendChild(roomRate);
 
         return roomItem;
+    }
+
+    async function statusCheck3(res) {
+        if (!res.ok) {
+            throw new Error(await res.json());
+        }
+        return res;
     }
 
     async function statusCheck2(res) {

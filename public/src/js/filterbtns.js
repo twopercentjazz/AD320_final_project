@@ -9,6 +9,7 @@
     function init() {
         let currFilter = "none";
         id("filter-btn1").addEventListener("click", () => {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
             if (currFilter === "filters") {
                 toggleFilters();
             } else if (currFilter === "views") {
@@ -18,10 +19,12 @@
             currFilter = "search";
         });
         id("filter-btn2").addEventListener("click", () => {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
             toggleSearch();
             currFilter = "none";
         });
         id("filter-btn3").addEventListener("click", () => {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
             if (currFilter === "search") {
                 toggleSearch();
             } else if (currFilter === "views") {
@@ -31,10 +34,12 @@
             currFilter = "filters";
         });
         id("filter-btn4").addEventListener("click", () => {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
             toggleFilters();
             currFilter = "none";
         });
         id("filter-btn5").addEventListener("click", () => {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
             if (currFilter === "filters") {
                 toggleFilters();
             } else if (currFilter === "search") {
@@ -44,6 +49,7 @@
             currFilter = "views";
         });
         id("filter-btn6").addEventListener("click", () => {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
             toggleViews();
             currFilter = "none";
         });
