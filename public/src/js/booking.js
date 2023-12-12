@@ -70,7 +70,7 @@
                 bed: "King",
                 count: "1",
                 rate: "250",
-                picture: "/public/assets/img/rooms/suite/1king.png"
+                picture: "../../assets/img/rooms/suite/1king.png"
             },
             {
                 id: "2",
@@ -80,7 +80,7 @@
                 bed: "King",
                 count: "1",
                 rate: "200",
-                picture: "/public/assets/img/rooms/deluxe/1king.png"
+                picture: "../../assets/img/rooms/deluxe/1king.png"
             },
             {
                 id: "3",
@@ -90,7 +90,7 @@
                 bed: "Queen",
                 count: "2",
                 rate: "180",
-                picture: "/public/assets/img/rooms/standard/2queen.png"
+                picture: "../../assets/img/rooms/standard/2queen.png"
             },
             {
                 id: "4",
@@ -100,7 +100,7 @@
                 bed: "Twin",
                 count: "1",
                 rate: "90",
-                picture: "/public/assets/img/rooms/economy/1twin.png"
+                picture: "../../assets/img/rooms/economy/1twin.png"
             }];
 
         displayList(testRooms);
