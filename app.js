@@ -432,8 +432,6 @@ function queryBuilder(values){
     let params = [];
     if(!isEmpty(values.guests)){
         let guestSnip = " r.max>=?";
-        // baseQuery += " r.max>=?";
-        // params.push(values.guests);
         let vals = valueBuilder(values.guests, params, baseQuery, guestSnip);
         baseQuery = vals[0];
         params = vals[1];
@@ -443,8 +441,6 @@ function queryBuilder(values){
             baseQuery += " AND";
         }
         let roomSnip = " r.type=?";
-        // baseQuery += " r.type=?";
-        // params.push(values.roomType);
         let vals = valueBuilder(values.roomType, params, baseQuery, roomSnip);
         baseQuery = vals[0];
         params = vals[1];
@@ -454,10 +450,16 @@ function queryBuilder(values){
             baseQuery += " AND";
         }
         let bedSnip = " r.bed=?";
-        // baseQuery += " r.bed=?";
-        // params.push(values.bedType);
-
         let vals = valueBuilder(values.bedType, params, baseQuery, bedSnip);
+        baseQuery = vals[0];
+        params = vals[1];
+    }
+    if(!isEmpty(values.bedCount)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        let bedSnip = " r.count=?";
+        let vals = valueBuilder(values.bedCount, params, baseQuery, bedSnip);
         baseQuery = vals[0];
         params = vals[1];
     }
