@@ -4,16 +4,15 @@
 "use strict";
 
 (function() {
-    // test var
-    const confirmationNumber = "000023";
-
-
     window.addEventListener("load", init);
 
     function init() {
-        // check availability on load, using test var now
-
-
+        displayRooms().then(rooms => {
+            displayList(rooms);
+        });
+        displayRooms().then(rooms => {
+            displayTile(rooms);
+        });
         id("status-room").style.backgroundColor = "darkgrey";
         id("check").addEventListener("click", checkAvailability);
         id("cancel-btn").addEventListener("click",  cancelReview);
@@ -24,8 +23,6 @@
                 confirmReview(user);
             });
         });
-
-
         id("login-btn").addEventListener("click", function(event) {
             event.preventDefault();
             userLogin();
@@ -35,117 +32,197 @@
         id("submit-btn").addEventListener("click", submitReservation);
         id("finished-btn").addEventListener("click", finishBooking);
         id("account-btn").addEventListener("click", goToAccount);
-
-
-
-
-
-        // test filter return
-        id("filter-btn").addEventListener('click', function(event) {
-            event.preventDefault();
-            let roomType = Array.from(qsa('input[name="room-type"]:checked')).map(e => e.value);
-            let bedType = Array.from(qsa('input[name="bed-type"]:checked')).map(e => e.value);
-            let bedCount = Array.from(qsa('input[name="bed-count"]:checked')).map(e => e.value);
-            let filters = {
-                type: roomType,
-                bed: bedType,
-                count: bedCount
-            };
-            let json = JSON.stringify(filters);
-            console.log(json); // remove test
+        qsa("#view-form input").forEach(view => view.addEventListener("change", changeView));
+        id("display-list").addEventListener("click", event => {
+            displayRooms().then(rooms => {
+                showListDetails(event, rooms);
+            });
+        });
+        id("display-tile").addEventListener("click", event => {
+            displayRooms().then(rooms => {
+                showTileDetails(event, rooms);
+            });
         });
 
+        id("clear-btn1").addEventListener("click", clearSearch);
+        id("clear-btn2").addEventListener("click", clearSearch);
+        id("filter-btn").addEventListener('click', function(event) {
+            event.preventDefault();
+            filterResults();
+            if (!noneChecked()) {
+                let filters = getCheckedFilters();
+                fetch("http://localhost:8000/room-filter?" + getQueryString(filters))
+                    .then(statusCheck3)
+                    .then(response => response.json())
+                    .then(response => {
+                        console.log(JSON.stringify(response));
+                        displayList(response);
+                        displayTile(response);
+                    })
+            }
+        });
+        id("search-btn").addEventListener('click', function(event) {
+            event.preventDefault();
+            filterResults();
+            if (!isSearchBarEmpty()) {
+                let filters = getSearchFilters(id("search-bar").value.toLowerCase());
+                fetch("http://localhost:8000/room-filter?" + getQueryString(filters))
+                    .then(statusCheck3)
+                    .then(response => response.json())
+                    .then(response => {
+                        console.log(JSON.stringify(response));
+                        displayList(response);
+                        displayTile(response);
+                    })
+            }
+        });
+    }
 
+    async function getRoomList() {
+        let params = "guests=" + window.sessionStorage.getItem("people") + "&checkin=" +
+            window.sessionStorage.getItem("checkin") + "&checkout=" +
+            window.sessionStorage.getItem("checkout");
+        return fetch("http://localhost:8000/available-rooms?" + params)
+            .then(statusCheck3)
+            .then(response => response.json())
+            .catch(console.log);
+    }
 
-
-
-        // test var
-        let testRooms = [
-            {
-                id: "1",
-                number: "100",
-                max: "1",
-                type: "Economy",
-                bed: "Twin",
-                count: "2",
-                rate: "60",
-                picture: "../../assets/img/rooms/suite/1king.png"
-            },
-            {
-                id: "2",
-                number: "108",
-                max: "2",
-                type: "Deluxe",
-                bed: "King",
-                count: "1",
-                rate: "110",
-                picture: "../../assets/img/rooms/deluxe/1king.png"
-            },
-            {
-                id: "3",
-                number: "105",
-                max: "2",
-                type: "Standard",
-                bed: "Queen",
-                count: "1",
-                rate: "90",
-                picture: "../../assets/img/rooms/standard/2queen.png"
-            },
-            {
-                id: "4",
-                number: "109",
-                max: "2",
-                type: "Suite",
-                bed: "King",
-                count: "1",
-                rate: "130",
-                picture: "../../assets/img/rooms/economy/1twin.png"
-            }];
-
-        displayList(testRooms);
-        displayTile(testRooms);
-        qsa("#view-form input").forEach(view => view.addEventListener("change", changeView));
-        id("display-list").addEventListener("click", () => showListDetails(event, testRooms));
-        id("display-tile").addEventListener("click", () => showTileDetails(event, testRooms));
+    async function displayRooms() {
+        return await getRoomList();
     }
 
     function submitReservation(event) {
         event.preventDefault();
-        // process transaction
-        // needs to succeed or fail (POST endpoint)
-        // send form data to server on success
-        // get confirmation number from server, using test var now
-        // show error message on fail
-
-
-
-
-
         isLoggedIn().then(loggedIn => {
             if (loggedIn) {
-                // show success page
-                id("status-submit").style.backgroundColor = "#737373";
-                id("status-done").style.backgroundColor = "darkgrey";
-                id("submit").classList.toggle("hidden");
-                id("room-booked").classList.toggle("hidden");
-                id("book-room").classList.toggle("hidden");
-                id("confirm-msg").textContent = "Booking Receipt";
+                let form = id("transaction-form");
+                let formData = new FormData(form); // Gather the form data
+                let object = {};
+                formData.forEach((value, key) => object[key] = value);
+                let json = JSON.stringify(object);
+                fetch('http://localhost:8000/reserve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: json
+                })
+                    .then(statusCheck)
+                    .then(response => response.text())
+                    .then(data => {
+                        // get confirmation number from server, using test var now
+                        //id("confirm-num").value = data;
+                        id("confirm-text").textContent = data;
+                        id("confirm-number").textContent = data;
+                        // show success page
+                        id("status-submit").style.backgroundColor = "#737373";
+                        id("status-done").style.backgroundColor = "darkgrey";
+                        id("submit").classList.toggle("hidden");
+                        id("room-booked").classList.toggle("hidden");
+                        id("book-room").classList.toggle("hidden");
+                        id("confirm-msg").textContent = "Booking Receipt";
 
-                // get confirmation number from server, using test var now
-                id("confirm-num").value = confirmationNumber;
-                id("confirm-text").textContent = confirmationNumber;
-                id("confirm-number").textContent = confirmationNumber;
-
-                id("confirmation").classList.toggle("hidden");
-                id("success").classList.toggle("hidden");
-                id("submit-page-buttons").classList.toggle("hidden");
-                id("complete-page-buttons").classList.toggle("hidden");
-                id("submit-text-msg").textContent =
-                    "All work and no play makes for a dull stay. Come play with us!";
-                window.scrollTo(0, 0);
+                        id("confirmation").classList.toggle("hidden");
+                        id("success").classList.toggle("hidden");
+                        id("submit-page-buttons").classList.toggle("hidden");
+                        id("complete-page-buttons").classList.toggle("hidden");
+                        id("submit-text-msg").textContent =
+                            "All work and no play makes for a dull stay. Come play with us!";
+                        window.scrollTo(0, 0);
+                    })
+                    .catch(console.log);
             } else {
                 id("submit-text-msg").textContent = "Please log in to complete your reservation";
             }
+        });
+    }
+
+    function getQueryString(filters) {
+        return Object.entries(filters).filter(([key, value]) => value !== undefined)
+            .map(([key, value]) => `${value}`).join('/');
+    }
+
+    function getSearchFilters(inputString) {
+        let bedCountRegex = /(1|2)/g;
+        let roomTypeRegex = /(economy|standard|deluxe|suite)/g;
+        let bedTypeRegex = /(twin|full|queen|king)/g;
+        let bedCount = inputString.match(bedCountRegex);
+        let guests = window.sessionStorage.getItem("people");
+        let roomType = inputString.match(roomTypeRegex);
+        let bedType = inputString.match(bedTypeRegex);
+        let checkin = window.sessionStorage.getItem("checkin");
+        let checkout = window.sessionStorage.getItem("checkout");
+        return {
+            bedCount: bedCount ? bedCount[0] : undefined,
+            guests: guests,
+            roomType: roomType ? capitalizeFirstLetter(roomType[0]) : undefined,
+            bedType: bedType ? capitalizeFirstLetter(bedType[0]) : undefined,
+            checkin: checkin,
+            checkout: checkout
+        }
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
+    function getCheckedFilters() {
+        let bedCount = Array.from(qsa('input[name="count"]:checked')).map(e => e.value);
+        let guests = window.sessionStorage.getItem("people");
+        let roomType = Array.from(qsa('input[name="type"]:checked')).map(e => e.value);
+        let bedType = Array.from(qsa('input[name="bed"]:checked')).map(e => e.value);
+        let checkin = window.sessionStorage.getItem("checkin");
+        let checkout = window.sessionStorage.getItem("checkout");
+
+        return  {
+            bedCount: bedCount,
+            guests: guests,
+            roomType: roomType,
+            bedType: bedType,
+            checkin: checkin,
+            checkout: checkout
+        };
+    }
+
+    function noneChecked() {
+        let checkboxes = qsa('#filter-form input[type="radio"]');
+        for (let checkbox of checkboxes) {
+            if (checkbox.checked) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function isSearchBarEmpty() {
+        let searchBar = id("search-bar").value;
+        if (searchBar === "") {
+            return true;
+        }
+        return false;
+    }
+
+    function filterResults() {
+        if (noneChecked()) {
+            id("filter-message-text").textContent = "Please select at least one filter.";
+        } else {
+            id("filter-message-text").textContent = "Filter rooms using the buttons above";
+        }
+    }
+
+    function clearSearch() {
+        id("filter-message-text").textContent = "Filter rooms using the buttons above";
+        id("search-bar").value = "";
+        let checkboxes = qsa('#filter-form input[type="radio"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        displayRooms().then(rooms => {
+            displayList(rooms);
+        });
+        displayRooms().then(rooms => {
+            displayTile(rooms);
         });
     }
 
@@ -199,17 +276,10 @@
     }
 
     function userLogin(){
-
         let params = {
             'username': id('username').value,
             'password': id('password').value
         };
-
-
-
-        //let params = new FormData();
-        //params.append('username', id('username').value);
-        //params.append('password', id('password').value);
         fetch("http://localhost:8000/login", {
             method: 'POST',
             headers: {
@@ -253,7 +323,7 @@
         id("confirm-room").classList.toggle("hidden");
 
         //set transaction form
-        id("curr-date").value = getTodayDate();
+        //id("curr-date").value = getTodayDate();
         id("date-text").textContent = formatDate(getTodayDate());
         id("room-num-text").textContent = window.sessionStorage.getItem("room");
         id("room").value = window.sessionStorage.getItem("room");
@@ -267,11 +337,11 @@
         id("length-text").textContent = getNights();
         id("rate-text").textContent = "$" + window.sessionStorage.getItem("rate") + "/night";
         id("cost-text").textContent = "$" + window.sessionStorage.getItem("cost");
-        id("cost").value = window.sessionStorage.getItem("cost");
+        //id("cost").value = window.sessionStorage.getItem("cost");
         id("name-text").textContent = user.name;
         id("email-text").textContent = user.email;
         id("user-text").textContent = user.user;
-        id("user").value = user.user;
+        //id("user").value = user.user;
         id("submit-msg").classList.add("hidden");
         id("submit-msg").classList.toggle("hidden");
         window.scrollTo(0, 0);
@@ -368,8 +438,12 @@
             window.sessionStorage.setItem("checkin", checkin);
             window.sessionStorage.setItem("checkout", checkout);
             window.sessionStorage.setItem("people", people);
-
-            // get available rooms from server, using test var now
+            displayRooms().then(rooms => {
+                displayList(rooms);
+            });
+            displayRooms().then(rooms => {
+                displayTile(rooms);
+            });
         }
     }
     function isValidCheckin(checkin, checkout) {

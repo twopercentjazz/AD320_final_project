@@ -111,6 +111,11 @@
                         <button id="filter-btn6" type="button" class="button">Hide Views</button>
                     </section>
                 </section>
+                <section id="filter-msg-box">
+                    <section id="filter-msg">
+                        <p id="filter-message-text">Filter rooms using the buttons above</p>
+                    </section>
+                </section>
                 <section id="search-section" class="hidden">
                     <section id="search-title">
                         <hr><h3>Keyword Search</h3><hr>
@@ -133,26 +138,26 @@
                             <section id="room-type">
                                 <h3>Room Type:</h3>
                                 <section id="room-type-options">
-                                    <label><input value="economy" type="checkbox" name="room-type"> Economy</label>
-                                    <label><input value="standard" type="checkbox" name="room-type"> Standard</label>
-                                    <label><input value="deluxe" type="checkbox" name="room-type"> Deluxe</label>
-                                    <label><input value="suite" type="checkbox" name="room-type"> Suite</label>
+                                    <label><input value="Economy" type="radio" name="type"> Economy</label>
+                                    <label><input value="Standard" type="radio" name="type"> Standard</label>
+                                    <label><input value="Deluxe" type="radio" name="type"> Deluxe</label>
+                                    <label><input value="Suite" type="radio" name="type"> Suite</label>
                                 </section>
                             </section>
                             <section id="bed-type">
                                 <h3>Bed Type:</h3>
                                 <section id="bed-type-options">
-                                    <label><input value="twin" type="checkbox" name="bed-type"> Twin</label>
-                                    <label><input value="full" type="checkbox" name="bed-type"> Full</label>
-                                    <label><input value="queen" type="checkbox" name="bed-type"> Queen</label>
-                                    <label><input value="king" type="checkbox" name="bed-type"> King</label>
+                                    <label><input value="Twin" type="radio" name="bed"> Twin</label>
+                                    <label><input value="Full" type="radio" name="bed"> Full</label>
+                                    <label><input value="Queen" type="radio" name="bed"> Queen</label>
+                                    <label><input value="King" type="radio" name="bed"> King</label>
                                 </section>
                             </section>
                             <section id="bed-count">
                                 <h3>Bed Count:</h3>
                                 <section id="bed-count-options">
-                                    <label><input value="1" type="checkbox" name="bed-type"> One</label>
-                                    <label><input value="2" type="checkbox" name="bed-type"> Two</label>
+                                    <label><input value="1" type="radio" name="count"> One</label>
+                                    <label><input value="2" type="radio" name="count"> Two</label>
                                 </section>
                             </section>
                             <button id="filter-btn" type="submit">Apply Filters</button>
@@ -269,25 +274,29 @@
                     <section id="trans-form" class="hidden">
                         <form id="transaction-form">
                             <section id="top-item" class="line-item">
-                                <label for="curr-date">Transaction Date:</label>
+                                <label for="date-text">Transaction Date:</label>
+                                <!--
                                 <div class="hidden">
                                     <input type="text" id="curr-date" class="item" name="date">
                                 </div>
+                                -->
                                 <p id="date-text"></p>
                             </section>
                             <section id="confirmation" class="hidden">
                                 <section class="line-item">
-                                    <label for="confirm-num">Confirmation Number:</label>
+                                    <label for="confirm-text">Confirmation Number:</label>
+                                    <!--
                                     <div class="hidden">
                                         <input type="text" id="confirm-num" class="item" name="confirm">
                                     </div>
+                                    -->
                                     <p id="confirm-text"></p>
                                 </section>
                             </section>
                             <section id="room-info" class="line-item">
                                 <label for="room">Room Number:</label>
                                 <div class="hidden">
-                                    <input type="text" id="room" class="item" name="room">
+                                    <input type="text" id="room" class="item" name="room" required>
                                 </div>
                                 <p id="room-num-text"></p>
                             </section>
@@ -298,21 +307,21 @@
                             <section class="line-item">
                                 <label for="occupants">Number of Guests:</label>
                                 <div class="hidden">
-                                    <input type="text" id="occupants" class="item" name="occupants">
+                                    <input type="text" id="occupants" class="item" name="occupants" required>
                                 </div>
                                 <p id="occupants-text"></p>
                             </section>
                             <section class="line-item">
                                 <label for="ckin">Check-In Date:</label>
                                 <div class="hidden">
-                                    <input type="text" id="ckin" class="item" name="ckin">
+                                    <input type="text" id="ckin" class="item" name="checkIn" required>
                                 </div>
                                 <p id="ckin-text"></p>
                             </section>
                             <section class="line-item">
                                 <label for="ckout">Check-Out Date:</label>
                                 <div class="hidden">
-                                    <input type="text" id="ckout" class="item" name="ckout">
+                                    <input type="text" id="ckout" class="item" name="checkOut" required>
                                 </div>
                                 <p id="ckout-text"></p>
                             </section>
@@ -325,17 +334,21 @@
                                 <p id="length-text"></p>
                             </section>
                             <section class="line-item">
-                                <label for="cost">Total Cost:</label>
+                                <label for="cost-text">Total Cost:</label>
+                                <!--
                                 <div class="hidden">
                                     <input type="text" id="cost" class="item" name="cost">
                                 </div>
+                                -->
                                 <p id="cost-text"></p>
                             </section>
                             <section id="user-info" class="line-item">
-                                <label for="user">Username:</label>
+                                <label for="user-text">Username:</label>
+                                <!--
                                 <div class="hidden">
                                     <input type="text" id="user" class="item" name="user">
                                 </div>
+                                -->
                                 <p id="user-text"></p>
                             </section>
                             <section class="line-item">

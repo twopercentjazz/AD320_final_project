@@ -27,26 +27,12 @@
         });
         id("clear-btn1").addEventListener("click", clearSearch);
         id("clear-btn2").addEventListener("click", clearSearch);
-        id("search-btn").addEventListener("click",  function(event) {
-            event.preventDefault();
-            SearchRooms();
-        });
         id("filter-btn").addEventListener('click', function(event) {
             event.preventDefault();
             filterResults();
-            let roomType = Array.from(qsa('input[name="type"]:checked')).map(e => e.value);
-            let bedType = Array.from(qsa('input[name="bed"]:checked')).map(e => e.value);
-            let bedCount = Array.from(qsa('input[name="count"]:checked')).map(e => e.value);
-            let filters = {
-                bedCount: bedCount,
-                roomType: roomType,
-                bedType: bedType
-            };
-            let queryString = Object.entries(filters)
-                .flatMap(([key, values]) => values.map(value => `${key}=${value}`))
-                .join('&');
             if (!noneChecked()) {
-                fetch("http://localhost:8000/room-filter?" + queryString)
+                let filters = getCheckedFilters();
+                fetch("http://localhost:8000/room-filter?" + getQueryString(filters))
                     .then(statusCheck)
                     .then(response => response.json())
                     .then(response => {
@@ -56,6 +42,59 @@
                     })
             }
         });
+        id("search-btn").addEventListener('click', function(event) {
+            event.preventDefault();
+            filterResults();
+            if (!isSearchBarEmpty()) {
+                let filters = getSearchFilters(id("search-bar").value.toLowerCase());
+                fetch("http://localhost:8000/room-filter?" + getQueryString(filters))
+                    .then(statusCheck)
+                    .then(response => response.json())
+                    .then(response => {
+                        console.log(JSON.stringify(response));
+                        displayList(response);
+                        displayTile(response);
+                    })
+            }
+        });
+
+
+
+
+    }
+
+    function getQueryString(filters) {
+        return Object.entries(filters).filter(([key, value]) => value !== undefined)
+            .map(([key, value]) => `${key}=${value}`).join('&');
+    }
+
+    function getSearchFilters(inputString) {
+        let bedCountRegex = /(1|2)/g;
+        let roomTypeRegex = /(economy|standard|deluxe|suite)/g;
+        let bedTypeRegex = /(twin|full|queen|king)/g;
+        let bedCount = inputString.match(bedCountRegex);
+        let roomType = inputString.match(roomTypeRegex);
+        let bedType = inputString.match(bedTypeRegex);
+        return {
+            bedCount: bedCount ? bedCount[0] : undefined,
+            roomType: roomType ? capitalizeFirstLetter(roomType[0]) : undefined,
+            bedType: bedType ? capitalizeFirstLetter(bedType[0]) : undefined
+        }
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
+    function getCheckedFilters() {
+        let roomType = Array.from(qsa('input[name="type"]:checked')).map(e => e.value);
+        let bedType = Array.from(qsa('input[name="bed"]:checked')).map(e => e.value);
+        let bedCount = Array.from(qsa('input[name="count"]:checked')).map(e => e.value);
+        return  {
+            bedCount: bedCount,
+            roomType: roomType,
+            bedType: bedType
+        };
     }
 
     function noneChecked() {
@@ -66,6 +105,14 @@
             }
         }
         return true;
+    }
+
+    function isSearchBarEmpty() {
+        let searchBar = id("search-bar").value;
+        if (searchBar === "") {
+            return true;
+        }
+        return false;
     }
 
     function filterResults() {
