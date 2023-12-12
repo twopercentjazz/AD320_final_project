@@ -81,9 +81,8 @@ nav {
     margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
-    width: 620px;
+    width: 700px;
     height: 650px;
-    border: 5px solid black;
     overflow-y: auto;
 }
 
@@ -106,3 +105,41 @@ p {
 #profile-btn.active, #reservations-btn.active,#payment-btn.active, #settings-btn.active {
     display: block;
 }
+
+.reservation-card {
+   width: 640px;
+   height: 100px;
+   background-color: white; 
+   display: flex;
+   justify-content: space-evenly;
+   margin-bottom: 10px;
+   border-radius: 10px;
+}
+
+.reservation-display {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.top {
+    margin-bottom: 10px;
+}
+
+.top > div{
+    display: flex;
+    gap: 50px;
+}
+
+.top > div > div > p {
+    margin: 0px 0;
+}
+
+.bottom > div {
+    display: flex;
+    gap: 50px;
+}
+
+.bottom > div > div > p {
+    margin: 0px 0;
+}
+
