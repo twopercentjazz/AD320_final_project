@@ -1,0 +1,115 @@
+<!--
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
+        <link rel="stylesheet" href="../css/login.css">
+        <script src="../js/login.js"></script>
+        <title>Login</title>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <!-- Copy chris nav here -->
+                <button id="testlogout">Join</button>
+                <button id="login-btn">Login</button>
+            </nav>
+        </header>
+
+        <main>
+            <form id="register">
+                <h1>Register</h1>
+                <p>* Indicates Required Field</p>
+                <p id="register-error"></p>
+                <div id="register-body">
+                    <div class="required-inputs">
+                        <div>
+                            <label for="first-name">First name *</label>
+                            <input type="text" id="first-name" pattern="[A-za-z]+" required>
+                        </div>
+                        <div>
+                            <label for="last-name">Last name *</label>
+                            <input type="text" id="last-name" pattern="[A-za-z]+" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="email">Email address *</label>
+                            <input type="text" id="email" required>
+                        </div>
+                        <div>
+                            <label for="verify-email">Verify email address *</label>
+                            <input type="text" id="verify-email" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="pw">Password *</label>
+                            <input type="text" id="pw" required>
+                        </div>
+                        <div>
+                            <label for="verify-pw">Verify password *</label>
+                            <input type="text" id="verify-pw" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="user">Username *</label>
+                            <input type="text" id="user" required>
+                        </div>
+                        <div>
+                            <label for="phone-num">Mobile number *</label>
+                            <input type="text" id="phone-num" minlength="10" maxlength="10" pattern="[0-9]+" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="state">State *</label>
+                            <input type="text" id="state" pattern="[A-za-z]+" minlength="2" maxlength="2" required>
+                        </div>
+                        <div>
+                            <label for="city">City/Town *</label>
+                            <input type="text" id="city" pattern="[A-za-z]+" required>
+                        </div>
+                    </div>
+                    <div class="required-inputs">
+                        <div>
+                            <label for="address">Steet address *</label>
+                            <input type="text" id="address" required>
+                        </div>
+                        <div>
+                            <label for="code">Postal code *</label>
+                            <input type="text" id="code" minlength="5" maxlength="5" pattern="[0-9]+"required>
+                        </div>
+                    </div>
+                    <button id="register-btn">Register</button>
+                </div>
+            </form>
+            <div id="popup">
+                <div id="popup-body">
+                    <form id="login">
+                        <div class="column">
+                            <h1>Please Sign in</h1>
+                            <label for="username">Username</label>
+                            <input type="text" id="username" autocomplete="username" required>
+                            <label for="user-pw">Password</label>
+                            <input type="password" id="user-pw" required>
+                            <button id="sign-in-button">Sign in</button>
+                            <div>
+                                <p>Not a member? <a href="login.html">Sign Up</a></p>
+                                <p id="login-error"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+
+        </footer>
+    </body>
+</html>
