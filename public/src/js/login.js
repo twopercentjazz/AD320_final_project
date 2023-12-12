@@ -21,7 +21,7 @@ const account = 'src/html/account.html';
         id('popup').addEventListener('click', e => {
             if(e.target === id('popup')) {
                 id('popup').style.display ='none';
-        }
+            }
         });
         id('register').addEventListener('submit', e => {
             e.preventDefault();
@@ -69,7 +69,6 @@ const account = 'src/html/account.html';
     */
     function errorMsg(input, condition, msg) {
         let validityState = input.validity;
-
         if (validityState.valueMissing) {
             input.setCustomValidity('Required field');
         } else if (condition) {

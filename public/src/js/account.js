@@ -131,7 +131,6 @@ const loginUrl = 'src/html/login.html';
             } else {
                 displayReservations(res, endpoint);
             }
-            
         })
         .catch(displayError);
     }
@@ -149,9 +148,7 @@ const loginUrl = 'src/html/login.html';
             reservationDisplay = document.getElementById("upcoming");    
         } else {
             reservationDisplay = document.getElementById("previous");
-        
         }
-
         reservationDisplay.innerHTML = "";
         let msg = gen("p");
         msg.textContent = e;
@@ -195,11 +192,6 @@ const loginUrl = 'src/html/login.html';
         }
         reservationDisplay.innerHTML = "";
       
-        // if (endpoint === "future-reservations") {
-        //     filter.textContent = "Upcoming Reservations";
-        // } else {
-        //     filter.textContent = "Previous Reservations";
-        // }
         appendElement(reservationDisplay, filter);
 
         data.forEach(reservation => {
