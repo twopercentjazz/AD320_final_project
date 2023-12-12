@@ -12,19 +12,40 @@
     </head>
     <body>
         <header>
-            <nav>
-                <!-- Copy chris nav here -->
-                <button id="testlogout">Join</button>
-                <button id="login-btn">Login</button>
-            </nav>
+            <a id="logo-box" href="index.html">
+                <img id="logo" src="../../assets/img/overlook-logo.png" alt="overlook-logo">
+                <p>Overlook Hotel</p>
+            </a>
+            <section id="navigation">
+                <nav id="nav1">
+                    <ul>
+                        <li><p id="login-btn">Login</p></li>
+                        <li><a id="nullLink" href="">|</a></li>
+                        <li><a id="link2" href="login.html">Join</a></li>
+                    </ul>
+                </nav>
+                <nav id="nav2">
+                    <ul>
+                        <li><a href="src/html/amenities.html">Play</a></li>
+                        <li><a href="src/html/dinning.html">Dine</a></li>
+                        <li><a href="src/html/rooms.html">Stay</a></li>
+                        <li><a id="curr-page" href="index.html">Home</a></li>
+                    </ul>
+                </nav>
+            </section>
         </header>
 
         <main>
+            <section id="hotel-name">
+                <P>OVERLOOK HOTEL</P>
+                <section id="hotel-title">
+                    <hr><h1>Register</h1><hr>
+                </section>
+            </section>
             <form id="register">
-                <h1>Register</h1>
-                <p>* Indicates Required Field</p>
-                <p id="register-error"></p>
                 <div id="register-body">
+                    <p>* Indicates Required Field</p>
+                    <p id="register-error"></p>
                     <div class="required-inputs">
                         <div>
                             <label for="first-name">First name *</label>

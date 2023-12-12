@@ -1,32 +1,197 @@
 /*
- *
- */
+*
+*/
+
+/* body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+} */
+
+body, button {
+    font-family: 'Poiret One', serif;
+}
+
+#login-btn:hover {
+    cursor: pointer;
+}
 
 body {
+    background-color: #0e0e0e;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    background-image: url("../../assets/img/carpet-pattern.png");
+    background-size: cover;
+    padding: 10px;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+#logo {
+    width: 130px;
+    height: 60px;
+    margin-left: 15px;
+}
+
+#navigation {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+nav {
+    background-color: rgba(0, 0, 0, 0);
+    overflow: hidden;
+    margin: 0 10px 0 0;
+}
+
+nav ul {
+    list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-/* temp nav */
-nav {
-    /* copy chris nav styling here */
-    background-color: #555;
-    padding: 30px;
-    display: flex;
-    justify-content: right;
+nav li {
+    float: right;
+    display: inline;
 }
 
+nav li a {
+    display: block;
+    color: #e0c99b;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 10px black;
+}
 
+nav li p {
+    display: block;
+    color: #e0c99b;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 10px black;
+}
+
+#nav1 {
+    margin-right: 20px;
+}
+
+#nav2 {
+    margin-right: 15px;
+}
+
+#nav1 li a {
+    padding: 14px 10px;
+    font-size: 20px;
+}
+
+    #nav1 li p {
+        margin-top: -1px;
+        padding: 14px 10px;
+        font-size: 20px;
+    }
+
+#nav2 li a {
+    padding: 14px 16px;
+    font-size: 24px;
+}
+
+#logo-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #e0c99b;
+    font-size: 20px;
+    text-decoration: none;
+    padding: 10px;
+}
+
+#logo-box p {
+    margin-left: 16px;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+#hotel-name {
+    /* margin-top: 170px; */
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+
+    box-shadow: black 0 0 10px;
+    background-color: black;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 40px;
+    
+
+
+    font-size: 20px;
+    color: #d7be8a;
+    margin-top: 200px;
+    /* margin-bottom: 10px; */
+}
+
+#hotel-name h1 {
+    color: #d7be8a;
+    text-shadow: #563803 0 5px 10px;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 50px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #d7be8a;
+    flex-grow: 1;
+}
+
+#hotel-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+label{
+    font-size: larger;
+}
 
 #register {
-    width: 1000px;
-    height: 100%;
-
-    margin: 20px auto 0;
+    box-shadow: black 0 0 10px;
+    background-color: black;
+    color: #d7be8a;
+    width: 1220px;
+    height: 700px;
+    margin: auto;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-top: 10px; */
 }
 
-.required-inputs {
-    display: flex;
+#register-body {
+    /* padding-top: 10px;
+    margin-left: 80px; */
+    /* border-radius: 20px; */
+    width: 80%;
+    color:#d7be8a;
 }
 
 .required-inputs {
@@ -51,7 +216,7 @@ input {
     font-size: 20px;
 }
 
-#login-error, #register-error{
+#login-error, #register-error {
     color: red;
 }
 
@@ -61,21 +226,18 @@ input {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     display: none;
     margin: 20px auto 0;
-
 }
-
 
 #popup-body {
     position: fixed;
     width: 800px;
     height: 400px;
     border: 2px solid black;
-    border-radius: 5px;
     background-color: white;
-    left: 25%;
+    left: 28%;
     top: 25%;
     border-radius: 30px;
 }
@@ -84,14 +246,14 @@ input {
     display: flex;
     justify-content: center;
     margin-top: 30px;
+    color:black;
 }
 
 #sign-in-button {
     width: 20%;
-    height:30px;
+    height: 30px;
 }
 
 button:hover {
     cursor: pointer;
 }
-

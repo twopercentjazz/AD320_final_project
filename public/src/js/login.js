@@ -11,10 +11,10 @@ const account = 'src/html/account.html';
  
     function init() {
         checkLoggedIn();
-        id("login-btn").addEventListener('click', () => {
+        id("login-btn").addEventListener('click', e => {
             id('popup').style.display = 'block';
         });
-        id('popup').addEventListener('click', (e) => {
+        id('popup').addEventListener('click', e => {
             if(e.target === id('popup')) {
                 id('popup').style.display ='none';
         }
@@ -130,7 +130,7 @@ const account = 'src/html/account.html';
      * 
      */
     function registerError(e) {
-        id('register-error').textContent = "*user already exists*"
+        id('register-error').textContent = "e"
     }
 
      /**
