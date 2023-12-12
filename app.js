@@ -87,7 +87,7 @@ app.post("/create-user-full", async (req, res) => {
             res.send("User added, but error attempting to add user information.")
         }
     } else {
-        res.send("User not added, may already exist.");
+        res.send("User not added, may already exist or a parameter may be improperly formatted");
     }
     await base.close();
 });
@@ -96,7 +96,6 @@ async function newUser(base, req, res){
     let addQuery = "INSERT INTO users (user, code, name, email) VALUES (?, ?, ?, ?)";
     try {
         let info = await base.run(addQuery, [req.body.username, req.body.password, req.body.name, req.body.email]);
-        console.log(info);
     } catch (error) {
         res.status(500);
     }
@@ -109,7 +108,6 @@ async function newUserInfo(base, req, res){
     try {
         let info = await base.run(infoStatement, [userID["id"], req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code]);
     } catch (error) {
-        console.log(error);
         res.status(500);
     }
 }
@@ -387,6 +385,73 @@ app.get("/room-filter/:guests/:roomType/:bedType/:checkin/:checkout", async (req
     await filter(req.params, res);
 });
 
+app.get("/search", async (req, res) => {
+    let search = req.query.input.toLowerCase().split(' ');
+    let params = {
+        guests: [],
+        roomType: [],
+        bedType: [],
+        bedCount: [],
+        checkIn: [],
+        checkOut: []
+    };
+
+    for (const i in search){
+        let index = Number.parseInt(i);
+        if (Number.isInteger(Number.parseInt(search[index]))){
+            if (index < search.length - 1){
+                let nextToken = search[index+1];
+                if(nextToken.includes("bed")){
+                    params.bedCount.push(search[index]);
+                    continue;
+                }
+                if (nextToken.includes("guest") || nextToken.includes("people") || nextToken.includes("person") || nextToken.includes("occupant")){
+                    params.guests.push(search[index]);
+                    continue;
+                }
+            }
+
+            if(search[index].length === 10 && Date.parse(search[index]) > Date.now()){
+                if(isEmpty(params.checkIn)){
+                    params.checkIn = search[index];
+                } else if(isEmpty(params.checkOut)){
+                    params.checkOut = search[index];
+                }
+            }
+        }
+
+        let val = search[i];
+        switch (val){
+            case 'economy':
+                params.roomType.push('Economy');
+                break;
+            case 'standard':
+                params.roomType.push('Standard');
+                break;
+            case 'deluxe':
+                params.roomType.push('Deluxe');
+                break;
+            case 'suite':
+                params.roomType.push('Suite');
+                break;
+            case 'twin':
+                params.bedType.push('Twin');
+                break;
+            case 'full':
+                params.bedType.push('Full');
+                break;
+            case 'queen':
+                params.bedType.push('Queen');
+                break;
+            case 'king':
+                params.bedType.push('King');
+                break;
+            default:
+        }
+    }
+    await filter(params, res);
+});
+
 async function filter(values, res){
     let params = queryBuilder(values)
     let query = params.pop();
@@ -394,35 +459,35 @@ async function filter(values, res){
         return res.status(400).send("No filter values found.")
     }
     let base = await getDBConnection();
-    let rooms = await base.all(query, params);
-    res.status(200).json(rooms);
+    try{
+        let rooms = await base.all(query, params);
+        res.status(200).json(rooms);
+    } catch (error){
+        console.log(error);
+        res.status(500)
+    }
     await base.close();
 }
 
 function valueBuilder(values, params, query, snip){
-    if(values.length > 1){
-        query += " (";
-        let bits = [];
-        for (const val of values){
-            if (val == ","){
-                continue;
-            }
-            bits.push(snip);
-            params.push(val);
-            bits.push(" OR");
+    query += " (";
+    let bits = [];
+    for (const val of values){
+        if (val == ","){
+            continue;
         }
-        bits.pop();
-        for (const val of bits){
-            query += val;
-        }
-        query += ")"
-    } else {
-        query += snip;
-        params.push(values);
+        bits.push(snip);
+        params.push(val);
+        bits.push(" OR");
     }
+    bits.pop();
+    for (const val of bits){
+        query += val;
+    }
+    query += ")"
+
     return [query, params];
 }
-
 
 function queryBuilder(values){
     let baseQuery = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
@@ -502,6 +567,8 @@ app.get("/available-rooms", async (req, res) => {
 });
 
 //TODO: DO NOT USE PAST THIS POINT
+
+
 app.post("/update-user-info", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(400).send("Must be logged in to change user information.");
