@@ -19,11 +19,9 @@ button {
 
 .filter {
     width: 100px;
+    height: 30px;
     border-radius: 10px;
-}
-
-#login-btn:hover {
-    cursor: pointer;
+    font-size: large;
 }
 
 body {
@@ -141,11 +139,11 @@ nav li p {
     padding-top: 120px;
     display: flex;
     color: #d7be8a;
-    
+    justify-content: center;
 }
 
 #profile-card, #options {
-    width: 220px;
+    width: 300px;
     box-shadow: black 0 0 10px;
     background-color: black;
     border-radius: 20px;
@@ -162,13 +160,14 @@ nav li p {
 }
 
 .options {
-    width: 200px;
+    width: 280px;
     margin: 10px;
     border-radius: 10px;
-
+    height: 40px;
+    font-size: larger;
 }
 
-.options:hover {
+button:hover {
     cursor: pointer;
 }
 

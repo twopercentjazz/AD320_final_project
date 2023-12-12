@@ -65,6 +65,7 @@ const account = 'src/html/account.html';
 
     /*checks if the given input in the registration form, is valid if not display error message 
     * on given input
+    * template from MDN
     */
     function errorMsg(input, condition, msg) {
         let validityState = input.validity;
