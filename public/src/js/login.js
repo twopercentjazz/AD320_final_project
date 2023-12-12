@@ -4,14 +4,12 @@
 "use strict";
 
 const apiUrl = 'http://localhost:8000/';
-// const baseUrl = 'http://127.0.0.1:8000/';
 const account = 'src/html/account.html';
 
 (function() {
     window.addEventListener("load", init);
  
     function init() {
-        // id('phone-num').setCustomValidity("Can only be numbers");
         checkLoggedIn();
         id("login-btn").addEventListener('click', () => {
             id('popup').style.display = 'block';
@@ -21,7 +19,6 @@ const account = 'src/html/account.html';
                 id('popup').style.display ='none';
         }
         });
-        // qsa('input').addEventListener('change', () => clearErrors());
         id('register').addEventListener('submit', e => {
             e.preventDefault();
             registerUser();
@@ -32,9 +29,10 @@ const account = 'src/html/account.html';
             e.preventDefault();
             login();
         });
-        id('testlogout').addEventListener('click', () => logout());
+        
     }
- 
+    
+    //Appends all input from the registration form
     function registerUser() {
         let params = new FormData();
         let name = id('first-name').value + " " + id('last-name').value;
@@ -47,12 +45,13 @@ const account = 'src/html/account.html';
         params.append('code', id("code").value);
         params.append('address', id("address").value);
         params.append('phone', id("phone-num").value);
-        for (let e of params.entries()) {
-            console.log(e);
-        }
+        // for (let e of params.entries()) {
+        //     console.log(e);
+        // }
         createUserRequest(params);
     }
 
+    //regex and error message for the specified input 
     function checkValidInput() {
         errorMsg(id('first-name'), !/^[A-Za-z]+$/.test(id('first-name').value), "Invalid name, must be letters");
         errorMsg(id('last-name'), !/^[A-Za-z]+$/.test(id('last-name').value), "Invalid name, must be letters");
@@ -64,13 +63,9 @@ const account = 'src/html/account.html';
        
     }
 
-    function clearErrors() {
-        let formInputs = qsa('input');
-        formInputs.forEach(input => {
-            id(input).setCustomValidity("");
-        });
-    }
-
+    /*checks if the given input in the registration form, is valid if not display error message 
+    * on given input
+    */
     function errorMsg(input, condition, msg) {
         let validityState = input.validity;
 
@@ -84,6 +79,7 @@ const account = 'src/html/account.html';
         input.reportValidity();
     }
     
+    //retrieves the inputs from the login popup 
     function login() {
         let params = new FormData();
         params.append('username', id('username').value);
@@ -91,14 +87,9 @@ const account = 'src/html/account.html';
         loginRequest(params)
     }
 
-    function logout() {
-        fetch(apiUrl + 'logout')
-        .then(statusCheck)
-        .then(res => res.text())
-        .then(console.log)
-        .catch(console.error);
-    }
-
+    /* sends post request with all valid inputs, will add user to database if it does not exist
+    *  otherwise displays an error
+    */
     function createUserRequest(params) {
         fetch(apiUrl + 'create-user-full', {method: 'POST', body: params})
         .then(statusCheck)
@@ -107,17 +98,19 @@ const account = 'src/html/account.html';
         .catch(registerError);
     } 
 
+    //sends post req with input, will log the user in and redirect them to the accounts page
     function loginRequest(params) {
         fetch(apiUrl + 'login', {method: 'POST', body: params})
         .then(statusCheck)
         .then(res => res.text())
-        // .then(console.log)
+        .then(console.log)
         .then(() => {
             window.location.href = apiUrl + account;
         })
         .catch(loginError);
     }
 
+    //if the user did not log out and their session has not expired, redirect to account page
     function checkLoggedIn() { 
         fetch(apiUrl + 'activity-check', {method: 'GET'})
         .then(statusCheck)
@@ -132,10 +125,18 @@ const account = 'src/html/account.html';
         .catch(console.error);
     }
 
+    /**
+     * error message displayed if user data exists containing the current 
+     * 
+     */
     function registerError(e) {
         id('register-error').textContent = "*user already exists*"
     }
 
+     /**
+     * error message displayed if username or password doesn't exist or is incorrect 
+     * 
+     */
     function loginError(e) {
         id('login-error').textContent = e;
     }
