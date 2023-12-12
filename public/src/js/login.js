@@ -11,10 +11,11 @@ const account = 'src/html/account.html';
  
     function init() {
         checkLoggedIn();
-        id("login-btn").addEventListener('click', () => {
+        id("link1").addEventListener('click', e => {
+            e.preventDefault();
             id('popup').style.display = 'block';
         });
-        id('popup').addEventListener('click', (e) => {
+        id('popup').addEventListener('click', e => {
             if(e.target === id('popup')) {
                 id('popup').style.display ='none';
         }
@@ -23,7 +24,7 @@ const account = 'src/html/account.html';
             e.preventDefault();
             registerUser();
         });
-        id('register-btn').addEventListener('click', () => checkValidInput());
+        id('link2').addEventListener('click', () => checkValidInput());
 
         id('login').addEventListener('submit', e => {
             e.preventDefault();
