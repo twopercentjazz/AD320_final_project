@@ -1,4 +1,4 @@
-<!--
+<!-- 
 
 -->
 <!DOCTYPE html>
@@ -6,21 +6,96 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
-        <link rel="stylesheet" href="/src/css/account.css">
-        <script src="/src/js/account.js"></script>
-        <title>Title</title>
+        <link rel="stylesheet" href="../css/account.css">
+        <script src="../js/account.js"></script>
+        <title>Account</title>
     </head>
     <body>
         <header>
-
+            <nav>
+                <!-- <button>Join</button>
+                <button>Login</button> -->
+            </nav>
         </header>
-
         <main>
-
+            <div id="profile-view">
+                <div id="left">
+                    <div id="profile-card">
+                        <div id="profile-card-body">
+                            <p class="name">insert-name</p>
+                            <p class="email">email@email.com</p>
+                            <p class="phone">+1(123)456-7890</p>
+                        </div>
+                    </div>
+                    <div id="options">
+                      
+                        <button class="options" id="profile-btn">Profile</button>
+                        <button class="options" id="reservations-btn">Reservations</button>
+                        <button class="options" id="sign-out-btn">Sign out</button>
+                        
+                    </div>
+                </div>
+                <div id="right">
+                    <div id="info-display">
+                        <div class="profile-display" id="profile">
+                            <div class="display-body">
+                                <h2 class="name">insert-name</h2>
+                                <div id="info">
+                                    <h3>Basic Info</h3>
+                                    <div id="details">
+                                        <div>
+                                            <h4 class="text">First name</h4>
+                                            <p id="first-name">first</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Last name</h4>
+                                            <p id="last-name">last</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Username</h4>
+                                            <p id="user">Username</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="info">
+                                    <h3>Contact</h2>
+                                    <div id="details">
+                                        <div>
+                                            <h4 class="text">Mobile Number</h4>
+                                            <p class="phone">number</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Email</h4>
+                                            <p class="email">email</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="text">Address</h4>
+                                            <p class="text" id="address">Street<br>City, State, Zip</p>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-display" id="reservations">
+                            <div class="display-body">
+                                <h2>Reservations</h2>
+                                <legend><strong>Filter</strong></legend>
+                                <div id="filter">
+                                    <button class="filter" id="current-btn">Upcoming</button>
+                                    <button class="filter" id="previous-btn">Previous</button>
+                                </div>
+                                <div class="reservation-display" id="upcoming"></div>
+                                <div class="reservation-display" id="previous"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <footer>
-
+            <p></p>
         </footer>
     </body>
 </html>

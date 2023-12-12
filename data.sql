@@ -111,8 +111,7 @@ INSERT INTO "trans" ("id","user","room","confirm","date","ckin","ckout","occupan
 (2,3,204,3,unixepoch('2024-01-04'),unixepoch('2024-01-06'),unixepoch('2024-01-17'),3,11*95*100),
 (3,2,109,4,unixepoch('2024-01-09'),unixepoch('2024-01-12'),unixepoch('2024-01-19'),2,7*130*100),
 (4,1,107,5,unixepoch('2024-01-04'),unixepoch('2024-01-08'),unixepoch('2024-01-18'),4,10*115*100),
-(5,0,210,6,unixepoch('2024-01-16'),unixepoch('2024-01-18'),unixepoch('2024-01-20'),4,2*145*100),
-(6,4,202,7,unixepoch('2023-12-02'),unixepoch('2023-12-05'),unixepoch('2023-12-09'),1,4*70*100);
+(5,0,210,6,unixepoch('2024-01-16'),unixepoch('2024-01-18'),unixepoch('2024-01-20'),4,2*145*100);
 
 
 --	Comment BEGIN TRANSACTION and this out to use with DB Browser for SQLite
