@@ -284,7 +284,7 @@ app.get("/user-reservations", async (req, res) => {
     if (!await activeCheck(base, req.cookies.username, req.cookies.sessionId)) {
         res.status(401).send("No active session found.");
     } else {
-        let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost' FROM trans t JOIN users u ON u.id=t.user JOIN rooms r ON r.number=t.room WHERE u.user=? AND unixepoch('now')<t.date;";
+        let query = "SELECT * FROM trans WHERE user=?";
         let transactions = await base.all(query, [req.cookies.username], (error) => {
             if (error) {
                 console.log("Does this ever trigger?");
@@ -303,8 +303,8 @@ app.get("/past-reservations", async (req, res) => {
         return res.status(401).send("No active session found");
     }
     let base = await getDBConnection();
-    let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost' FROM trans t JOIN users u ON u.id=t.user JOIN rooms r ON r.number=t.room WHERE u.user=? AND t.ckout<unixepoch('now');";
-    let transactions = await base.all(query, [req.cookies.username])
+    let query = "SELECT * FROM trans WHERE user=? AND WHERE ckout<?";
+    let transactions = await base.all(query, [req.cookies.username, Date.now()])
 });
 
 //Subtle issue with a discrepancy between Date.now() being the actual time, and the stored times being standardized
