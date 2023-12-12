@@ -117,10 +117,22 @@ const loginUrl = 'src/html/login.html';
         .then(statusCheck)
         .then(res => res.json())
         .then(res => {
-            console.log(res);
-            displayReservations(res, endpoint);
+            if(res.length === 0) {
+                displayError("No reservations found");
+            } else {
+                displayReservations(res, endpoint);
+            }
+            
         })
-        .catch(console.error);
+        .catch(displayError);
+    }
+
+    function displayError(e){
+        let reservationDisplay = document.getElementById("upcoming");
+        reservationDisplay.innerHTML = "";
+        let msg = gen("p");
+        msg.textContent = e;
+        appendElement(reservationDisplay, msg);
     }
 
     /**
