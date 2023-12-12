@@ -58,8 +58,8 @@ const account = 'src/html/account.html';
         errorMsg(id('verify-email'), id('email').value !== id('verify-email').value, "Emails do not match");
         errorMsg(id('verify-pw'), id('pw').value !== id('verify-pw').value, "Passwords do not match")
         errorMsg(id('phone-num'), id('phone-num').value.length !== 10, "Must be 10 numbers");
-        errorMsg(id('state'), !/^[A-Za-z]+$/.test(id('state').value), "Invalid state, must be letters");
-        errorMsg(id('code'), id('code').value.length < 5, "Must be 5-12 numbers");
+        errorMsg(id('state'), !/^[A-Za-z]+$/.test(id('state').value), "Invalid state, must be 2 letters");
+        errorMsg(id('code'), id('code').value.length !== 5, "Must be 5 numbers");
        
     }
 

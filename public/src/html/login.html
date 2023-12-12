@@ -68,7 +68,7 @@
                     <div class="required-inputs">
                         <div>
                             <label for="state">State *</label>
-                            <input type="text" id="state" pattern="[A-za-z]+" required>
+                            <input type="text" id="state" pattern="[A-za-z]+" minlength="2" maxlength="2" required>
                         </div>
                         <div>
                             <label for="city">City/Town *</label>
@@ -82,7 +82,7 @@
                         </div>
                         <div>
                             <label for="code">Postal code *</label>
-                            <input type="text" id="code" minlength="5" maxlength="12" pattern="[0-9]+"required>
+                            <input type="text" id="code" minlength="5" maxlength="5" pattern="[0-9]+"required>
                         </div>
                     </div>
                     <button id="register-btn">Register</button>
