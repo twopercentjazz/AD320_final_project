@@ -57,10 +57,6 @@
                     })
             }
         });
-
-
-
-
     }
 
     function getQueryString(filters) {
@@ -126,9 +122,9 @@
     function clearSearch() {
         id("filter-message-text").textContent = "Filter rooms using the buttons above";
         id("search-bar").value = "";
-        let checkboxes = qsa('#filter-form input[type="radio"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
+        let inputs = qsa('#filter-form input.default');
+        inputs.forEach(input => {
+            input.checked = true;
         });
         displayRooms().then(rooms => {
             displayList(rooms);

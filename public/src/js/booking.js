@@ -51,7 +51,7 @@
             filterResults();
             if (!noneChecked()) {
                 let filters = getCheckedFilters();
-                fetch("http://localhost:8000/room-filter?" + getQueryString(filters))
+                fetch("http://localhost:8000/room-filter/" + getQueryString(filters))
                     .then(statusCheck3)
                     .then(response => response.json())
                     .then(response => {
@@ -66,7 +66,7 @@
             filterResults();
             if (!isSearchBarEmpty()) {
                 let filters = getSearchFilters(id("search-bar").value.toLowerCase());
-                fetch("http://localhost:8000/room-filter?" + getQueryString(filters))
+                fetch("http://localhost:8000/room-filter/" + getQueryString(filters))
                     .then(statusCheck3)
                     .then(response => response.json())
                     .then(response => {
@@ -214,9 +214,9 @@
     function clearSearch() {
         id("filter-message-text").textContent = "Filter rooms using the buttons above";
         id("search-bar").value = "";
-        let checkboxes = qsa('#filter-form input[type="radio"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
+        let inputs = document.querySelectorAll('#filter-form input.default');
+        inputs.forEach(input => {
+            input.checked = true;
         });
         displayRooms().then(rooms => {
             displayList(rooms);

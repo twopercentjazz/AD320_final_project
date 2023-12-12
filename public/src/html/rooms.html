@@ -109,7 +109,7 @@
                         <label for="search-bar">Search</label>
                         <input type="text" id="search-bar" name="search" required>
                         <button id="search-btn" type="submit">Find Rooms</button>
-                        <button id="clear-btn1" type="button">Clear</button>
+                        <button id="clear-btn1" type="button">Reset</button>
                     </form>
                 </section>
             </section>
@@ -123,7 +123,7 @@
                             <h3>Room Type:</h3>
                             <section id="room-type-options">
                                 <label><input value="Economy" type="radio" name="type"> Economy</label>
-                                <label><input value="Standard" type="radio" name="type"> Standard</label>
+                                <label><input class=default" value="Standard" type="radio" name="type" checked> Standard</label>
                                 <label><input value="Deluxe" type="radio" name="type"> Deluxe</label>
                                 <label><input value="Suite" type="radio" name="type"> Suite</label>
                             </section>
@@ -133,19 +133,19 @@
                             <section id="bed-type-options">
                                 <label><input value="Twin" type="radio" name="bed"> Twin</label>
                                 <label><input value="Full" type="radio" name="bed"> Full</label>
-                                <label><input value="Queen" type="radio" name="bed"> Queen</label>
+                                <label><input class=default" value="Queen" type="radio" name="bed" checked> Queen</label>
                                 <label><input value="King" type="radio" name="bed"> King</label>
                             </section>
                         </section>
                         <section id="bed-count">
                             <h3>Bed Count:</h3>
                             <section id="bed-count-options">
-                                <label><input value="1" type="radio" name="count"> One</label>
+                                <label><input class=default" value="1" type="radio" name="count" checked> One</label>
                                 <label><input value="2" type="radio" name="count"> Two</label>
                             </section>
                         </section>
                         <button id="filter-btn" type="submit">Apply Filters</button>
-                        <button id="clear-btn2" type="button">Clear</button>
+                        <button id="clear-btn2" type="button">Reset</button>
                     </form>
                 </section>
             </section>
