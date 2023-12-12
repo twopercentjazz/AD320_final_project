@@ -922,6 +922,17 @@ hr {
     box-shadow: #424242 1px 1px 2px;
 }
 
+#confirm-box p {
+    font-size: 20px;
+    color: #8d8d8d;
+    padding: 0;
+    margin: 0;
+}
+
+#submit-msg, #login-msg {
+    padding-bottom: 40px;
+}
+
 .hidden {
     display: none;
 }

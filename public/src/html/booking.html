@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="../css/styles.css">
         <link rel="stylesheet" href="../css/booking.css">
         <script src="/public/src/js/booking.js"></script>
+        <script src="/public/src/js/load.js"></script>
         <title>Booking</title>
     </head>
     <body>
@@ -258,7 +259,9 @@
                                 <label for="password">Password</label>
                                 <input type="password" id="password" name="code" required>
                                 <button id="login-btn" type="submit">Confirm</button>
-                                <p>click <a href="">here</a> to create an account</p>
+                                <section id="login-msg">
+                                    <p>click <a href="">here</a> to create an account</p>
+                                </section>
                             </form>
                         </section>
                     </section>
@@ -348,6 +351,9 @@
                         </form>
                     </section>
                     <hr class="small-divider">
+                    <section id="submit-msg" class="hidden">
+                        <p id="submit-text-msg"></p>
+                    </section>
                 </section>
             </section>
             <section id="make-reservation" class="hidden">

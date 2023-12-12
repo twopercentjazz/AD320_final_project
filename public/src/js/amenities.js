@@ -4,29 +4,16 @@
 "use strict";
 
 (function() {
-    const loggedIn = true;
     window.addEventListener("load", init);
 
     function init() {
-        const CHECKIN = new Date();
-        const CHECKOUT = new Date(CHECKIN);
-        CHECKOUT.setDate(CHECKOUT.getDate() + 1);
-        let year = CHECKIN.getFullYear();
-        let month = CHECKIN.getMonth() + 1;
-        let day = CHECKIN.getDate();
-        id("checkin-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
-        year = CHECKOUT.getFullYear();
-        month = CHECKOUT.getMonth() + 1;
-        day = CHECKOUT.getDate();
-        id("checkout-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+
 
 
         id("check").addEventListener("click", checkAvailability);
 
 
-        id("nullLink").addEventListener("click",  (e) => {
-            e.preventDefault();
-        });
+
     }
 
     function checkAvailability() {

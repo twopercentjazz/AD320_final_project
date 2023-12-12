@@ -5,34 +5,13 @@
 
 (function() {
     // test var
-    const loggedIn = true;
     const confirmationNumber = "000023";
 
 
     window.addEventListener("load", init);
 
     function init() {
-        /*
-        const CHECKIN = new Date();
-        const CHECKOUT = new Date(CHECKIN);
-        CHECKOUT.setDate(CHECKOUT.getDate() + 1);
-        let year = CHECKIN.getFullYear();
-        let month = CHECKIN.getMonth() + 1;
-        let day = CHECKIN.getDate();
-        id("checkin-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
-        year = CHECKOUT.getFullYear();
-        month = CHECKOUT.getMonth() + 1;
-        day = CHECKOUT.getDate();
-        id("checkout-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
 
-         */
-
-        let checkin = window.sessionStorage.getItem("checkin");
-        let checkout = window.sessionStorage.getItem("checkout");
-        let people = window.sessionStorage.getItem("people");
-        id("people").value = people;
-        id("checkin-date").value = checkin;
-        id("checkout-date").value = checkout;
 
 
 
@@ -40,9 +19,7 @@
 
 
 
-        id("nullLink").addEventListener("click",  (e) => {
-            e.preventDefault();
-        });
+
 
 
         id("status-room").style.backgroundColor = "darkgrey";
@@ -182,7 +159,7 @@
 
         id("cancel-btn").addEventListener("click",  cancelReview);
         id("confirm-btn").addEventListener("click", () => confirmReview(user));
-        id("login-btn").addEventListener("click", login);
+        id("login-btn").addEventListener("click", userLogin);
         id("cancel-btn2").addEventListener("click",  cancelSubmit);
         id("back-btn").addEventListener("click", backToReview);
         id("submit-btn").addEventListener("click", submitReservation);
@@ -198,31 +175,49 @@
         // show error message
 
 
-        // show success page
-        id("status-submit").style.backgroundColor = "#737373";
-        id("status-done").style.backgroundColor = "darkgrey";
+        if (isLoggedIn()) {
+            // show success page
+            id("status-submit").style.backgroundColor = "#737373";
+            id("status-done").style.backgroundColor = "darkgrey";
 
-        id("submit").classList.toggle("hidden");
+            id("submit").classList.toggle("hidden");
 
-        id("room-booked").classList.toggle("hidden");
-        id("book-room").classList.toggle("hidden");
+            id("room-booked").classList.toggle("hidden");
+            id("book-room").classList.toggle("hidden");
 
-        id("confirm-msg").textContent = "Booking Receipt";
+            id("confirm-msg").textContent = "Booking Receipt";
 
-        // get confirmation number from server
-        id("confirm-num").value = confirmationNumber;
-        id("confirm-text").textContent = confirmationNumber;
-        id("confirm-number").textContent = confirmationNumber;
+            // get confirmation number from server
+            id("confirm-num").value = confirmationNumber;
+            id("confirm-text").textContent = confirmationNumber;
+            id("confirm-number").textContent = confirmationNumber;
 
-        id("confirmation").classList.toggle("hidden");
+            id("confirmation").classList.toggle("hidden");
 
-        id("success").classList.toggle("hidden");
+            id("success").classList.toggle("hidden");
 
-        id("submit-page-buttons").classList.toggle("hidden");
-        id("complete-page-buttons").classList.toggle("hidden");
+            id("submit-page-buttons").classList.toggle("hidden");
+            id("complete-page-buttons").classList.toggle("hidden");
 
 
-        window.scrollTo(0, 0);
+
+
+
+
+            window.scrollTo(0, 0);
+        } else {
+
+            id("submit-text-msg").textContent = "Please log in to complete your reservation";
+
+
+
+
+        }
+
+
+
+
+
 
 
     }
@@ -258,21 +253,49 @@
         id("bottom").classList.toggle("hidden");
         id("make-reservation").classList.toggle("hidden");
         id("trans-form").classList.toggle("hidden");
+
+        id("people").value = 2;
+
+        id("submit-msg").classList.toggle("hidden");
+
         window.sessionStorage.clear();
 
     }
 
     function login() {
-        // login endpoint - show summary
-
+        toggleNav();
         id("login-box").classList.toggle("hidden");
         id("confirm-msg").textContent = "Booking Summary";
         id("make-reservation").classList.toggle("hidden");
         id("bottom").classList.toggle("hidden");
         id("trans-form").classList.toggle("hidden");
+        id("submit-text-msg").textContent = "Please click the submit button to complete your reservation";
+    }
+
+    function userLogin(){
+        let params = new FormData(id("login-form"));
+        fetch("/login", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(processLogin)
+            .catch(console.log);
+    }
+
+    function processLogin(res) {
+        // remove log test
+        console.log(res);
 
 
+        if (res === "Successfully logged in.") {
+            login();
+        } else {
+            id("submit-text-msg").textContent = res;
+        }
+    }
 
+    function toggleNav() {
+        id("login").classList.toggle("hidden");
+        id("account").classList.toggle("hidden");
     }
 
     function backToReview() {
@@ -326,27 +349,55 @@
         id("user-text").textContent = user.user;
         id("user").value = user.user;
 
+        id("submit-msg").classList.add("hidden");
+
+        id("submit-msg").classList.toggle("hidden");
+
         window.scrollTo(0, 0);
 
 
-        if (loggedIn) {
+
+        if (isLoggedIn()) {
             id("confirm-msg").textContent = "Booking Summary";
             id("trans-form").classList.toggle("hidden");
             id("make-reservation").classList.toggle("hidden");
+            id("submit-text-msg").textContent = "Please click the submit button to complete your reservation";
         } else {
             id("confirm-msg").textContent = "Please log in to complete your reservation";
             id("login-box").classList.toggle("hidden");
             id("bottom").classList.toggle("hidden");
+            id("submit-text-msg").textContent = "Must be Logged in to continue";
         }
 
-
-
-
-
-
-
-
     }
+
+
+
+    function checkActivity() {
+        return fetch("/activity-check")
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(processCheckActivity)
+            .catch(console.log);
+    }
+
+    function processCheckActivity(res) {
+        return res === "true";
+    }
+
+    function isLoggedIn() {
+        let loggedIn;
+        checkActivity().then(result => {
+            loggedIn = result;
+        });
+        return loggedIn;
+    }
+
+
+
+
+
+
 
     function getTodayDate() {
         let today = new Date();

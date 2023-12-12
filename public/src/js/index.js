@@ -4,26 +4,15 @@
 "use strict";
 
 (function() {
-    const loggedIn = true;
     window.addEventListener("load", init);
 
     function init() {
-        toggleNav(loggedIn);
 
 
 
 
-        const CHECKIN = new Date();
-        const CHECKOUT = new Date(CHECKIN);
-        CHECKOUT.setDate(CHECKOUT.getDate() + 1);
-        let year = CHECKIN.getFullYear();
-        let month = CHECKIN.getMonth() + 1;
-        let day = CHECKIN.getDate();
-        id("checkin-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
-        year = CHECKOUT.getFullYear();
-        month = CHECKOUT.getMonth() + 1;
-        day = CHECKOUT.getDate();
-        id("checkout-date").value = year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+
+
 
 
 
@@ -51,18 +40,13 @@
             id("login").classList.toggle("hidden");
             id("account").classList.toggle("hidden");
         });
-        id("nullLink").addEventListener("click",  (e) => {
-            e.preventDefault();
-        });
+
 
 
         //void testDB();
     }
 
-    function toggleNav(loggedIn) {
-        id("login").classList.toggle("hidden");
-        id("account").classList.toggle("hidden");
-    }
+
 
 
 
