@@ -45,9 +45,6 @@ const account = 'src/html/account.html';
         params.append('code', id("code").value);
         params.append('address', id("address").value);
         params.append('phone', id("phone-num").value);
-        // for (let e of params.entries()) {
-        //     console.log(e);
-        // }
         createUserRequest(params);
     }
 
@@ -59,12 +56,12 @@ const account = 'src/html/account.html';
         errorMsg(id('verify-pw'), id('pw').value !== id('verify-pw').value, "Passwords do not match")
         errorMsg(id('phone-num'), id('phone-num').value.length !== 10, "Must be 10 numbers");
         errorMsg(id('state'), !/^[A-Za-z]+$/.test(id('state').value), "Invalid state, must be 2 letters");
-        errorMsg(id('code'), id('code').value.length !== 5, "Must be 5 numbers");
-       
+        errorMsg(id('code'), id('code').value.length !== 5, "Must be 5 numbers");  
     }
 
     /*checks if the given input in the registration form, is valid if not display error message 
     * on given input
+    * template from MDN
     */
     function errorMsg(input, condition, msg) {
         let validityState = input.validity;
@@ -130,7 +127,7 @@ const account = 'src/html/account.html';
      * 
      */
     function registerError(e) {
-        id('register-error').textContent = "e"
+        id('register-error').textContent = e;
     }
 
      /**
