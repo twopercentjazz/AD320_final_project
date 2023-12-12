@@ -1,30 +1,153 @@
 /*
  * 
  */
-
- body {
+body {
     margin: 0;
     padding: 0;
+}
+
+body, button {
+    font-family: 'Poiret One', serif;
+}
+
+button {
+    background-color: #282121;
+    box-shadow: #424242 2px 2px 4px;
+    border: #a8a49d 1px solid;
+    color: #a8a49d;
+}
+
+.filter {
+    width: 100px;
+    border-radius: 10px;
+}
+
+#login-btn:hover {
+    cursor: pointer;
+}
+
+body {
+    background-color: #0e0e0e;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    background-image: url("../../assets/img/carpet-pattern.png");
+    background-size: cover;
+    padding: 10px;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+#logo {
+    width: 130px;
+    height: 60px;
+    margin-left: 15px;
+}
+
+#navigation {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+nav {
+    background-color: rgba(0, 0, 0, 0);
+    overflow: hidden;
+    margin: 0 10px 0 0;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    float: right;
+    display: inline;
+}
+
+nav li a {
+    display: block;
+    color: #e0c99b;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 10px black;
+}
+
+nav li p {
+    display: block;
+    color: #e0c99b;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 10px black;
+}
+
+#nav1 {
+    margin-right: 20px;
+}
+
+#nav2 {
+    margin-right: 15px;
+}
+
+#nav1 li a {
+    padding: 14px 10px;
+    font-size: 20px;
+}
+
+    #nav1 li p {
+        margin-top: -1px;
+        padding: 14px 10px;
+        font-size: 20px;
+    }
+
+#nav2 li a {
+    padding: 14px 16px;
+    font-size: 24px;
+}
+
+#logo-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #e0c99b;
+    font-size: 20px;
+    text-decoration: none;
+    padding: 10px;
+}
+
+#logo-box p {
+    margin-left: 16px;
+    margin-top: 5px;
+    margin-bottom: 0;
 }
 
 #profile-view {
     width: 1000px;
     height: 1000px;
     margin: 20px auto 0;
+    padding-top: 120px;
     display: flex;
-}
-
-nav {
-    /* copy chris nav styling here */
-    background-color: #555;
-    padding: 30px;
-    display: flex;
-    justify-content: right;
+    color: #d7be8a;
+    
 }
 
 #profile-card, #options {
     width: 220px;
-    background-color: teal;
+    box-shadow: black 0 0 10px;
+    background-color: black;
     border-radius: 20px;
 }
 
@@ -42,7 +165,7 @@ nav {
     width: 200px;
     margin: 10px;
     border-radius: 10px;
-    border-color: transparent;
+
 }
 
 .options:hover {
@@ -57,7 +180,8 @@ nav {
     margin-left: 20px;
     width: 700px;
     height: 800px;
-    background-color: teal;
+    box-shadow: black 0 0 10px;
+    background-color: black;
     border-radius: 20px;
     padding: 40px;
 }
@@ -81,9 +205,8 @@ nav {
     margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
-    width: 620px;
+    width: 700px;
     height: 650px;
-    border: 5px solid black;
     overflow-y: auto;
 }
 
@@ -101,8 +224,48 @@ p {
     margin-top: 0;
 }
 
-#overview .profile-display, #profile .profile-display, #reservations .profile-display, #payment .profile-display,
-#settings .profile-display, #upcoming .reservation-display, #previous .reservation-display, #overview-btn.active,
-#profile-btn.active, #reservations-btn.active,#payment-btn.active, #settings-btn.active {
+#profile .profile-display, #reservations .profile-display,
+#upcoming .reservation-display, #previous .reservation-display, #overview-btn.active,
+#profile-btn.active, #reservations-btn.active {
     display: block;
 }
+
+.reservation-card {
+   width: 640px;
+   height: 70px;
+   border: #545454 1px solid;
+   background-color: #171717;
+   box-shadow: #343434 0 0 10px;
+   display: flex;
+   justify-content: space-evenly;
+   margin-bottom: 10px;
+   border-radius: 10px;
+}
+
+.reservation-display {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.top {
+    margin-bottom: 10px;
+}
+
+.top > div{
+    display: flex;
+    gap: 40px;
+}
+
+.top > div > div > p {
+    margin: 0px 0;
+}
+
+.bottom > div {
+    display: flex;
+    gap: 50px;
+}
+
+.bottom > div > div > p {
+    margin: 0px 0;
+}
+

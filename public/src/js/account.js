@@ -6,14 +6,12 @@ const apiUrl = "http://localhost:8000/";
 const loginUrl = 'src/html/login.html';
 (function() {
     window.addEventListener("load", init);
-
     function init() {
         checkLoggedIn();
         hide();
         hideReservations();
         getUserInfo();
-        toggleDisplay('profile');
-        // retrieveReservations();
+        toggleDisplay("profile");
         id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
         id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
         id('current-btn').addEventListener('click', () => {
@@ -120,11 +118,123 @@ const loginUrl = 'src/html/login.html';
         .then(res => res.json())
         .then(res => {
             console.log(res);
+            displayReservations(res, endpoint);
         })
         .catch(console.error);
-        
     }
 
+    /**
+     * helper function updates the text content of the element passed
+     * @param {*} element  
+     * @param {*} string 
+     * @param {*} data 
+     */
+    function updateTxtCon(element, string, data){
+        element.textContent = string + data;
+    }
+
+    /**
+     * helper function, appends the newly created elements together
+     * @param {*} element1 
+     * @param {*} element2 
+     */
+    function appendElement(element1, element2) {
+        element1.appendChild(element2);
+    }
+
+    /**
+     * loops through the json data, and creates info cards of the given reservation
+     * orginally had a different format thus the naming conventions, but due to the length
+     * of the data input, it changes the format of the display
+     * @param {*} data 
+     */
+    function displayReservations(data, endpoint) {
+        let reservationDisplay = document.getElementById("upcoming");
+        reservationDisplay.innerHTML = "";
+        let filter = gen("h1");
+        if (endpoint === "future-reservations") {
+            filter.textContent = "Upcoming Reservations";
+        } else {
+            filter.textContent = "Previous Reservations";
+        }
+        appendElement(reservationDisplay, filter);
+
+        data.forEach(reservation => {
+            let reservationCard = gen("div");
+            reservationCard.classList.add("reservation-card");
+    
+            let top = gen("div");
+            top.classList.add("top");
+    
+            let topMid = gen("div");
+            let topLeft = gen("div");
+            let topRight = gen("div");
+    
+            let id = gen("p");
+            updateTxtCon(id, "ID: ", reservation.id);
+    
+            let cost = gen("p");
+            updateTxtCon(cost, "Cost: ", reservation.cost);
+    
+            let reservedDate = gen("p");
+            updateTxtCon(reservedDate, "Reserved: ", reservation.reserved);
+    
+            let confirm = gen("p");
+            updateTxtCon(confirm, "Confirmation: ", reservation.confirm);
+    
+            appendElement(topLeft, id);
+            appendElement(topLeft, cost);
+    
+            appendElement(topRight, reservedDate);
+            appendElement(topRight, confirm);
+    
+            appendElement(topMid, topLeft);
+            appendElement(topMid, topRight);
+    
+            appendElement(top, topMid);
+    
+            let bot = gen("div");
+            bot.classList.add("bottom");
+    
+            let botMid = gen("div");
+            let botLeft = gen("div");
+            let botRight = gen("div");
+    
+            let checkIn = gen("p");
+            updateTxtCon(checkIn, "Check In: ", reservation.ckin);
+    
+            let checkOut = gen("p");
+            updateTxtCon(checkOut, "Check Out: ", reservation.ckout);
+    
+            let occupants = gen("p");
+            updateTxtCon(occupants, "Occupants: ", reservation.occupants);
+    
+            let room = gen("p");
+            updateTxtCon(room, "Room: ", reservation.room);
+    
+            let reservedBy = gen("p");
+            updateTxtCon(reservedBy, "Reserved by: ", reservation.user);
+    
+            appendElement(botLeft, checkIn);
+            appendElement(botLeft, checkOut);
+    
+            appendElement(botRight, occupants);
+            appendElement(botRight, room);
+            appendElement(botRight, reservedBy);
+    
+            appendElement(botMid, botLeft);
+            appendElement(botMid, botRight);
+    
+            appendElement(bot, botMid);
+    
+            appendElement(reservationCard, top);
+            appendElement(reservationCard, bot);
+    
+            appendElement(reservationDisplay, reservationCard);
+        });
+    }
+
+    
     //logs the user out and redirects to the login/registration page
     function logout() {
         fetch(apiUrl + 'logout', {method: 'POST'})
