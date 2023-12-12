@@ -29,11 +29,7 @@
         id("account-btn").addEventListener("click", goToAccount);
 
 
-        displayList(testRooms);
-        displayTile(testRooms);
-        qsa("#view-form input").forEach(view => view.addEventListener("change", changeView));
-        id("display-list").addEventListener("click", () => showListDetails(event, testRooms));
-        id("display-tile").addEventListener("click", () => showTileDetails(event, testRooms));
+
 
 
         // test filter return
@@ -48,8 +44,9 @@
                 count: bedCount
             };
             let json = JSON.stringify(filters);
-            console.log(json); // Output the JSON string to the console
+            console.log(json); // remove test
         });
+
 
 
 
@@ -105,46 +102,55 @@
                 rate: "90",
                 picture: "/public/assets/img/rooms/economy/1twin.png"
             }];
+
+        displayList(testRooms);
+        displayTile(testRooms);
+        qsa("#view-form input").forEach(view => view.addEventListener("change", changeView));
+        id("display-list").addEventListener("click", () => showListDetails(event, testRooms));
+        id("display-tile").addEventListener("click", () => showTileDetails(event, testRooms));
     }
 
     function submitReservation(event) {
         event.preventDefault();
-        // transaction needs to succeed or fail (POST endpoint)
+        // process transaction
+        // needs to succeed or fail (POST endpoint)
         // send form data to server on success
         // get confirmation number from server, using test var now
         // show error message on fail
 
-
-        if (isLoggedIn()) {
-            // show success page
-            id("status-submit").style.backgroundColor = "#737373";
-            id("status-done").style.backgroundColor = "darkgrey";
-
-            id("submit").classList.toggle("hidden");
-
-            id("room-booked").classList.toggle("hidden");
-            id("book-room").classList.toggle("hidden");
-
-            id("confirm-msg").textContent = "Booking Receipt";
-
-
-            // get confirmation number from server, using test var now
-            id("confirm-num").value = confirmationNumber;
-            id("confirm-text").textContent = confirmationNumber;
-            id("confirm-number").textContent = confirmationNumber;
+        console.log(isLoggedIn()); //remove test
 
 
 
-            id("confirmation").classList.toggle("hidden");
+        isLoggedIn().then(loggedIn => {
+            if (loggedIn) {
+                // show success page
+                id("status-submit").style.backgroundColor = "#737373";
+                id("status-done").style.backgroundColor = "darkgrey";
 
-            id("success").classList.toggle("hidden");
+                id("submit").classList.toggle("hidden");
 
-            id("submit-page-buttons").classList.toggle("hidden");
-            id("complete-page-buttons").classList.toggle("hidden");
-            window.scrollTo(0, 0);
-        } else {
-            id("submit-text-msg").textContent = "Please log in to complete your reservation";
-        }
+                id("room-booked").classList.toggle("hidden");
+                id("book-room").classList.toggle("hidden");
+
+                id("confirm-msg").textContent = "Booking Receipt";
+
+                // get confirmation number from server, using test var now
+                id("confirm-num").value = confirmationNumber;
+                id("confirm-text").textContent = confirmationNumber;
+                id("confirm-number").textContent = confirmationNumber;
+
+                id("confirmation").classList.toggle("hidden");
+
+                id("success").classList.toggle("hidden");
+
+                id("submit-page-buttons").classList.toggle("hidden");
+                id("complete-page-buttons").classList.toggle("hidden");
+                window.scrollTo(0, 0);
+            } else {
+                id("submit-text-msg").textContent = "Please log in to complete your reservation";
+            }
+        });
     }
 
     function finishBooking() {
@@ -197,19 +203,35 @@
     }
 
     function userLogin(){
-        let params = new FormData(id("login-form"));
-        fetch("http://localhost:8000/login", {method :"POST", body: params})
-            .then(statusCheck)
-            .then(response => response.text())
+
+        let params = {
+            'username': id('username').value,
+            'password': id('password').value
+        };
+
+
+
+        //let params = new FormData();
+        //params.append('username', id('username').value);
+        //params.append('password', id('password').value);
+        fetch("http://localhost:8000/login", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params),
+        })
+            .then(statusCheck2)
+            .then(res => res.text())
             .then(processLogin)
-            .catch(console.log);
+            .catch(console.error);
     }
 
     function processLogin(res) {
+        console.log('Response text:', res);
+
         if (res === "Successfully logged in.") {
             login();
-        } else {
-            id("submit-text-msg").textContent = res;
         }
     }
 
@@ -257,36 +279,43 @@
         id("submit-msg").classList.add("hidden");
         id("submit-msg").classList.toggle("hidden");
         window.scrollTo(0, 0);
-        if (isLoggedIn()) {
-            id("confirm-msg").textContent = "Booking Summary";
-            id("trans-form").classList.toggle("hidden");
-            id("make-reservation").classList.toggle("hidden");
-            id("submit-text-msg").textContent = "Please click the submit button to complete your reservation";
-        } else {
-            id("confirm-msg").textContent = "Please log in to complete your reservation";
-            id("login-box").classList.toggle("hidden");
-            id("bottom").classList.toggle("hidden");
-            id("submit-text-msg").textContent = "Must be Logged in to continue";
-        }
+
+
+
+        console.log(isLoggedIn()); //remove test
+
+
+        isLoggedIn().then(loggedIn => {
+            if (loggedIn) {
+                id("confirm-msg").textContent = "Booking Summary";
+                id("trans-form").classList.toggle("hidden");
+                id("make-reservation").classList.toggle("hidden");
+                id("submit-text-msg").textContent = "Please click the submit button to complete your reservation";
+            } else {
+                id("confirm-msg").textContent = "Please log in to complete your reservation";
+                id("login-box").classList.toggle("hidden");
+                id("bottom").classList.toggle("hidden");
+                id("submit-text-msg").textContent = "Must be Logged in to continue";
+            }
+        });
+
+
     }
 
-    function checkActivity() {
-        return fetch("/activity-check")
+    async function checkActivity() {
+        return fetch("http://localhost:8000/activity-check")
             .then(statusCheck)
             .then(response => response.text())
             .then(processCheckActivity)
             .catch(console.log);
     }
 
-    function processCheckActivity(res) {
+    async function processCheckActivity(res) {
         return res === "true";
     }
 
-    function isLoggedIn() {
-        let loggedIn;
-        checkActivity().then(result => {
-            loggedIn = result;
-        });
+    async function isLoggedIn() {
+        let loggedIn = await checkActivity();
         return loggedIn;
     }
 
@@ -317,20 +346,6 @@
         id("bottom").classList.toggle("hidden");
         window.scrollTo(0, 0);
     }
-
-    /*
-    async function getRoomList() {
-        return fetch("http://localhost:8000/rooms")
-            .then(statusCheck)
-            .then(response => response.json())
-            .catch(console.log);
-    }
-
-    async function displayRooms() {
-        let rooms = await getRoomList();
-        return rooms;
-    }
-    */
 
     function formatDate(dateString) {
         let date = new Date(dateString);
@@ -656,6 +671,14 @@
         roomItem.appendChild(roomRate);
 
         return roomItem;
+    }
+
+    async function statusCheck2(res) {
+        if (!res.ok) {
+            id("submit-text-msg").textContent = "Invalid username or password. Please try again.";
+            throw new Error(await res.text());
+        }
+        return res;
     }
 
 

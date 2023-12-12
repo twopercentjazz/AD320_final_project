@@ -45,7 +45,7 @@
                 count: bedCount
             };
             let json = JSON.stringify(filters);
-            console.log(json); // Output the JSON string to the console
+            console.log(json); // remove test
         });
 
     }
