@@ -81,8 +81,14 @@ app.post("/create-user-full", async (req, res) => {
     await newUser(base, req, res);
     if(res.statusCode === 200){
         let info = await newUserInfo(base, req, res);
+        if(res.statusCode === 200) {
+            res.send("New user successfully created.");
+        } else {
+            res.send("User added, but error attempting to add user information.")
+        }
+    } else {
+        res.send("User not added, may already exist.");
     }
-    res.status(200).send()
     await base.close();
 });
 
@@ -93,7 +99,6 @@ async function newUser(base, req, res){
     } catch (error) {
         res.status(500);
     }
-    res.status(200).send("New user successfully created");
 }
 
 async function newUserInfo(base, req, res){
@@ -101,16 +106,11 @@ async function newUserInfo(base, req, res){
     let userID = await base.get(idQuery, [req.body.username]);
     let infoStatement = "INSERT INTO info (id, phone, address, city, state, code) VALUES (?,?,?,?,?,?)";
     try {
-        let info = await base.run(infoStatement, [userID["id"], req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code], (error) => {
-            if(error){
-                console.log("Error finally caught");
-            }
-        });
+        let info = await base.run(infoStatement, [userID["id"], req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code]);
     } catch (error) {
         console.log(error);
         res.status(500);
     }
-    res.status(200)
 }
 
 /**
