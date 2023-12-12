@@ -8,14 +8,15 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
         <link rel="stylesheet" href="../css/styles.css">
         <link rel="stylesheet" href="../css/rooms.css">
-        <script src="/public/src/js/rooms.js"></script>
-        <script src="/public/src/js/load.js"></script>
+        <script src="../js/rooms.js"></script>
+        <script src="../js/load.js"></script>
+        <script src="../js/filterbtns.js"></script>
         <title>Rooms</title>
     </head>
     <body>
         <header>
             <a id="logo-box" href="../../index.html">
-                <img id="logo" src="/public/assets/img/overlook-logo.png" alt="overlook-logo">
+                <img id="logo" src="../../assets/img/overlook-logo.png" alt="overlook-logo">
                 <p>Overlook Hotel</p>
             </a>
             <section id="navigation">
@@ -69,7 +70,7 @@
                 </section>
             </section>
             <section id="intro">
-                <img id="intro-img" src="/public/assets/img/hallway.jpg" alt="hallway">
+                <img id="intro-img" src="../../assets/img/hallway.jpg" alt="hallway">
             </section>
             <section id="rooms-title">
                 <hr><h2>Explore Rooms</h2><hr>
@@ -94,6 +95,11 @@
                     <button id="filter-btn6" type="button" class="button">Hide Views</button>
                 </section>
             </section>
+            <section id="filter-msg-box">
+                <section id="filter-msg">
+                    <p id="filter-message-text">Filter rooms using the buttons above</p>
+                </section>
+            </section>
             <section id="search-section" class="hidden">
                 <section id="search-title">
                     <hr><h3>Keyword Search</h3><hr>
@@ -103,7 +109,7 @@
                         <label for="search-bar">Search</label>
                         <input type="text" id="search-bar" name="search" required>
                         <button id="search-btn" type="submit">Find Rooms</button>
-                        <button id="clear-btn1" type="button">Clear</button>
+                        <button id="clear-btn1" type="button">Reset</button>
                     </form>
                 </section>
             </section>
@@ -116,30 +122,30 @@
                         <section id="room-type">
                             <h3>Room Type:</h3>
                             <section id="room-type-options">
-                                <label><input value="economy" type="checkbox" name="type"> Economy</label>
-                                <label><input value="standard" type="checkbox" name="type"> Standard</label>
-                                <label><input value="deluxe" type="checkbox" name="type"> Deluxe</label>
-                                <label><input value="suite" type="checkbox" name="type"> Suite</label>
+                                <label><input value="Economy" type="radio" name="type"> Economy</label>
+                                <label><input class=default" value="Standard" type="radio" name="type" checked> Standard</label>
+                                <label><input value="Deluxe" type="radio" name="type"> Deluxe</label>
+                                <label><input value="Suite" type="radio" name="type"> Suite</label>
                             </section>
                         </section>
                         <section id="bed-type">
                             <h3>Bed Type:</h3>
                             <section id="bed-type-options">
-                                <label><input value="twin" type="checkbox" name="bed"> Twin</label>
-                                <label><input value="full" type="checkbox" name="bed"> Full</label>
-                                <label><input value="queen" type="checkbox" name="bed"> Queen</label>
-                                <label><input value="king" type="checkbox" name="bed"> King</label>
+                                <label><input value="Twin" type="radio" name="bed"> Twin</label>
+                                <label><input value="Full" type="radio" name="bed"> Full</label>
+                                <label><input class=default" value="Queen" type="radio" name="bed" checked> Queen</label>
+                                <label><input value="King" type="radio" name="bed"> King</label>
                             </section>
                         </section>
                         <section id="bed-count">
                             <h3>Bed Count:</h3>
                             <section id="bed-count-options">
-                                <label><input value="1" type="checkbox" name="count"> One</label>
-                                <label><input value="2" type="checkbox" name="count"> Two</label>
+                                <label><input class=default" value="1" type="radio" name="count" checked> One</label>
+                                <label><input value="2" type="radio" name="count"> Two</label>
                             </section>
                         </section>
                         <button id="filter-btn" type="submit">Apply Filters</button>
-                        <button id="clear-btn2" type="button">Clear</button>
+                        <button id="clear-btn2" type="button">Reset</button>
                     </form>
                 </section>
             </section>

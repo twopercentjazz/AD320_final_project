@@ -141,7 +141,7 @@ nav li a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 400px;
+    width: 500px;
     border-bottom: #595959 1px solid;
 }
 
@@ -632,7 +632,7 @@ hr {
 #tile-view {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     background-color: black;
     box-shadow: black 0 0 10px;
     width: 60%;
@@ -653,7 +653,7 @@ hr {
     border-radius: 20px;
     padding-top: 0;
     padding-bottom: 0;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     cursor: pointer;
 }
 
@@ -666,9 +666,9 @@ hr {
     background-color: #171717;
     box-shadow: #343434 0 0 10px;
     width: 20%;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin-left: 27px;
+    margin-right: 27px;
+    margin-bottom: 50px;
     border-radius: 20px;
     padding: 0;
     cursor: pointer;
@@ -717,7 +717,10 @@ hr {
 .room-type-list {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    width: 215px;
+    margin-left: 75px;
+    text-align: left;
 }
 
 .room-rate-tile {
@@ -730,7 +733,9 @@ hr {
 .room-rate-list {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    width: 215px;
+    text-align: left;
 }
 
 #num-results {
@@ -931,6 +936,22 @@ hr {
 
 #submit-msg, #login-msg {
     padding-bottom: 40px;
+}
+
+#filter-msg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #969696;
+    font-size: 20px;
+    text-align: center;
+    box-shadow: black 0 0 10px;
+    width: 60%;
+    background-color: black;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 40px 0;
+    margin-top: 0;
 }
 
 .hidden {

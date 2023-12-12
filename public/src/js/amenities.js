@@ -7,13 +7,7 @@
     window.addEventListener("load", init);
 
     function init() {
-
-
-
         id("check").addEventListener("click", checkAvailability);
-
-
-
     }
 
     function checkAvailability() {
@@ -59,30 +53,7 @@
         if (inputDate < today || inputDate > nextYear) {
             return false;
         }
-        /*
-        if (month < 1 || month > 12) {
-            return false;
-        }
-        if (day < 1 || day > validateDay(month, year)) {
-            return false;
-        }
-         */
         return true;
-    }
-
-
-    /**
-     * Returns the response's result text if successful, otherwise
-     * returns the rejected Promise result with an error status and corresponding text
-     * @param {object} res - response to check for success/error
-     * @return {object} - valid response if response was successful, otherwise rejected
-     *                    Promise result
-     */
-    async function statusCheck(res) {
-        if (!res.ok) {
-            throw new Error(await res.text());
-        }
-        return res;
     }
 
     /**
