@@ -438,29 +438,56 @@ app.post("/update-user-info", async (req, res) => {
 });
 
 app.get("/room-filter", async (req, res) => {
-    let query
-
-    if (isEmpty(req.query.room-type, req.query.bed-type, req.query.bed-count)){
+    let params = queryBuilder(req);
+    let query = params.pop();
+    if(params.length < 1){
+        //No filters, expected behavior?
     }
-    req.query
+    console.log(query);
+    let base = await getDBConnection();
+    let rooms = await base.all(query, params);
+    res.status(200).json(rooms);
+    await base.close();
 });
 
 function queryBuilder(req){
-    let baseQuery = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" +
-        "FROM \"rooms\" r\n" +
-        "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" +
+    let baseQuery = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
+        "FROM rooms r\n" +
+        "JOIN pictures p ON p.id=r.picture\n" +
         "WHERE";
     let params = [];
     if(!isEmpty(req.query.occupants)){
-        baseQuery += " max<=?";
+        baseQuery += " r.max>=?";
         params.push(req.query.occupants);
     }
-    if(!isEmpty(req.query.room-type)){
-        baseQuery += ""
+    if(!isEmpty(req.query.roomType)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.type=?";
+        params.push(req.query.roomType);
+
     }
-    if(!isEmpty(req.query.room-type)){
-        baseQuery += ""
+    if(!isEmpty(req.query.bedType)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " r.bed=?";
+        params.push(req.query.bedType);
     }
+    if(!isEmpty(req.query.checkIn, req.query.checkOut)){
+        if(params.length > 0){
+            baseQuery += " AND";
+        }
+        baseQuery += " (r.number NOT IN (SELECT t.room FROM trans t\n" +
+            "WHERE unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)))\n" +
+            "AND (r.number NOT IN (SELECT t.room FROM trans t\n" +
+            "WHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400)))";
+        params.push(req.query.checkIn);
+        params.push(req.query.checkOut);
+    }
+    params.push(baseQuery);
+    return params;
 }
 
 async function availableCheck(base, room, checkIn, checkOut) {
