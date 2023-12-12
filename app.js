@@ -503,15 +503,6 @@ function queryBuilder(values){
         params = vals[1];
     }
 
-    // added this for bed count param from your old implementation
-    if(!isEmpty(values.bedCount)){
-        if(params.length > 0){
-            baseQuery += " AND";
-        }
-        baseQuery += " r.count=?";
-        params.push(values.bedCount);
-    }
-
     if(!isEmpty(values.roomType)){
         if(params.length > 0){
             baseQuery += " AND";
