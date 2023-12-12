@@ -1,5 +1,9 @@
-/*
- *
+/* Derrek  
+ * login.js
+ * Scripts for the login page. 
+ * Includes the event listener to display the login popup, and the registration button to check
+ * for valid inputs and prompt the user when any is invalid before sending a fetch req.
+ * 
  */
 "use strict";
 

@@ -1,5 +1,13 @@
-/*
- *
+/* Derrek
+ * account.js
+ * All scripts regarding the account page. User driven, all functions and features will only
+ * work from user interaction. Additioally a user must be logged in to reach these features.
+ * Fetch requests are made when the user checks information they included on account creation.
+ * During account creation, there are checks to determine if the input is valid or not, and will
+ * only send that information to the server once successful 
+ * Another fetch request is made to retrieve all(if any) reservations the user has made
+ * and displays it in a recept like format
+ * If a user is currently not logged in, they will be redirected to the login/registation page
  */
 "use strict";
 const apiUrl = "http://localhost:8000/";
