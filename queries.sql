@@ -35,9 +35,8 @@ WHERE p.id=r.picture;
 	all available rooms, one date
 	Chris' list 2.
 
-SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
 FROM rooms r
-JOIN pictures p ON p.id=r.picture
 WHERE 3<=r.max
 AND (r.number NOT IN (
 	SELECT t.room
@@ -45,9 +44,8 @@ AND (r.number NOT IN (
 	WHERE unixepoch('2024-01-09') BETWEEN t.ckin AND (t.ckout-86400))
 );
 */
-SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
 FROM rooms r
-JOIN pictures p ON p.id=r.picture
 WHERE ?<=r.max
 AND (r.number NOT IN (
 	SELECT t.room
@@ -60,35 +58,78 @@ AND (r.number NOT IN (
 	all available rooms, two dates
 	Chris' list 2.
 
-SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
 FROM rooms r
-JOIN pictures p ON p.id=r.picture
 WHERE 3<=r.max
 AND (r.number NOT IN (
 	SELECT t.room
 	FROM trans t
-	WHERE unixepoch('2024-01-09') BETWEEN t.ckin AND (t.ckout-86400))
-)
-AND (r.number NOT IN (
-	SELECT t.room
-	FROM trans t
-	WHERE (unixepoch('2024-01-13')-86400) BETWEEN t.ckin AND (t.ckout-86400))
+	WHERE (unixepoch('2024-01-09') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-13')-86400 BETWEEN t.ckin AND (t.ckout-86400)))
 );
 */
-SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
 FROM rooms r
-JOIN pictures p ON p.id=r.picture
 WHERE ?<=r.max
 AND (r.number NOT IN (
 	SELECT t.room
 	FROM trans t
-	WHERE unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400))
-)
-AND (r.number NOT IN (
+	WHERE (unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch(?)-86400 BETWEEN t.ckin AND (t.ckout-86400)))
+);
+
+
+
+/*
+	all transactions per user without date overlap (with 8601 dates)
+	Chris' list 5. Third Endpoint
+
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
+FROM rooms r
+WHERE r.number NOT IN (
 	SELECT t.room
 	FROM trans t
-	WHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400))
+	WHERE (unixepoch('2024-01-01') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-03')-86400 BETWEEN t.ckin AND (t.ckout-86400))
 );
+
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
+FROM rooms r
+WHERE r.number NOT IN (
+	SELECT t.room
+	FROM trans t
+	WHERE (unixepoch('2024-01-03') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-08')-86400 BETWEEN t.ckin AND (t.ckout-86400))
+);
+
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
+FROM rooms r
+WHERE r.number NOT IN (
+	SELECT t.room
+	FROM trans t
+	WHERE (unixepoch('2024-01-08') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-11')-86400 BETWEEN t.ckin AND (t.ckout-86400))
+);
+
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
+FROM rooms r
+WHERE r.number NOT IN (
+	SELECT t.room
+	FROM trans t
+	WHERE (unixepoch('2024-01-11') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-19')-86400 BETWEEN t.ckin AND (t.ckout-86400))
+);
+
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
+FROM rooms r
+WHERE r.number NOT IN (
+	SELECT t.room
+	FROM trans t
+	WHERE (unixepoch('2024-01-19') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-23')-86400 BETWEEN t.ckin AND (t.ckout-86400))
+);
+*/
+SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
+FROM rooms r
+WHERE r.number NOT IN (
+	SELECT t.room
+	FROM trans t
+	WHERE (unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch(?)-86400 BETWEEN t.ckin AND (t.ckout-86400))
+);
+
 
 
 /*
@@ -300,37 +341,43 @@ SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'res
 FROM trans t
 JOIN users u ON u.id=t.user
 JOIN rooms r ON r.number=t.room
-WHERE u.user='kyle' AND ((unixepoch('2024-01-01') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-03')-86400 BETWEEN t.ckin AND (t.ckout-86400)));
+WHERE (unixepoch('2024-01-01') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-03')-86400 BETWEEN t.ckin AND (t.ckout-86400));
 
 SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'
 FROM trans t
 JOIN users u ON u.id=t.user
 JOIN rooms r ON r.number=t.room
-WHERE u.user='kyle' AND ((unixepoch('2024-01-03') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-08')-86400 BETWEEN t.ckin AND (t.ckout-86400)));
+WHERE (unixepoch('2024-01-03') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-08')-86400 BETWEEN t.ckin AND (t.ckout-86400));
 
 SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'
 FROM trans t
 JOIN users u ON u.id=t.user
 JOIN rooms r ON r.number=t.room
-WHERE u.user='kyle' AND ((unixepoch('2024-01-08') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-11')-86400 BETWEEN t.ckin AND (t.ckout-86400)));
+WHERE (unixepoch('2024-01-08') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-11')-86400 BETWEEN t.ckin AND (t.ckout-86400));
 
 SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'
 FROM trans t
 JOIN users u ON u.id=t.user
 JOIN rooms r ON r.number=t.room
-WHERE u.user='kyle' AND ((unixepoch('2024-01-11') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-19')-86400 BETWEEN t.ckin AND (t.ckout-86400)));
+WHERE (unixepoch('2024-01-11') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-19')-86400 BETWEEN t.ckin AND (t.ckout-86400));
 
 SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'
 FROM trans t
 JOIN users u ON u.id=t.user
 JOIN rooms r ON r.number=t.room
-WHERE u.user='kyle' AND ((unixepoch('2024-01-19') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-23')-86400 BETWEEN t.ckin AND (t.ckout-86400)));
+WHERE (unixepoch('2024-01-19') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-23')-86400 BETWEEN t.ckin AND (t.ckout-86400));
+
+SELECT r.number AS 'room',r.type,r.rate
+FROM rooms r
+JOIN trans t ON r.number=t.room
+WHERE (unixepoch('2024-01-19') BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch('2024-01-23')-86400 BETWEEN t.ckin AND (t.ckout-86400));
 */
-SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'
-FROM trans t
-JOIN users u ON u.id=t.user
-JOIN rooms r ON r.number=t.room
-WHERE u.user=? AND ((unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch(?)-86400 BETWEEN t.ckin AND (t.ckout-86400)));
+/*
+SELECT r.number AS 'room',r.type,r.rate
+FROM rooms r
+JOIN trans t ON r.number=t.room
+WHERE (unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)) OR (unixepoch(?)-86400 BETWEEN t.ckin AND (t.ckout-86400));
+*/
 
 
 
