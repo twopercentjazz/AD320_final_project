@@ -6,14 +6,12 @@ const apiUrl = "http://localhost:8000/";
 const loginUrl = 'src/html/login.html';
 (function() {
     window.addEventListener("load", init);
-
     function init() {
         checkLoggedIn();
         hide();
         hideReservations();
         getUserInfo();
-        toggleDisplay('reservations');
-        // retrieveReservations();
+        toggleDisplay("profile");
         id("profile-btn").addEventListener("click", () => toggleDisplay("profile"));
         id("reservations-btn").addEventListener("click", () => toggleDisplay("reservations"));
         id('current-btn').addEventListener('click', () => {
@@ -120,23 +118,47 @@ const loginUrl = 'src/html/login.html';
         .then(res => res.json())
         .then(res => {
             console.log(res);
-            displayReservations(res);
+            displayReservations(res, endpoint);
         })
         .catch(console.error);
     }
 
+    /**
+     * helper function updates the text content of the element passed
+     * @param {*} element  
+     * @param {*} string 
+     * @param {*} data 
+     */
     function updateTxtCon(element, string, data){
         element.textContent = string + data;
     }
 
+    /**
+     * helper function, appends the newly created elements together
+     * @param {*} element1 
+     * @param {*} element2 
+     */
     function appendElement(element1, element2) {
         element1.appendChild(element2);
     }
 
-    function displayReservations(data) {
+    /**
+     * loops through the json data, and creates info cards of the given reservation
+     * orginally had a different format thus the naming conventions, but due to the length
+     * of the data input, it changes the format of the display
+     * @param {*} data 
+     */
+    function displayReservations(data, endpoint) {
         let reservationDisplay = document.getElementById("upcoming");
         reservationDisplay.innerHTML = "";
-    
+        let filter = gen("h1");
+        if (endpoint === "future-reservations") {
+            filter.textContent = "Upcoming Reservations";
+        } else {
+            filter.textContent = "Previous Reservations";
+        }
+        appendElement(reservationDisplay, filter);
+
         data.forEach(reservation => {
             let reservationCard = gen("div");
             reservationCard.classList.add("reservation-card");
@@ -205,11 +227,9 @@ const loginUrl = 'src/html/login.html';
     
             appendElement(bot, botMid);
     
-            // Append top and bottom sections to the reservation card
             appendElement(reservationCard, top);
             appendElement(reservationCard, bot);
     
-            // Append the reservation card to the reservationDisplay
             appendElement(reservationDisplay, reservationCard);
         });
     }
