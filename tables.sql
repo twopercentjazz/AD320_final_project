@@ -113,6 +113,23 @@ The expression of a CHECK constraint may not contain a subquery
 --"bed" INTEGER REFERENCES "beds" ON UPDATE CASCADE ON DELETE SET NULL,
 
 
+/*
+CREATE TABLE IF NOT EXISTS "users" (
+"id" INTEGER PRIMARY KEY NOT NULL,
+"user" TEXT NOT NULL UNIQUE,	-- user name
+"pass" TEXT NOT NULL CHECK (length("code") BETWEEN 6 AND 30),	-- passcode
+"name" TEXT NOT NULL,
+"email" TEXT NOT NULL,
+"phone" TEXT NOT NULL CHECK (length("phone") IN (10,12,14)),
+"address" TEXT NOT NULL,
+"city" TEXT NOT NULL,
+"state" TEXT NOT NULL CHECK (length("state")=2),
+"code" TEXT NOT NULL CHECK (length("code")=5 OR length("code")=10)
+"sessionid" INTEGER UNIQUE DEFAULT NULL
+) STRICT;
+*/
+
+
 CREATE TABLE IF NOT EXISTS "users" (
 "id" INTEGER PRIMARY KEY NOT NULL,
 "user" TEXT NOT NULL UNIQUE,	-- user name

@@ -77,6 +77,16 @@ INSERT INTO "rooms" ("number","max","type","bed","count","rate","picture") VALUE
 	- users table
 	- info table
 */
+/*
+INSERT INTO users ("id","user","pass","name","email","phone","address","city","state","code","sessionid") VALUES
+(0,'derrek','qwerty','Derrek Do','Derrek.Do@seattlecolleges.edu','(800) 555-1212','123 Nowhere Way','Nowhere','NW','10001',NULL),
+(1,'chris','poiuyt','Chris Nickell','Christopher.Nickell@seattlecolleges.edu','(800) 555-0100','987 Nowhere St','Nowhere','NW','10001',NULL),
+(2,'joel','asdfgh','Joel Perry','Joel.Perry@seattlecolleges.edu','(800) 555-0123','456 Nowhere Ave','Nowhere','NW','10001',NULL),
+(3,'kyle','lkjhgf','Kyle Potempa','Kyle.Potempa@seattlecolleges.edu','(800) 555-0177','753 Nowhere Rd','Nowhere','NW','10001',NULL),
+(4,'tim','mnbvcx','Tim Mandzyuk','Timothy.Mandzyuk@seattlecolleges.edu','(800) 555-0194','624 Nowhere Cir','Nowhere','NW','10001',NULL);
+*/
+
+
 INSERT INTO "users" ("id","user","code","name","email","sessionid") VALUES
 (0,'derrek','qwerty','Derrek Do','Derrek.Do@seattlecolleges.edu',NULL),
 (1,'chris','poiuyt','Chris Nickell','Christopher.Nickell@seattlecolleges.edu',NULL),

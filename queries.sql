@@ -32,7 +32,7 @@ WHERE p.id=r.picture;
 
 
 /*
-	all available rooms, one date
+	all available rooms without (8601) single date overlap and max occupancy
 	Chris' list 2.
 
 SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
@@ -55,7 +55,7 @@ AND (r.number NOT IN (
 
 
 /*
-	all available rooms, two dates
+	all available rooms without (8601) date range overlap and max occupancy
 	Chris' list 2.
 
 SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
@@ -79,7 +79,7 @@ AND (r.number NOT IN (
 
 
 /*
-	all transactions per user without date overlap (with 8601 dates)
+	all available rooms without (8601) date range overlap
 	Chris' list 5. Third Endpoint
 
 SELECT r.number,r.type,CAST((r.rate/100) AS REAL) AS 'rate'
@@ -192,6 +192,9 @@ WHERE ?;
 /*
 	create user account
 */
+INSERT INTO users (id,user,pass,name,email,phone,address,city,state,code,sessionid) VALUES
+(NULL,?,?,?,?,NULL);
+
 INSERT INTO users (id,user,code,name,email,sessionid) VALUES
 (NULL,?,?,?,?,NULL);
 
@@ -232,11 +235,11 @@ UPDATE users SET sessionid=NULL WHERE user=?
 	user sessionid by user name
 	Chris' list 5. First Endpoint
 
-SELECT u.sessionid FROM users u WHERE id=1;
-SELECT u.sessionid FROM users u WHERE user='chris';
+SELECT sessionid FROM users u WHERE id=1;
+SELECT sessionid FROM users u WHERE user='chris';
 */
-SELECT u.sessionid FROM users u WHERE id=?;
-SELECT u.sessionid FROM users u WHERE user=?;
+SELECT sessionid FROM users WHERE id=?;
+SELECT sessionid FROM users WHERE user=?;
 
 
 /*
@@ -244,11 +247,11 @@ SELECT u.sessionid FROM users u WHERE user=?;
 	user by user name
 	Chris' list 5. Second Endpoint
 
-SELECT u.id,u.user,u.name,u.email FROM users u WHERE id=1;
-SELECT u.id,u.user,u.name,u.email FROM users u WHERE user='chris';
+SELECT id,user,name,email FROM users WHERE id=1;
+SELECT id,user,name,email FROM users WHERE user='chris';
 */
-SELECT u.id,u.user,u.name,u.email FROM users u WHERE id=?;
-SELECT u.id,u.user,u.name,u.email FROM users u WHERE user=?;
+SELECT id,user,name,email FROM users WHERE id=?;
+SELECT id,user,name,email FROM users WHERE user=?;
 
 
 /*
@@ -256,6 +259,8 @@ SELECT u.id,u.user,u.name,u.email FROM users u WHERE user=?;
 
 ,u.code AS 'password'
 */
+SELECT id,user,name,email,phone,address,city,state,code FROM users;
+
 SELECT u.id,u.user,u.name,u.email,i.phone,i.address,i.city,i.state,i.code
 FROM users u,info i
 WHERE i.id=u.id;
@@ -276,6 +281,11 @@ FROM users u
 JOIN info i ON i.id=u.id
 WHERE u.user='derrek';
 */
+SELECT id,user,name,email,phone,address,city,state,code FROM users WHERE id=?;
+
+SELECT id,user,name,email,phone,address,city,state,code FROM users WHERE user=?;
+
+
 SELECT u.id,u.user,u.name,u.email,i.phone,i.address,i.city,i.state,i.code
 FROM users u
 JOIN info i ON i.id=u.id
@@ -334,6 +344,9 @@ WHERE u.user=?;
 
 
 /*
+	This is vestigial
+	Ignore it
+
 	all transactions per user with date overlap (with 8601 dates)
 	Chris' list 5. Third Endpoint
 
