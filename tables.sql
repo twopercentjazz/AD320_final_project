@@ -138,9 +138,9 @@ CREATE TABLE IF NOT EXISTS "trans" (
 "user" INTEGER NOT NULL REFERENCES "users" ON UPDATE CASCADE ON DELETE CASCADE,
 "room" INTEGER NOT NULL REFERENCES "rooms" ON UPDATE CASCADE ON DELETE CASCADE,
 "confirm" INTEGER NOT NULL UNIQUE,
-"date" INTEGER NOT NULL CHECK ("date" BETWEEN unixepoch('2023-12-10') AND unixepoch('2038-01-18')),
-"ckin" INTEGER NOT NULL CHECK ("ckin" BETWEEN unixepoch('2023-12-10') AND unixepoch('2038-01-18')),
-"ckout" INTEGER NOT NULL CHECK ("ckout" BETWEEN unixepoch('2023-12-10') AND unixepoch('2038-01-18')),
+"date" INTEGER NOT NULL CHECK ("date" BETWEEN unixepoch('2023-12-01') AND unixepoch('2038-01-18')),
+"ckin" INTEGER NOT NULL CHECK ("ckin" BETWEEN unixepoch('2023-12-01') AND unixepoch('2038-01-18')),
+"ckout" INTEGER NOT NULL CHECK ("ckout" BETWEEN unixepoch('2023-12-01') AND unixepoch('2038-01-18')),
 "occupants" INTEGER NOT NULL CHECK ("occupants" BETWEEN 1 AND 4),	-- maximum occupancy
 "cost" INTEGER NOT NULL CHECK ("cost" BETWEEN 50*100 AND 10000*100)	-- $50.00-$10,000.00 in pennies
 ) STRICT;
