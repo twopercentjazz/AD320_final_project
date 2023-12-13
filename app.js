@@ -427,16 +427,15 @@ app.post("/room-filter", async (req, res) => {
  * Parameter based filter endpoint. Requires exact punctuation, spelling, and formatting.
  * Unknown behavior for multiple values for a field, but expected to fail.
  */
-app.get("/room-filter/:guests/:roomType/:bedType/:bedCount/:checkin/:checkout", async (req, res) => {
+app.get("/room-filter/:guests/:roomType/:bedType/:bedCount/:checkIn/:checkOut", async (req, res) => {
     let params = {
         guests: [req.params.guests],
         roomType: [req.params.roomType],
         bedType: [req.params.bedType],
-        bedCount: [req.params.bedCount],
-        checkIn: [req.params.checkIn],
-        checkOut: [req.params.checkOut]
+        bedCount: req.params.bedCount,
+        checkIn: req.params.checkIn,
+        checkOut: req.params.checkOut
     };
-    console.log(params);
     await filter(params, res);
 });
 
@@ -526,8 +525,6 @@ async function filter(values, res){
     if(params.length < 1){
         return res.status(400).send("No filter values found.")
     }
-    console.log(query);
-    console.log(params);
     let base = await getDBConnection();
     try{
         let rooms = await base.all(query, params);
