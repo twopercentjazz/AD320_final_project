@@ -241,6 +241,7 @@ p {
    justify-content: space-evenly;
    margin-bottom: 10px;
    border-radius: 10px;
+   font-size: 15px;
 }
 
 .reservation-display {
@@ -254,7 +255,7 @@ p {
 
 .top > div{
     display: flex;
-    gap: 40px;
+    gap: 20px;
 }
 
 .top > div > div > p {
@@ -263,7 +264,7 @@ p {
 
 .bottom > div {
     display: flex;
-    gap: 40px;
+    gap: 30px;
 }
 
 .bottom > div > div > p {
