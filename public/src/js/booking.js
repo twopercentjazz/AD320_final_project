@@ -158,8 +158,8 @@
             guests: guests,
             roomType: roomType ? capitalizeFirstLetter(roomType[0]) : undefined,
             bedType: bedType ? capitalizeFirstLetter(bedType[0]) : undefined,
-            checkin: checkin,
-            checkout: checkout
+            checkIn: checkin,
+            checkOut: checkout
         }
     }
 

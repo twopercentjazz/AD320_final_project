@@ -427,7 +427,7 @@ app.post("/room-filter", async (req, res) => {
  * Parameter based filter endpoint. Requires exact punctuation, spelling, and formatting.
  * Unknown behavior for multiple values for a field, but expected to fail.
  */
-app.get("/room-filter/:guests/:roomType/:bedType/:bedCount/:checkIn/:checkOut", async (req, res) => {
+app.get("/room-filter/:bedCount/:guests/:roomType/:bedType/:checkIn/:checkOut", async (req, res) => {
     await filter(req.params, res);
 });
 
@@ -439,10 +439,10 @@ app.get("/room-filter/:guests/:roomType/:bedType/:bedCount/:checkIn/:checkOut", 
 app.get("/search", async (req, res) => {
     let search = req.query.input.toLowerCase().split(' ');
     let params = {
+        bedCount: [],
         guests: [],
         roomType: [],
         bedType: [],
-        bedCount: [],
         checkIn: [],
         checkOut: []
     };
