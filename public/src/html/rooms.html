@@ -1,27 +1,182 @@
 <!--
-
+This page is about the rooms the hotel offers.
 -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poiret One">
-        <link rel="stylesheet" href="/src/css/styles.css">
-        <link rel="stylesheet" href="/src/css/rooms.css">
-        <script src="/src/js/rooms.js"></script>
+        <link rel="stylesheet" href="../css/styles.css">
+        <script src="../js/rooms.js"></script>
+        <script src="../js/load.js"></script>
+        <script src="../js/filterbtns.js"></script>
         <title>Rooms</title>
     </head>
     <body>
         <header>
-
+            <a id="logo-box" href="../../index.html">
+                <img id="logo" src="../../assets/img/overlook-logo.png" alt="overlook-logo">
+                <p>Overlook Hotel</p>
+            </a>
+            <section id="navigation">
+                <nav id="nav1">
+                    <ul id="login">
+                        <li><a id="link1" href="">Login</a></li>
+                        <li><a id="nullLink" href="">|</a></li>
+                        <li><a id="link2" href="">Join</a></li>
+                    </ul>
+                    <ul id="account" class="hidden">
+                        <li><a href="account.html">My Account</a></li>
+                    </ul>
+                </nav>
+                <nav id="nav2">
+                    <ul>
+                        <li><a href="amenities.html">Play</a></li>
+                        <li><a href="dinning.html">Dine</a></li>
+                        <li><a id="curr-page" href="rooms.html">Stay</a></li>
+                        <li><a href="../../index.html">Home</a></li>
+                    </ul>
+                </nav>
+            </section>
         </header>
-
         <main>
-
+            <section id="hotel-name">
+                <P>Stay</P>
+                <section id="hotel-title">
+                    <hr><h1>Historic Overlook Hotel</h1><hr>
+                </section>
+                <p>Rooms & Suites</p>
+            </section>
+            <section id="availability">
+                <section id="availability-box">
+                    <form id="availability-form">
+                        <label for="checkin-date">Check-In</label>
+                        <input type="date" id="checkin-date" name="dates" required>
+                        <label for="checkout-date">Check-Out</label>
+                        <input type="date" id="checkout-date" name="dates" required>
+                        <label for="people">People</label>
+                        <select id="people">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                        <button id="check" type="button" class="button">Check Availability</button>
+                    </form>
+                    <section id="error-msg">
+                        <section id="error-msg-box"></section>
+                    </section>
+                </section>
+            </section>
+            <section id="intro">
+                <img id="intro-img" src="../../assets/img/hallway.jpg" alt="hallway">
+            </section>
+            <section id="rooms-title">
+                <hr><h2>Explore Rooms</h2><hr>
+            </section>
+            <section id="explore-rooms">
+                <section id="show-search">
+                    <button id="filter-btn1" type="button" class="button">Show Search</button>
+                </section>
+                <section id="hide-search" class="hidden">
+                    <button id="filter-btn2" type="button" class="button">Hide Search</button>
+                </section>
+                <section id="show-filters">
+                    <button id="filter-btn3" type="button" class="button">Show Filters</button>
+                </section>
+                <section id="hide-filters" class="hidden">
+                    <button id="filter-btn4" type="button" class="button">Hide Filters</button>
+                </section>
+                <section id="show-views">
+                    <button id="filter-btn5" type="button" class="button">Show Views</button>
+                </section>
+                <section id="hide-views" class="hidden">
+                    <button id="filter-btn6" type="button" class="button">Hide Views</button>
+                </section>
+            </section>
+            <section id="filter-msg-box">
+                <section id="filter-msg">
+                    <p id="filter-message-text">Filter rooms using the buttons above</p>
+                </section>
+            </section>
+            <section id="search-section" class="hidden">
+                <section id="search-title">
+                    <hr><h3>Keyword Search</h3><hr>
+                </section>
+                <section id="search">
+                    <form id="search-form">
+                        <label for="search-bar">Search</label>
+                        <input type="text" id="search-bar" name="search" required>
+                        <button id="search-btn" type="submit">Find Rooms</button>
+                        <button id="clear-btn1" type="button">Reset</button>
+                    </form>
+                </section>
+            </section>
+            <section id="filters-section" class="hidden">
+                <section id="filters-title">
+                    <hr><h3>Filter Results</h3><hr>
+                </section>
+                <section id="filter">
+                    <form id="filter-form">
+                        <section id="room-type">
+                            <h3>Room Type:</h3>
+                            <section id="room-type-options">
+                                <label><input value="Economy" type="radio" name="type"> Economy</label>
+                                <label><input class=default" value="Standard" type="radio" name="type" checked> Standard</label>
+                                <label><input value="Deluxe" type="radio" name="type"> Deluxe</label>
+                                <label><input value="Suite" type="radio" name="type"> Suite</label>
+                            </section>
+                        </section>
+                        <section id="bed-type">
+                            <h3>Bed Type:</h3>
+                            <section id="bed-type-options">
+                                <label><input value="Twin" type="radio" name="bed"> Twin</label>
+                                <label><input value="Full" type="radio" name="bed"> Full</label>
+                                <label><input class=default" value="Queen" type="radio" name="bed" checked> Queen</label>
+                                <label><input value="King" type="radio" name="bed"> King</label>
+                            </section>
+                        </section>
+                        <section id="bed-count">
+                            <h3>Bed Count:</h3>
+                            <section id="bed-count-options">
+                                <label><input class=default" value="1" type="radio" name="count" checked> One</label>
+                                <label><input value="2" type="radio" name="count"> Two</label>
+                            </section>
+                        </section>
+                        <button id="filter-btn" type="submit">Apply Filters</button>
+                        <button id="clear-btn2" type="button">Reset</button>
+                    </form>
+                </section>
+            </section>
+            <section id="views-section" class="hidden">
+                <section id="views-title">
+                    <hr><h3>Change Results View</h3><hr>
+                </section>
+                <section id="view">
+                    <form id="view-form">
+                        <label><input value="list" type="radio" name="result-views" checked="checked"> List View</label>
+                        <label><input value="tile" type="radio" name="result-views"> Tile View</label>
+                    </form>
+                </section>
+            </section>
+            <section id="results-title">
+                <hr><h3>Results: <span id="num-results"></span></h3><hr class="long-hr">
+            </section>
+            <section id="display-list">
+                <section id="list-view">
+                </section>
+            </section>
+            <section id="display-tile" class="hidden">
+                <section id="tile-view"></section>
+            </section>
+            <section id="room-detail-view" class="hidden">
+                <section id="room-detail"></section>
+            </section>
+            <section id="end-results">
+                <hr>
+            </section>
         </main>
-
         <footer>
-
         </footer>
     </body>
 </html>
