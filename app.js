@@ -37,9 +37,10 @@ function isEmpty(...input) {
  * this is the cleanest option that I've considered.
  * @param base A database connection.
  * @param user The user to give a sessionId to.
+ * @param res Response, used in case of an error.
  * @returns {Promise<string>} The unique sessionId.
  */
-async function createSessionId(base, user) {
+async function createSessionId(base, user, res) {
     let sessionId = Math.random().toString().substring(2, 18);
     let query = "SELECT sessionid FROM users";
     let ids = await base.all(query);
@@ -55,11 +56,11 @@ async function createSessionId(base, user) {
     }
 
     let insertion = "UPDATE users SET sessionid=? WHERE user=?";
-    await base.run(insertion, [sessionId, user], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-        }
-    });
+    try {
+        await base.run(insertion, [sessionId, user]);
+    } catch (error) {
+        res.status(500);
+    }
     return sessionId
 }
 
@@ -73,6 +74,10 @@ async function getDBConnection() {
     });
 }
 
+/**
+ * Endpoint to create a user account, complete with user info. All fields must be filled.
+ * If a user with a given username already exists, fails with a 500 status code.
+ */
 app.post("/create-user-full", async (req, res) => {
     if (isEmpty(req.body.username, req.body.password, req.body.name, req.body.email, req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code)) {
         return res.status(400).send("Missing a required parameter");
@@ -80,33 +85,47 @@ app.post("/create-user-full", async (req, res) => {
     let base = await getDBConnection();
     await newUser(base, req, res);
     if(res.statusCode === 200){
-        let info = await newUserInfo(base, req, res);
+        await newUserInfo(base, req, res);
         if(res.statusCode === 200) {
-            res.send("New user successfully created.");
+            res.type("text").send("New user successfully created.");
         } else {
-            res.send("User added, but error attempting to add user information.")
+            res.type("text").send("User added, but error attempting to add user information.")
         }
     } else {
-        res.send("User not added, may already exist or a parameter may be improperly formatted");
+        res.type("text").send("User not added, may already exist or a parameter may be improperly formatted");
     }
     await base.close();
 });
 
+/**
+ * Adds a new user.
+ * @param base An open connection to the database.
+ * @param req Request parameters
+ * @param res Response, in case of an error.
+ * @returns {Promise<void>} Unused.
+ */
 async function newUser(base, req, res){
     let addQuery = "INSERT INTO users (user, code, name, email) VALUES (?, ?, ?, ?)";
     try {
-        let info = await base.run(addQuery, [req.body.username, req.body.password, req.body.name, req.body.email]);
+        await base.run(addQuery, [req.body.username, req.body.password, req.body.name, req.body.email]);
     } catch (error) {
         res.status(500);
     }
 }
 
+/**
+ * Adds info for a new user.
+ * @param base An open connection to the database.
+ * @param req Request parameters
+ * @param res Response, in case of an error.
+ * @returns {Promise<void>} Unused.
+ */
 async function newUserInfo(base, req, res){
     let idQuery = "SELECT id FROM users WHERE user=?";
     let userID = await base.get(idQuery, [req.body.username]);
     let infoStatement = "INSERT INTO info (id, phone, address, city, state, code) VALUES (?,?,?,?,?,?)";
     try {
-        let info = await base.run(infoStatement, [userID["id"], req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code]);
+        await base.run(infoStatement, [userID["id"], req.body.phone, req.body.address, req.body.city, req.body.state, req.body.code]);
     } catch (error) {
         res.status(500);
     }
@@ -114,10 +133,7 @@ async function newUserInfo(base, req, res){
 
 /**
  * Creates a new user. Requires a unique username, a password, a name, and an email. Values can not be empty/null.
- * If a user with a given username already exists, fails with a 400 status code.
- * While there's a strong argument for checking if a user exists before inserting, that leads to a potential race
- * condition where a user isn't found, another connection adds a user, and then this fails. Instead, this simply catches
- * a failed attempt. Added bonus of avoiding a (relatively) expensive query.
+ * If a user with a given username already exists, fails with a 500 status code.
  */
 app.post("/create-user", async (req, res) => {
     if (isEmpty(req.body.username, req.body.password, req.body.name, req.body.email)) {
@@ -126,13 +142,8 @@ app.post("/create-user", async (req, res) => {
     let addQuery = "INSERT INTO users (user, code, name, email) VALUES (?, ?, ?, ?)";
     let base = await getDBConnection();
     try {
-        await base.run(addQuery, [req.body.username, req.body.password, req.body.name, req.body.email], (error) => {
-            if (error) {
-                console.log("Does this ever trigger?");
-                return res.status(500).send("Internal error.");
-            }
-        });
-        res.status(200).send("User successfully created.")
+        await base.run(addQuery, [req.body.username, req.body.password, req.body.name, req.body.email]);
+        res.type("text").send("User successfully created.")
     } catch (error) {
         if (error.code === "SQLITE_CONSTRAINT") {
             res.status(400).send("User already exists.");
@@ -153,21 +164,20 @@ app.post("/login", async (req, res) => {
     }
     let query = "SELECT user,code FROM users WHERE user=?";
     let base = await getDBConnection();
-    let user = await base.get(query, [req.body.username], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");
+    try {
+        let user = await base.get(query, [req.body.username]);
+        if (isEmpty(user)) {
+            res.status(400).send("User not found");
+        } else if (user['code'] !== req.body.password) {
+            res.status(400).send("Invalid credentials");
+        } else {
+            let id = await createSessionId(base, req.body.username, res);
+            res.cookie("sessionId", id, {maxAge: 2592000000}); //Roughly a month
+            res.cookie("username", req.body.username, {maxAge: 2592000000})
+            res.type("text").send("Successfully logged in.");
         }
-    });
-    if (isEmpty(user)) {
-        res.status(400).send("User not found");
-    } else if (user['code'] !== req.body.password) {
-        res.status(400).send("Invalid credentials");
-    } else {
-        let id = await createSessionId(base, req.body.username);
-        res.cookie("sessionId", id, {maxAge: 2592000000}); //Roughly a month
-        res.cookie("username", req.body.username, {maxAge: 2592000000})
-        res.status(200).send("Successfully logged in.");
+    } catch (error) {
+        res.status(500)
     }
     await base.close();
 });
@@ -177,10 +187,10 @@ app.post("/login", async (req, res) => {
  */
 app.post("/logout", async (req, res) => {
     if (isEmpty(req.cookies.sessionId)) {
-        res.status(200).send("Already logged out");
+        res.type("text").send("Already logged out");
     } else {
         res.clearCookie("sessionId");
-        res.status(200).send("Successfully logged out");
+        res.type("text").send("Successfully logged out");
     }
 });
 
@@ -190,13 +200,13 @@ app.post("/logout", async (req, res) => {
  */
 app.get("/activity-check", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
-        return res.status(200).send("false");
+        return res.type("text").send("false");
     }
     let base = await getDBConnection();
     if (!await activeCheck(base, req.cookies.username, req.cookies.sessionId)) {
-        res.status(200).send("false");
+        res.type("text").send("false");
     } else {
-        res.status(200).send("true")
+        res.type("text").send("true")
     }
     await base.close();
 });
@@ -214,68 +224,79 @@ async function activeCheck(base, user, sessionId) {
         return false;
     }
     let query = "SELECT user,sessionid from users WHERE user=?";
-    let result = await base.get(query, [user]);
+    let result;
+    try {
+        result = await base.get(query, [user]);
+    } catch (error){
+        //Error response
+    }
     return (!isEmpty(result) && result["sessionid"] == sessionId);
 }
 
+/**
+ * If a user is logged in, returns that user's information.
+ */
 app.get("/user-info", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(400).send("false");
     }
     let base = await getDBConnection();
     let query = "SELECT * FROM users WHERE user=?";
-    let userInfo = await base.get(query, [req.cookies.username], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");
-        }
-    });
-    res.status(200).json(userInfo);
+    try {
+        let userInfo = await base.get(query, [req.cookies.username]);
+        res.status(200).json(userInfo);
+    } catch (error) {
+        res.status(500);
+    }
     await base.close();
 });
 
+/**
+ * Returns all the information on a logged-in user.
+ */
 app.get("/user-all-info", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(400).send("false");
     }
     let base = await getDBConnection();
-    let query = "SELECT u.\"id\",u.\"user\",u.\"name\",u.\"email\",i.\"phone\",i.\"address\",i.\"city\",i.\"state\",i.\"code\"\n" +
-        "FROM \"users\" u\n" +
-        "JOIN \"info\" i ON i.\"id\"=u.\"id\"\n" +
-        "WHERE u.\"user\"=?";
-    let result = await base.get(query, [req.cookies.username]);
-    res.status(200).json(result);
+    let query = "SELECT u.id,u.user,u.name,u.email,i.phone,i.address,i.city,i.state,i.code\n" +
+        "FROM users u\n" +
+        "JOIN info i ON i.id=u.id\n" +
+        "WHERE u.user=?";
+    try {
+        let result = await base.get(query, [req.cookies.username]);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500)
+    }
     await base.close();
 });
 
 /**
- * Checks if a user is logged in, and then returns all of that users transactions.
+ * Checks if a user is logged in, and then returns all of that users reservations.
  */
 app.get("/user-reservations", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(401).send("No active session found");
     }
     let base = await getDBConnection();
-    if (!await activeCheck(base, req.cookies.username, req.cookies.sessionId)) {
-        res.status(401).send("No active session found.");
-    } else {
-        // let query = "SELECT * FROM trans WHERE user=?";
-        let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'\n" +
-            "FROM trans t\n" +
-            "JOIN users u ON u.id=t.user\n" +
-            "JOIN rooms r ON r.number=t.room\n" +
-            "WHERE u.user=?";
-        let transactions = await base.all(query, [req.cookies.username], (error) => {
-            if (error) {
-                console.log("Does this ever trigger?");
-                return res.status(500).send("Internal error");
-            }
-        });
+    let query = "SELECT t.id,u.user,r.number AS 'room',t.confirm,date(t.date,'unixepoch') AS 'reserved',date(t.ckin,'unixepoch') AS 'ckin',date(t.ckout,'unixepoch') AS 'ckout',t.occupants,CAST((t.cost/100) AS REAL) AS 'cost'\n" +
+        "FROM trans t\n" +
+        "JOIN users u ON u.id=t.user\n" +
+        "JOIN rooms r ON r.number=t.room\n" +
+        "WHERE u.user=?";
+    try {
+        let transactions = await base.all(query, [req.cookies.username]);
         res.status(200).json(transactions);
+    } catch (error) {
+        res.status(500)
     }
     await base.close();
 });
 
+/**
+ * Checks if a user is logged in, and then returns all of that users past reservations.
+ */
 app.get("/past-reservations", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(401).send("No active session found");
@@ -286,11 +307,18 @@ app.get("/past-reservations", async (req, res) => {
         "JOIN users u ON u.id=t.user\n" +
         "JOIN rooms r ON r.number=t.room\n" +
         "WHERE u.user=? AND t.ckout<unixepoch('now');";
-    let transactions = await base.all(query, [req.cookies.username, Date.now()]);
-    res.status(200).json(transactions);
+    try {
+        let transactions = await base.all(query, [req.cookies.username]);
+        res.status(200).json(transactions);
+    } catch (error) {
+        res.status(500)
+    }
     await base.close();
 });
 
+/**
+ * Checks if a user is logged in, and then returns all of that users future reservations.
+ */
 app.get("/future-reservations", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(401).send("No active session found");
@@ -301,91 +329,121 @@ app.get("/future-reservations", async (req, res) => {
         "JOIN users u ON u.id=t.user\n" +
         "JOIN rooms r ON r.number=t.room\n" +
         "WHERE u.user=? AND t.ckout>unixepoch('now');";
-    let transactions = await base.all(query, [req.cookies.username]);
-    res.status(200).json(transactions);
+    try {
+        let transactions = await base.all(query, [req.cookies.username]);
+        res.status(200).json(transactions);
+    } catch (error) {
+        res.status(500)
+    }
     await base.close();
 });
 
+/**
+ * Reserves a room for the currently logged in user.
+ * Requires a valid Room number, check in date, check out date, and number of occupants.
+ */
 app.post("/reserve", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId, req.body.room, req.body.checkIn, req.body.checkOut, req.body.occupants)) {
         return res.status(400).send("Missing required information.");
     }
     let base = await getDBConnection();
-    if (!await activeCheck(base, req.cookies.username, req.cookies.sessionId)) {
-        res.status(401).send("No active session found.");
+    let roomCheck = "SELECT * FROM rooms WHERE number=?";
+    let room = await base.get(roomCheck, [req.body.room]);
+    if (isEmpty(room)) {
+        res.status(400).send("Room not found");
     } else {
-        let roomCheck = "SELECT * FROM rooms WHERE number=?";
-        let room = await base.get(roomCheck, [req.body.room]);
-        if (isEmpty(room)) {
-            res.status(400).send("Room not found");
-        } else {
-            //Should really attempt to verify things
-            let confirmationNumber = Math.random().toString().substring(2, 18);
-            let idQuery = "SELECT id FROM users WHERE user=?";
+        //This should be unique.
+        let confirmationNumber = Math.random().toString().substring(2, 18);
+        let idQuery = "SELECT id FROM users WHERE user=?";
+        try {
             let userId = await base.get(idQuery, [req.cookies.username]);
             let reservationStatement = "INSERT INTO trans (user, room, confirm, date, ckin, ckout, occupants, cost) VALUES" + "(?,?,?,unixepoch(date()),unixepoch(?),unixepoch(?),?, ((julianday(?) - julianday(?)) * ?))";
             let reservation = await base.run(reservationStatement, [userId["id"], req.body.room, confirmationNumber, req.body.checkIn, req.body.checkOut, req.body.occupants, req.body.checkOut, req.body.checkIn, room["rate"]]);
             if (isEmpty(reservation)) {
                 res.status(400).send("Something went wrong");
             } else {
-                res.status(200).send(confirmationNumber);
+                res.type("text").send(confirmationNumber);
             }
+        } catch (error) {
+            res.status(500);
         }
     }
     await base.close();
 });
 
 /**
- * Returns effectively the entire rooms table.
+ * Returns information on every room.
  */
 app.get("/rooms", async (req, res) => {
-    // let query = "SELECT * FROM rooms";
     let query = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
         "FROM rooms r,pictures p\n" +
         "WHERE p.id=r.picture;";
     let base = await getDBConnection();
-    let rooms = await base.all(query, [], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");
-        }
-    });
-    //Result checking?
-    res.status(200).json(rooms);
-    await base.close();
-});
-
-app.get("/room-info/:number", async (req, res) => {
-    // let query = "SELECT * FROM rooms WHERE number=?";
-    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" + "FROM \"rooms\" r\n" + "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" + "WHERE r.\"number\"=?;";
-    let base = await getDBConnection();
-    let room = await base.get(query, [req.params.number], (error) => {
-        if (error) {
-            console.log("Does this ever trigger?");
-            return res.status(500).send("Internal error");
-        }
-    });
-    if (isEmpty(room)) {
-        res.status(200).send("Room not found.");
-    } else {
-        res.status(200).json(room);
+    try {
+        let rooms = await base.all(query, []);
+        res.status(200).json(rooms);
+    } catch (error) {
+        res.status(500)
     }
     await base.close();
 });
 
+/**
+ * Returns information on a specific room, passed as a parameter.
+ */
+app.get("/room-info/:number", async (req, res) => {
+    // let query = "SELECT * FROM rooms WHERE number=?";
+    let query = "SELECT r.\"number\",r.\"max\",r.\"type\",r.\"bed\",r.\"count\",CAST((r.\"rate\"/100) AS REAL) AS 'rate',p.\"picture\"\n" + "FROM \"rooms\" r\n" + "JOIN \"pictures\" p ON p.\"id\"=r.\"picture\"\n" + "WHERE r.\"number\"=?;";
+    let base = await getDBConnection();
+    try {
+        let room = await base.get(query, [req.params.number]);
+        if (isEmpty(room)) {
+            res.type("text").send("Room not found.");
+        } else {
+            res.status(200).json(room);
+        }
+    } catch (error) {
+        res.status(500)
+    }
+    await base.close();
+});
+
+/**
+ * Query based room filter. Requires exact punctuation, spelling, and formatting.
+ * Multiple values for the same field should be included separately. Other formats may or may not work.
+ */
 app.get("/room-filter", async (req, res) => {
     await filter(req.query, res);
 });
 
+/**
+ * Post based room filter via a passed JSON string. Requires exact punctuation, spelling, and formatting.
+ */
 app.post("/room-filter", async (req, res) => {
     await filter(req.body, res);
 });
 
-// added param to get bed count to work
-app.get("/room-filter/:bedCount/:guests/:roomType/:bedType/:checkin/:checkout", async (req, res) => {
-    await filter(req.params, res);
+/**
+ * Parameter based filter endpoint. Requires exact punctuation, spelling, and formatting.
+ * Unknown behavior for multiple values for a field, but expected to fail.
+ */
+app.get("/room-filter/:guests/:roomType/:bedType/:bedCount/:checkIn/:checkOut", async (req, res) => {
+    let params = {
+        guests: [req.params.guests],
+        roomType: [req.params.roomType],
+        bedType: [req.params.bedType],
+        bedCount: req.params.bedCount,
+        checkIn: req.params.checkIn,
+        checkOut: req.params.checkOut
+    };
+    await filter(params, res);
 });
 
+/**
+ * Query based search endpoint. Punctuation is generally ignored, but requires exact spelling.
+ * Dates only work when given exactly two dates, in the correct format.
+ * Attempts are made to determine number of guests or beds, but are very crude.
+ */
 app.get("/search", async (req, res) => {
     let search = req.query.input.toLowerCase().split(' ');
     let params = {
@@ -453,6 +511,14 @@ app.get("/search", async (req, res) => {
     await filter(params, res);
 });
 
+/**
+ * Filter function.
+ * If given dates, that is an attempted guaranteed range.
+ * If given multiple values for a given field, finds all rooms that match that any of those values.
+ * @param values The filter values.
+ * @param res Response to send.
+ * @returns {Promise<*>} Unused.
+ */
 async function filter(values, res){
     let params = queryBuilder(values)
     let query = params.pop();
@@ -464,32 +530,16 @@ async function filter(values, res){
         let rooms = await base.all(query, params);
         res.status(200).json(rooms);
     } catch (error){
-        console.log(error);
         res.status(500)
     }
     await base.close();
 }
 
-function valueBuilder(values, params, query, snip){
-    query += " (";
-    let bits = [];
-    for (const val of values){
-        if (val == ","){
-            continue;
-        }
-        bits.push(snip);
-        params.push(val);
-        bits.push(" OR");
-    }
-    bits.pop();
-    for (const val of bits){
-        query += val;
-    }
-    query += ")"
-
-    return [query, params];
-}
-
+/**
+ * Builds the query for searching/filtering. Should probably be refactored some.
+ * @param values The keys and values to parse.
+ * @returns {*[]} The list of parameters for the query, with the query itself as the final entry.
+ */
 function queryBuilder(values){
     let baseQuery = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
         "FROM rooms r\n" +
@@ -502,7 +552,6 @@ function queryBuilder(values){
         baseQuery = vals[0];
         params = vals[1];
     }
-
     if(!isEmpty(values.roomType)){
         if(params.length > 0){
             baseQuery += " AND";
@@ -525,10 +574,12 @@ function queryBuilder(values){
         if(params.length > 0){
             baseQuery += " AND";
         }
-        let bedSnip = " r.count=?";
-        let vals = valueBuilder(values.bedCount, params, baseQuery, bedSnip);
-        baseQuery = vals[0];
-        params = vals[1];
+        baseQuery += " r.count=?";
+        params.push(values.bedCount);
+        // let bedSnip = " r.count=?";
+        // let vals = valueBuilder(values.bedCount, params, baseQuery, bedSnip);
+        // baseQuery = vals[0];
+        // params = vals[1];
     }
     if(!isEmpty(values.checkIn, values.checkOut)){
         if(params.length > 0){
@@ -538,6 +589,7 @@ function queryBuilder(values){
             "WHERE unixepoch(?) BETWEEN t.ckin AND (t.ckout-86400)))\n" +
             "AND (r.number NOT IN (SELECT t.room FROM trans t\n" +
             "WHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400)))";
+        //Left here for reference to fix a bug.
         // baseQuery += " (r.number IN (SELECT t.room FROM trans t WHERE unixepoch(?) >= t.ckout))\n" +
         //     "OR (r.number IN (SELECT t.room FROM trans t WHERE unixepoch(?) <= t.ckin))";
         params.push(values.checkIn);
@@ -547,6 +599,39 @@ function queryBuilder(values){
     return params;
 }
 
+/**
+ * Parses passed values to form part of a search/filter query.
+ * Kinda hacky, but handles a surprisingly solid range.
+ * @param values The values to parse, generally as an array.
+ * @param params An array of parameters to add to.
+ * @param query The query to add to.
+ * @param snip Small string fragment to add to the query for each value.
+ * @returns {*[]} Super hacky, returns the updated query and parameters as an array based tuple.
+ */
+function valueBuilder(values, params, query, snip){
+    query += " (";
+    let bits = [];
+    for (const val of values){
+        if (val == ","){
+            continue;
+        }
+        bits.push(snip);
+        params.push(val);
+        bits.push(" OR");
+    }
+    bits.pop();
+    for (const val of bits){
+        query += val;
+    }
+    query += ")"
+
+    return [query, params];
+}
+
+/**
+ * Query based endpoint to find rooms available given a date range.
+ * Requires queries for guests, check in date, and a check out date.
+ */
 app.get("/available-rooms", async (req, res) => {
     let base = await getDBConnection();
     let query = "SELECT r.number,r.max,r.type,r.bed,r.count,CAST((r.rate/100) AS REAL) AS 'rate',p.picture\n" +
@@ -563,28 +648,35 @@ app.get("/available-rooms", async (req, res) => {
         "\tFROM trans t\n" +
         "\tWHERE (unixepoch(?)-86400) BETWEEN t.ckin AND (t.ckout-86400))\n" +
         ")";
-    let rooms = await base.all(query, [req.query.guests, req.query.checkin, req.query.checkout]);
-    res.status(200).json(rooms);
+    try {
+        let rooms = await base.all(query, [req.query.guests, req.query.checkin, req.query.checkout]);
+        res.status(200).json(rooms);
+    } catch (error) {
+        res.status(500)
+    }
     await base.close();
 });
 
-//TODO: DO NOT USE PAST THIS POINT
-
-
+/**
+ * Updates the logged-in user's information.
+ * Must have an entry in the table (not guaranteed, if the more basic endpoint was used to create user).
+ * Currently improperly formatted: only useful for adding an entire entry into the info table, when it doesn't exist
+ * and all values are provided.
+ */
 app.post("/update-user-info", async (req, res) => {
     if (isEmpty(req.cookies.username, req.cookies.sessionId)) {
         return res.status(400).send("Must be logged in to change user information.");
     }
-   let statement = "INSERT INTO info (";
-   let params = [];
-   if(req.body.phone){
-       statement += "phone,";
-       params.push(req.body.phone);
-   }
-   if(req.body.address){
-       statement += "address,";
-       params.push(req.body.address);
-   }
+    let statement = "INSERT INTO info (";
+    let params = [];
+    if(req.body.phone){
+        statement += "phone,";
+        params.push(req.body.phone);
+    }
+    if(req.body.address){
+        statement += "address,";
+        params.push(req.body.address);
+    }
     if(req.body.city){
         statement += "city,";
         params.push(req.body.city);
@@ -598,35 +690,26 @@ app.post("/update-user-info", async (req, res) => {
         params.push(req.body.code);
     }
     if(params.length === 0){
-        return res.status(200).send("No valid values given.");
+        return res.type("text").send("No valid values given.");
     }
     statement = statement.slice(0, -1); //Kills the last comma. What we lose in efficiency, we gain in simplicity.
     statement += ") VALUES (";
 
-   for(let i= 0; i < params.length - 1;i++){
-       statement += "?, ";
+    for(let i= 0; i < params.length - 1;i++){
+        statement += "?, ";
     }
-   statement += "?)";
-   let base = await getDBConnection();
-   let idQuery = "SELECT id FROM users WHERE user=?";
-   let userID = await base.get(idQuery, [req.cookies.username]);
-   let infoUpdate = await base.run(statement, params);
-   res.status(200).send("User information updated successfully.");
+    statement += "?)";
+    let base = await getDBConnection();
+    let idQuery = "SELECT id FROM users WHERE user=?";
+    try {
+        await base.get(idQuery, [req.cookies.username]);
+        await base.run(statement, params);
+        res.type("text").send("User information updated successfully.");
+    } catch (error) {
+        res.status(500);
+    }
+    await base.close();
 });
-
-async function availableCheck(base, room, checkIn, checkOut) {
-    let availableCheck = "SELECT (ckin,ckout) FROM trans WHERE room=?";
-    let reservations = await base.all(availableCheck, [room]);
-    let inDate = dateToEpoch(checkIn);
-    let outDate = dateToEpoch(checkOut);
-    let safe = true;
-    for (const val in reservations) {
-        if (inDate > val["ckin"] && inDate < val["ckout"]) {
-            safe = false;
-            // res.status(400).send("Room is already reserved for that period");
-        }
-    }
-}
 
 /**
  * Takes a number in Unix Epoch time (assumed to be UTC) and converts to ISO 8601 Date format in local time.
@@ -636,7 +719,12 @@ async function availableCheck(base, room, checkIn, checkOut) {
 async function epochToDate(time) {
     let base = await getDBConnection();
     let timeQuery = "SELECT date(?, 'unixepoch', 'localtime')"
-    let newTime = await base.get(timeQuery, [time]);
+    let newTime;
+    try {
+        newTime = await base.get(timeQuery, [time]);
+    } catch (error) {
+        //Error response
+    }
     await base.close();
     return JSON.stringify(newTime["date(?, 'unixepoch', 'localtime')"]);
 }
@@ -649,7 +737,12 @@ async function epochToDate(time) {
 async function dateToEpoch(time) {
     let base = await getDBConnection();
     let timeQuery = "SELECT unixepoch(?, 'utc')";
-    let newTime = await base.get(timeQuery, [time]);
+    let newTime;
+    try {
+        newTime = await base.get(timeQuery, [time]);
+    } catch (error) {
+        //Error response
+    }
     await base.close();
     return JSON.stringify(newTime["unixepoch(?, 'utc')"]);
 }
