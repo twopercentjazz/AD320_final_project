@@ -50,6 +50,7 @@ const account = 'src/html/account.html';
         params.append('address', id("address").value);
         params.append('phone', id("phone-num").value);
         createUserRequest(params);
+        id("register").reset();
     }
 
     //regex and error message for the specified input 
