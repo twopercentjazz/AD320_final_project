@@ -4,12 +4,6 @@
  * Additionally includes styling for the nav bar Chris designed
  */
 
-/* body {
-    margin: 0;
-    padding: 0;
-    background-color: black;
-} */
-
 body, button {
     font-family: 'Poiret One', serif;
 }
@@ -98,11 +92,11 @@ nav li p {
     font-size: 20px;
 }
 
-    #nav1 li p {
-        margin-top: -1px;
-        padding: 14px 10px;
-        font-size: 20px;
-    }
+#nav1 li p {
+    margin-top: -1px;
+    padding: 14px 10px;
+    font-size: 20px;
+}
 
 #nav2 li a {
     padding: 14px 16px;
@@ -127,10 +121,8 @@ nav li p {
 }
 
 #hotel-name {
-    /* margin-top: 170px; */
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
-
     box-shadow: black 0 0 10px;
     background-color: black;
     width: 60%;
@@ -138,13 +130,9 @@ nav li p {
     margin-right: auto;
     text-align: center;
     padding: 40px;
-    
-
-
     font-size: 20px;
     color: #d7be8a;
     margin-top: 200px;
-    /* margin-bottom: 10px; */
 }
 
 #hotel-name h1 {
@@ -185,13 +173,12 @@ label{
     display: flex;
     justify-content: center;
     align-items: center;
-    /* margin-top: 10px; */
+    margin-top: 10px;
 }
 
 #register-body {
-    /* padding-top: 10px;
-    margin-left: 80px; */
-    /* border-radius: 20px; */
+    margin-left: 80px;
+    border-radius: 20px;
     width: 80%;
     color:#d7be8a;
 }
