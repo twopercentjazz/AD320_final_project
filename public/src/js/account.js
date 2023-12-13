@@ -28,8 +28,7 @@ const loginUrl = 'src/html/login.html';
         });
         id('previous-btn').addEventListener('click', () => {
             filter("previous")
-            // retrieveReservations('past-reservations');
-            displayError("No reservations found");
+            retrieveReservations('past-reservations');
         });
         id('sign-out-btn').addEventListener('click', logout);
     }   
@@ -87,7 +86,15 @@ const loginUrl = 'src/html/login.html';
        .then(statusCheck)
        .then(res => res.json())
        .then(updateProfile)
-       .catch(console.error);
+       .catch(handleError);
+    }
+
+    /**
+     * if unable to retriev user data, display error message
+     * @param {*} e 
+     */
+    function handleError(e) {
+        id("for-error").textContent = e;
     }
 
     /**
@@ -138,8 +145,7 @@ const loginUrl = 'src/html/login.html';
 
     /**
      * Even wehn tables are empty (no reservations found), server sends back a empty json [],
-     * this is to prevent appending empty json data. Additonally since previous reservations arent being saved
-     * this is to prevent website from crashing, when the search query fails.
+     * this is to prevent appending empty json data.
      * @param {*} e error msg returned from server
      * @param {*} endpoint determines which display will appear
      */
