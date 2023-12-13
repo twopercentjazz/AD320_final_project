@@ -86,7 +86,15 @@ const loginUrl = 'src/html/login.html';
        .then(statusCheck)
        .then(res => res.json())
        .then(updateProfile)
-       .catch(console.error);
+       .catch(handleError);
+    }
+
+    /**
+     * if unable to retriev user data, display error message
+     * @param {*} e 
+     */
+    function handleError(e) {
+        id("for-error").textContent = e;
     }
 
     /**
