@@ -1,5 +1,5 @@
 /*
- * This file contains javascript code for the index.html page.
+ *
  */
 "use strict";
 
@@ -7,88 +7,284 @@
     window.addEventListener("load", init);
 
     function init() {
-        id("check").addEventListener("click", checkAvailability);
+        // void testNewUser();
+        // void testFullUser();
+        // void testLogin();
+        // void testActive();
+        // void testLogout();
+        // void testRooms();
+        // void testRoomNumber();
+        // void testReserve();
+        // void testInfo();
+        // void testAllInfo();
+        // void testReservations();
+        // void testPastReservations();
+        // void testFutureReservations();
+        // void testAvailable();
+        // void testFilter();
+        void testFilter2();
+        // void testJsonFilter();
+        // void testSearch();
+
+        // void testDateFilter();
+
+        // void testUpdateInfo();
+        // void testFilter();
     }
 
-    function checkAvailability() {
-        id("error-msg-box").innerHTML = "";
-        let error = gen("p");
-        let checkin = id("checkin-date").value;
-        let checkout = id("checkout-date").value;
-        let people = id("people").value;
-        if (!isValidDate(checkin) || !isValidDate(checkout) || !isValidCheckin(checkin, checkout)) {
-            error.textContent = "Please enter valid dates.";
-            id("error-msg-box").appendChild(error);
-        } else {
-            window.sessionStorage.setItem("checkin", checkin);
-            window.sessionStorage.setItem("checkout", checkout);
-            window.sessionStorage.setItem("people", people);
-            window.location.href = "src/html/booking.html";
-        }
-    }
-    function isValidCheckin(checkin, checkout) {
-        let checkinDate = new Date(checkin);
-        let checkoutDate = new Date(checkout);
-        if (checkinDate >= checkoutDate) {
-            return false;
-        }
-        return true;
+    async function testSearch() {
+        // fetch('/room-filter?guests=2&roomType=Suite&bedType=King')
+        fetch('/search?input=deluxe+king+or+queen')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
     }
 
-    function isValidDate(date) {
-        let inputDate = new Date(date);
-        inputDate.setHours(0, 0, 0, 0);
-        if (isNaN(inputDate)) {
-            return false;
+    async function testNewUser(){
+        let params = new FormData;
+        let testName = "calliope";
+        let fakeName = "karen";
+        params.append("username", testName);
+        params.append("password", "badPassword");
+        params.append("name", fakeName);
+        params.append("email", "fakeEmail");
+
+        fetch("/create-user", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testFullUser(){
+        let params = new FormData;
+        params.append("username", "Irys");
+        params.append("password", "badPassword");
+        params.append("name", "Baelz");
+        params.append("email", "fakeEmail");
+        params.append("phone", "555-duck-you");
+        params.append("address", "Tokyo");
+        params.append("city", "Tokyo");
+        params.append("state", "Fu");
+        params.append("code", "78232");
+
+        fetch("/create-user-full", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testLogin(){
+        let params = new FormData;
+        // let testName = "kyle";
+        let testName = "Irys";
+        params.append("username", testName);
+        params.append("password", "badPassword");
+
+        fetch("/login", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testActive(){
+        // let params = new FormData;
+        fetch("/activity-check")
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testLogout(){
+        let params = new FormData;
+        fetch("/logout", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testRooms() {
+        fetch('/rooms')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function testRoomNumber(){
+        fetch('/room-info/217')
+            .then(statusCheck)
+            .then(resp => resp.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testReserve(){
+        let params = new FormData;
+        params.append("room", 220);
+        params.append("checkIn", "2024-03-13");
+        params.append("checkOut", "2024-03-15");
+        params.append("occupants", 2);
+
+        fetch("/reserve", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testInfo(){
+        fetch('/user-info')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    async function testAllInfo(){
+        fetch('/user-all-info')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(console.log)
+            .catch(console.log);
+    }
+
+    function processJson(response){
+        for (let i = 0; i < response.length;i++){
+            console.log(response[i]);
         }
-        let today = new Date();
-        today.setHours(0, 0, 0, 0);
-        let nextYear = new Date(today);
-        nextYear.setFullYear(today.getFullYear() + 1);
-        today.setDate(today.getDate() - 1);
-        nextYear.setDate(nextYear.getDate() - 1);
-        let year = inputDate.getFullYear();
-        let month = inputDate.getMonth() + 1;
-        let day = inputDate.getDate();
-        if (inputDate < today || inputDate > nextYear) {
-            return false;
-        }
-        return true;
+        // response.forEach(console.log);
+    }
+
+    function processTest(responseText) {
+        let text = document.createElement("p");
+        text.textContent = responseText;
+        //text.style.color = "red";
+        document.body.appendChild(text);
     }
 
     /**
-     * Returns the element that has the ID attribute with the specified value.
-     * @param {string} idName - element ID
-     * @returns {object} DOM object associated with id.
+     * Returns the response's result text if successful, otherwise
+     * returns the rejected Promise result with an error status and corresponding text
+     * @param {object} res - response to check for success/error
+     * @return {object} - valid response if response was successful, otherwise rejected
+     *                    Promise result
      */
-    function id(idName) {
-        return document.getElementById(idName);
+    async function statusCheck(res) {
+        if (!res.ok) {
+            throw new Error(await res.text());
+        }
+        return res;
     }
 
-    /**
-     * Returns the first element that matches the given CSS selector.
-     * @param {string} selector - CSS query selector.
-     * @returns {object} The first DOM object matching the query.
-     */
-    function qs(selector) {
-        return document.querySelector(selector);
+    async function testReservations() {
+        fetch('/user-reservations')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
     }
 
-    /**
-     * Returns the array of elements that match the given CSS selector.
-     * @param {string} selector - CSS query selector
-     * @returns {object[]} array of DOM objects matching the query.
-     */
-    function qsa(selector) {
-        return document.querySelectorAll(selector);
+    async function testPastReservations() {
+        fetch('/past-reservations')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
     }
 
-    /**
-     * Returns a new element with the given tag name.
-     * @param {string} tagName - HTML tag name for new DOM element.
-     * @returns {object} New DOM object for given HTML tag.
-     */
-    function gen(tagName) {
-        return document.createElement(tagName);
+    async function testFutureReservations() {
+        fetch('/future-reservations')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
     }
+
+    async function testAvailable(){
+        fetch('/available-rooms?guests=2&checkin=2024-02-12&checkout=2024-03-01')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function testFilter() {
+        // fetch('/room-filter?guests=2&roomType=Suite&bedType=King')
+        fetch('/room-filter?guests=3&bedType=Queen&bedType=King')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function testFilter2() {
+        fetch('/room-filter/3/Deluxe/Queen/null/null/null')
+        // fetch('/room-filter/2')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function testJsonFilter(){
+        let blob = ``;
+        let params = new FormData;
+        params.append("guests", [2, 3]);
+        params.append("roomType", ["economy","standard","deluxe","suite"]);
+        params.append("bedType", ["twin","full","queen","king"]);
+        params.append("bedCount", [1, 2]);
+        fetch('/room-filter', {
+            method: 'POST',
+            body: JSON.stringify({
+                "roomType": ["Economy","standard","Deluxe","suite"],
+                "bedType":["Twin","full","Queen","king"],
+                "bedCount": 1
+            }),
+            headers: {
+                "Content-type": "application/json"
+            }
+        })
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    //TODO: Untested or fails past this point.
+    async function testDateFilter() {
+        fetch('/room-filter?occupants=2&roomType=Suite&bedType=King&checkIn=2024-02-14&checkOut=2024-04-10')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function test() {
+        fetch('/available-rooms')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function testUpdateInfo(){
+        let params = new FormData;
+        params.append("phone", 666);
+        params.append("city", "Tokyo");
+        params.append("state", "Hell");
+        params.append("code", "78232");
+
+        fetch("/update-user-info", {method :"POST", body: params})
+            .then(statusCheck)
+            .then(response => response.text())
+            .then(console.log)
+            .catch(console.log);
+    }
+
 })();
