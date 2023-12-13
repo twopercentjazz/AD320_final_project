@@ -22,14 +22,32 @@
         // void testFutureReservations();
         // void testAvailable();
         // void testFilter();
-        void testFilter2();
+        // void testFilter2();
         // void testJsonFilter();
         // void testSearch();
 
         // void testDateFilter();
-
+        //
         // void testUpdateInfo();
         // void testFilter();
+    }
+
+    async function testFilter() {
+        // fetch('/room-filter?guests=2&roomType=Suite&bedType=King')
+        fetch('/room-filter?bedCount=1&bedType=Queen&bedType=King')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
+    }
+
+    async function testFilter2() {
+        fetch('/room-filter/3/Deluxe/Queen/null/null/null')
+            // fetch('/room-filter/2')
+            .then(statusCheck)
+            .then(resp => resp.json())
+            .then(processJson)
+            .catch(console.log);
     }
 
     async function testSearch() {
@@ -214,23 +232,7 @@
             .catch(console.log);
     }
 
-    async function testFilter() {
-        // fetch('/room-filter?guests=2&roomType=Suite&bedType=King')
-        fetch('/room-filter?guests=3&bedType=Queen&bedType=King')
-            .then(statusCheck)
-            .then(resp => resp.json())
-            .then(processJson)
-            .catch(console.log);
-    }
 
-    async function testFilter2() {
-        fetch('/room-filter/3/Deluxe/Queen/null/null/null')
-        // fetch('/room-filter/2')
-            .then(statusCheck)
-            .then(resp => resp.json())
-            .then(processJson)
-            .catch(console.log);
-    }
 
     async function testJsonFilter(){
         let blob = ``;
@@ -258,7 +260,7 @@
 
     //TODO: Untested or fails past this point.
     async function testDateFilter() {
-        fetch('/room-filter?occupants=2&roomType=Suite&bedType=King&checkIn=2024-02-14&checkOut=2024-04-10')
+        fetch('/room-filter?guests=2&roomType=Suite&bedType=King&bedType=Queen&checkIn=2024-02-14&checkOut=2024-04-10')
             .then(statusCheck)
             .then(resp => resp.json())
             .then(processJson)
