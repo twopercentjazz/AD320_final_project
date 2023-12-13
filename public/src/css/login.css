@@ -205,7 +205,7 @@ label {
     display: block;
 }
 
-input {
+.text-input {
     width: 450px;
     padding: 10px;
     box-sizing: border-box;
@@ -266,4 +266,14 @@ button:hover {
 
 #sign-in-redirect {
     color: white;
+    margin-top: -15px;
+    margin-bottom: -5;
+}
+
+.remember {
+    display: flex;
+    align-items: flex-start;
+    margin-top: -20px;
+    margin-bottom: 5px;
+    color: #d7be8a;    
 }

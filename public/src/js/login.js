@@ -17,6 +17,10 @@ const account = 'src/html/account.html';
         checkLoggedIn();
         id("login-btn").addEventListener('click', e => {
             id('popup').style.display = 'block';
+            let user = localStorage.getItem("username");
+            if (user) {
+                id('username').value = user;
+            }
         });
         id('popup').addEventListener('click', e => {
             if(e.target === id('popup')) {
@@ -107,6 +111,9 @@ const account = 'src/html/account.html';
         .then(res => res.text())
         .then(console.log)
         .then(() => {
+            if (id('remember-me').checked){
+                localStorage.setItem("username", params.get("username"));
+            }
             window.location.href = apiUrl + account;
         })
         .catch(loginError);
