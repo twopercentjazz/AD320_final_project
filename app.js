@@ -428,15 +428,7 @@ app.post("/room-filter", async (req, res) => {
  * Unknown behavior for multiple values for a field, but expected to fail.
  */
 app.get("/room-filter/:guests/:roomType/:bedType/:bedCount/:checkIn/:checkOut", async (req, res) => {
-    let params = {
-        guests: [req.params.guests],
-        roomType: [req.params.roomType],
-        bedType: [req.params.bedType],
-        bedCount: req.params.bedCount,
-        checkIn: req.params.checkIn,
-        checkOut: req.params.checkOut
-    };
-    await filter(params, res);
+    await filter(req.params, res);
 });
 
 /**
@@ -548,38 +540,59 @@ function queryBuilder(values){
     let params = [];
     if(!isEmpty(values.guests)){
         let guestSnip = " r.max>=?";
-        let vals = valueBuilder(values.guests, params, baseQuery, guestSnip);
-        baseQuery = vals[0];
-        params = vals[1];
+        if(Array.isArray(values.guests)){
+            let vals = valueBuilder(values.guests, params, baseQuery, guestSnip);
+            baseQuery = vals[0];
+            params = vals[1];
+        } else {
+            baseQuery += guestSnip;
+            params.push(values.guests)
+        }
     }
     if(!isEmpty(values.roomType)){
         if(params.length > 0){
             baseQuery += " AND";
         }
         let roomSnip = " r.type=?";
-        let vals = valueBuilder(values.roomType, params, baseQuery, roomSnip);
-        baseQuery = vals[0];
-        params = vals[1];
+        if(Array.isArray(values.roomType)){
+            let vals = valueBuilder(values.roomType, params, baseQuery, roomSnip);
+            baseQuery = vals[0];
+            params = vals[1];
+        } else {
+            baseQuery += roomSnip;
+            params.push(values.roomType);
+        }
+
     }
     if(!isEmpty(values.bedType)){
         if(params.length > 0){
             baseQuery += " AND";
         }
         let bedSnip = " r.bed=?";
-        let vals = valueBuilder(values.bedType, params, baseQuery, bedSnip);
-        baseQuery = vals[0];
-        params = vals[1];
+        if(Array.isArray(values.bedType)) {
+            let vals = valueBuilder(values.bedType, params, baseQuery, bedSnip);
+            baseQuery = vals[0];
+            params = vals[1];
+        } else {
+            baseQuery += bedSnip;
+            params.push(values.bedType);
+        }
     }
     if(!isEmpty(values.bedCount)){
         if(params.length > 0){
             baseQuery += " AND";
         }
-        baseQuery += " r.count=?";
-        params.push(values.bedCount);
-        // let bedSnip = " r.count=?";
-        // let vals = valueBuilder(values.bedCount, params, baseQuery, bedSnip);
-        // baseQuery = vals[0];
-        // params = vals[1];
+        let bedSnip = " r.count=?";
+
+        if(Array.isArray(values.bedCount)){
+            let vals = valueBuilder(values.bedCount, params, baseQuery, bedSnip);
+            baseQuery = vals[0];
+            params = vals[1];
+        } else {
+            baseQuery += " r.count=?";
+            params.push(values.bedCount);
+        }
+
     }
     if(!isEmpty(values.checkIn, values.checkOut)){
         if(params.length > 0){
